@@ -16,8 +16,8 @@ Guidance for Claude Code (and other agents) working in this repository.
 
 A single-page portal where students browse and use a growing collection of small
 learning tools. Home view shows a catalog of tool cards; picking one switches
-the page to that tool's view (hash-routed, e.g. `#quiz-generator`) without a
-page reload. Built to keep growing: adding tool N+1 never touches existing
+the page to that tool's view (hash-routed, e.g. `#fuel-system-overview`)
+without a page reload. Built to keep growing: adding tool N+1 never touches existing
 tools' code.
 
 ### Structure
@@ -35,11 +35,9 @@ tools' code.
 
 ### Data model (localStorage, prefixed `tm.*`)
 
-- `tm.quizAttempts` — saved quiz attempt history: `{ quizId, score, total, completedAt }`.
-  Quiz content itself is static and bundled with the tool, not generated or
-  stored here.
-- Attempted content persists locally so it's still there next visit (quiz
-  score history), not lost each session.
+- None currently — no tool stores anything. `storage.js` (the shared helper
+  module) was removed with the Quiz Generator; re-add it if a future tool
+  needs persisted state, following the `tm.*`-prefixed key convention.
 
 ### Visual direction
 
@@ -48,25 +46,21 @@ pastel tint per card (coral/teal/amber) so new cards keep cycling through
 it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
 Google Fonts. Full dark-mode token set in `styles.css`.
 
-### Phase 1 — Portal shell + 2 tools (current)
+### Phase 1 — Portal shell + 1 tool (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
-- **Quiz Generator**: static question bank bundled with the tool (starter
-  topic: Web Basics — HTML/CSS/JS fundamentals, 10 multiple-choice questions,
-  each with a short explanation shown after answering). No AI call, no key
-  needed. Renders an interactive quiz with immediate feedback; saves attempt
-  history to `tm.quizAttempts`.
 - **Fuel System Overview**: interactive SVG diagram of a jet engine's fuel
   system (adapted from a supplied reference file). Toggle between start and
   shutdown flow states; hover a component for its title and description.
   No stored state — purely explanatory, no localStorage key.
-- Flashcard Trainer was built for Phase 1, then removed by request — see
-  git history if it's wanted back (it used a BYOK Anthropic key, called
-  directly from client JS with the `anthropic-dangerous-direct-browser-access:
-  true` header, no backend).
+- Quiz Generator and Flashcard Trainer were both built for Phase 1, then
+  removed by request — see git history if either is wanted back. Quiz
+  Generator: static Web Basics question bank, scored, saved attempt history
+  to `tm.quizAttempts` via `storage.js` (also removed). Flashcard Trainer:
+  BYOK Anthropic key, called directly from client JS with the
+  `anthropic-dangerous-direct-browser-access: true` header, no backend.
 
 ### Future phases
 
 - Add more tools via the registry pattern above; scope and specifics TBD per
   tool when planned.
-- Possible: AI-generated/expanded quiz topics, or a reworked flashcard tool.
