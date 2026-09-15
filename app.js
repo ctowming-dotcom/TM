@@ -69,32 +69,5 @@
 
     renderCatalog();
     route();
-
-    // Settings panel (shared across tools; only Flashcard Trainer uses the key today)
-    var settingsPanel = document.getElementById('settings-panel');
-    var settingsToggle = document.getElementById('settings-toggle');
-    var apiKeyInput = document.getElementById('api-key-input');
-    var saveApiKeyBtn = document.getElementById('save-api-key');
-    var clearApiKeyBtn = document.getElementById('clear-api-key');
-    var closeSettingsBtn = document.getElementById('close-settings');
-
-    function openSettings() {
-      apiKeyInput.value = TM.storage.getApiKey();
-      settingsPanel.hidden = false;
-    }
-    function closeSettings() {
-      settingsPanel.hidden = true;
-    }
-
-    settingsToggle.addEventListener('click', openSettings);
-    closeSettingsBtn.addEventListener('click', closeSettings);
-    saveApiKeyBtn.addEventListener('click', function () {
-      TM.storage.setApiKey(apiKeyInput.value.trim());
-      closeSettings();
-    });
-    clearApiKeyBtn.addEventListener('click', function () {
-      TM.storage.clearApiKey();
-      apiKeyInput.value = '';
-    });
   });
 })();

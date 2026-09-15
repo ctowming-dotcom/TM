@@ -35,35 +35,34 @@ tools' code.
 
 ### Data model (localStorage, prefixed `tm.*`)
 
-- `tm.apiKey` — student's own Anthropic API key (BYOK), needed only by the
-  Flashcard Trainer's AI-generation path. Entered once via a settings panel,
-  editable/clearable. Never hardcoded or committed. Calls go directly from
-  client JS to the Anthropic Messages API with the
-  `anthropic-dangerous-direct-browser-access: true` header (no backend).
 - `tm.quizAttempts` — saved quiz attempt history: `{ quizId, score, total, completedAt }`.
   Quiz content itself is static and bundled with the tool, not generated or
   stored here.
-- `tm.decks` — saved flashcard decks: `{ id, topic, source: 'ai'|'manual'|'mixed', createdAt, cards: [{ id, front, back }] }`.
-- Generated/attempted content persists locally so it's still there next visit
-  (a "my decks" list, quiz score history), not lost each session.
+- Attempted content persists locally so it's still there next visit (quiz
+  score history), not lost each session.
 
-### Phase 1 — Portal shell + 2 tools (current)
+### Visual direction
+
+Bright Lab: white/near-black base, coral accent (`#ff5c6c`), a rotating
+pastel tint per card (coral/teal/amber) so new cards keep cycling through
+it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
+Google Fonts. Full dark-mode token set in `styles.css`.
+
+### Phase 1 — Portal shell + 1 tool (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
-- Settings panel for `tm.apiKey` (BYOK, Anthropic), used only by the
-  Flashcard Trainer.
 - **Quiz Generator**: static question bank bundled with the tool (starter
   topic: Web Basics — HTML/CSS/JS fundamentals, 10 multiple-choice questions,
   each with a short explanation shown after answering). No AI call, no key
   needed. Renders an interactive quiz with immediate feedback; saves attempt
   history to `tm.quizAttempts`.
-- **Flashcard Trainer**: student enters a topic for an AI-generated starter
-  deck (Anthropic, via `tm.apiKey`), or creates/edits cards manually →
-  flip/cycle drill UI → saves to `tm.decks`, editable anytime.
+- Flashcard Trainer was built for Phase 1, then removed by request — see
+  git history if it's wanted back (it used a BYOK Anthropic key, called
+  directly from client JS with the `anthropic-dangerous-direct-browser-access:
+  true` header, no backend).
 
 ### Future phases
 
 - Add more tools via the registry pattern above; scope and specifics TBD per
   tool when planned.
-- Possible: AI-generated/expanded quiz topics (Phase 1 quiz content is
-  static-only).
+- Possible: AI-generated/expanded quiz topics, or a reworked flashcard tool.
