@@ -32,26 +32,35 @@ tools' code.
 
 ### Data model (localStorage, prefixed `tm.*`)
 
-- `tm.apiKey` — student's own AI provider API key (BYOK). Shared by all tools
-  that need AI. Entered once via a settings panel, editable/clearable. Never
-  hardcoded or committed.
-- `tm.quizzes` — saved quizzes: `{ id, topic, createdAt, questions: [{ question, choices[], answerIndex, explanation? }] }`.
+- `tm.apiKey` — student's own Anthropic API key (BYOK), needed only by the
+  Flashcard Trainer's AI-generation path. Entered once via a settings panel,
+  editable/clearable. Never hardcoded or committed. Calls go directly from
+  client JS to the Anthropic Messages API with the
+  `anthropic-dangerous-direct-browser-access: true` header (no backend).
+- `tm.quizAttempts` — saved quiz attempt history: `{ quizId, score, total, completedAt }`.
+  Quiz content itself is static and bundled with the tool, not generated or
+  stored here.
 - `tm.decks` — saved flashcard decks: `{ id, topic, source: 'ai'|'manual'|'mixed', createdAt, cards: [{ id, front, back }] }`.
-- Generated content persists locally so it's still there next visit (a "my
-  quizzes" / "my decks" list per tool), not regenerated fresh each time.
+- Generated/attempted content persists locally so it's still there next visit
+  (a "my decks" list, quiz score history), not lost each session.
 
 ### Phase 1 — Portal shell + 2 tools (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
-- Settings panel for `tm.apiKey` (BYOK), shared across tools.
-- **Quiz Generator**: student enters a topic → calls AI provider directly
-  from client JS using `tm.apiKey` → renders an interactive multiple-choice
-  quiz with immediate feedback → saves to `tm.quizzes` for replay.
+- Settings panel for `tm.apiKey` (BYOK, Anthropic), used only by the
+  Flashcard Trainer.
+- **Quiz Generator**: static question bank bundled with the tool (starter
+  topic: Web Basics — HTML/CSS/JS fundamentals, 10 multiple-choice questions,
+  each with a short explanation shown after answering). No AI call, no key
+  needed. Renders an interactive quiz with immediate feedback; saves attempt
+  history to `tm.quizAttempts`.
 - **Flashcard Trainer**: student enters a topic for an AI-generated starter
-  deck, or creates/edits cards manually → flip/cycle drill UI → saves to
-  `tm.decks`, editable anytime.
+  deck (Anthropic, via `tm.apiKey`), or creates/edits cards manually →
+  flip/cycle drill UI → saves to `tm.decks`, editable anytime.
 
 ### Future phases
 
 - Add more tools via the registry pattern above; scope and specifics TBD per
   tool when planned.
+- Possible: AI-generated/expanded quiz topics (Phase 1 quiz content is
+  static-only).
