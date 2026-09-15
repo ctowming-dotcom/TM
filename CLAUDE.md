@@ -46,13 +46,20 @@ pastel tint per card (coral/teal/amber) so new cards keep cycling through
 it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
 Google Fonts. Full dark-mode token set in `styles.css`.
 
-### Phase 1 — Portal shell + 1 tool (current)
+### Phase 1 — Portal shell + 2 tools (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
 - **Fuel System Overview**: interactive SVG diagram of a jet engine's fuel
   system (adapted from a supplied reference file). Toggle between start and
   shutdown flow states; hover a component for its title and description.
   No stored state — purely explanatory, no localStorage key.
+- **Oil System Overview**: interactive SVG diagram of a turbofan oil system
+  (adapted from a supplied reference file). Switch spool configuration
+  (single/twin/triple), toggle supply/scavenge/return circuits on and off,
+  hover a component for its title and description. No stored state.
+  Both diagram tools keep their own reference-sheet visual style (not the
+  portal's Bright Lab palette) since their colors are semantic — e.g. green
+  = open/flowing, red = closed or a return line, amber = active selection.
 - Quiz Generator and Flashcard Trainer were both built for Phase 1, then
   removed by request — see git history if either is wanted back. Quiz
   Generator: static Web Basics question bank, scored, saved attempt history

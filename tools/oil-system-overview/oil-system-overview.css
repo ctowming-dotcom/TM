@@ -1,0 +1,308 @@
+.oil-diagram {
+  --bg: #0b1c2c;
+  --grid: #14304a;
+  --panel: #0f2033;
+  --box-fill: #173350;
+  --box-fill2: #1d3e61;
+  --box-stroke: #5aa9d6;
+  --box-stroke-dim: #2f5a7d;
+  --text: #eaf3fb;
+  --text-dim: #9db6cc;
+  --amber: #f2b134;
+  --supply: #4ade80;
+  --scavenge: #fb923c;
+  --return: #ef4444;
+  --air: #7e93a8;
+  background:
+    repeating-linear-gradient(0deg, var(--grid) 0px, var(--grid) 1px, transparent 1px, transparent 42px),
+    repeating-linear-gradient(90deg, var(--grid) 0px, var(--grid) 1px, transparent 1px, transparent 42px),
+    var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  border-radius: 10px;
+  padding: 22px 22px 40px;
+}
+
+.oil-diagram * {
+  box-sizing: border-box;
+}
+
+.oil-diagram .mono {
+  font-family: "Consolas", "SFMono-Regular", Menlo, monospace;
+}
+
+.oil-diagram header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  border-bottom: 1px solid var(--box-stroke-dim);
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+}
+
+.oil-diagram header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin: 0 0 4px;
+  color: var(--text);
+}
+
+.oil-diagram header p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.oil-diagram .tag {
+  display: inline-block;
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  color: var(--amber);
+  border: 1px solid rgba(242, 177, 52, 0.45);
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.oil-diagram .controls {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--box-stroke-dim);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.oil-diagram .control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oil-diagram .control-group .glabel {
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.6px;
+  margin-right: 4px;
+}
+
+.oil-diagram .spool-btn {
+  background: var(--box-fill);
+  border: 1px solid var(--box-stroke-dim);
+  color: var(--text-dim);
+  padding: 7px 14px;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.oil-diagram .spool-btn:hover {
+  border-color: var(--box-stroke);
+  color: var(--text);
+}
+
+.oil-diagram .spool-btn.active {
+  background: linear-gradient(180deg, #2a4d70, #1c3a5a);
+  border-color: var(--amber);
+  color: var(--text);
+  box-shadow: 0 0 0 1px rgba(242, 177, 52, 0.25) inset;
+}
+
+.oil-diagram .line-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  color: var(--text-dim);
+  user-select: none;
+}
+
+.oil-diagram .line-toggle input {
+  accent-color: var(--amber);
+  cursor: pointer;
+}
+
+.oil-diagram .line-toggle .swatch {
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.oil-diagram .line-toggle.dimmed {
+  color: #5c7086;
+}
+
+.oil-diagram .line-toggle.dimmed .swatch {
+  opacity: 0.35;
+}
+
+.oil-diagram .legend-supply .swatch {
+  background: var(--supply);
+}
+
+.oil-diagram .legend-scavenge .swatch {
+  background: var(--scavenge);
+}
+
+.oil-diagram .legend-return .swatch {
+  background: var(--return);
+}
+
+.oil-diagram .stage-wrap {
+  background: var(--panel);
+  border: 1px solid var(--box-stroke-dim);
+  border-radius: 8px;
+  padding: 10px;
+  position: relative;
+  overflow: auto;
+}
+
+.oil-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 1100px;
+}
+
+.oil-diagram .comp-box {
+  fill: var(--box-fill);
+  stroke: var(--box-stroke);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 0.12s ease;
+}
+
+.oil-diagram .comp-box:hover {
+  fill: var(--box-fill2);
+  stroke: var(--amber);
+}
+
+.oil-diagram .comp-box.filter {
+  fill: url(#oil-hatch);
+}
+
+.oil-diagram .comp-label {
+  fill: var(--text);
+  font-size: 12.5px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.oil-diagram .comp-label.small {
+  font-size: 10.5px;
+}
+
+.oil-diagram .sublabel {
+  fill: var(--text-dim);
+  font-size: 10px;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: "Consolas", monospace;
+}
+
+.oil-diagram .group-title {
+  fill: var(--text-dim);
+  font-size: 11px;
+  font-family: "Consolas", monospace;
+  letter-spacing: 1px;
+}
+
+.oil-diagram .flow-line {
+  fill: none;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+}
+
+.oil-diagram .flow-line.supply {
+  stroke: var(--supply);
+}
+
+.oil-diagram .flow-line.scavenge {
+  stroke: var(--scavenge);
+}
+
+.oil-diagram .flow-line.return {
+  stroke: var(--return);
+}
+
+.oil-diagram .flow-anim {
+  stroke-dasharray: 9 7;
+  animation: oil-flowmove 0.55s linear infinite;
+}
+
+@keyframes oil-flowmove {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oil-diagram .flow-anim {
+    animation: none;
+  }
+}
+
+.oil-diagram .static-line {
+  fill: none;
+  stroke: var(--air);
+  stroke-width: 1.6;
+  stroke-dasharray: 3 4;
+  opacity: 0.8;
+}
+
+.oil-diagram .static-label {
+  fill: var(--air);
+  font-size: 13.5px;
+  font-family: "Consolas", monospace;
+}
+
+.oil-diagram .hidden {
+  opacity: 0 !important;
+}
+
+.oil-diagram .tooltip {
+  position: fixed;
+  max-width: 280px;
+  background: #0c1f31;
+  border: 1px solid var(--amber);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text);
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  display: none;
+}
+
+.oil-diagram .tooltip .t-title {
+  color: var(--amber);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 4px;
+  display: block;
+  letter-spacing: 0.2px;
+}
+
+.oil-diagram footer {
+  margin-top: 14px;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  text-align: center;
+}
