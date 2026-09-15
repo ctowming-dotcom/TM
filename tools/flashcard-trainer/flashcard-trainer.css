@@ -6,6 +6,13 @@
   gap: 0.5rem;
 }
 
+.flashcards-header h2,
+.flashcards-new h2,
+.flashcards-detail h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
 .btn-new-deck,
 .btn-generate,
 .btn-blank,
@@ -16,12 +23,13 @@
 .btn-prev,
 .btn-next,
 .add-card-form button {
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
+  font-weight: 700;
 }
 
 .btn-new-deck,
@@ -51,17 +59,17 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius);
+  background: var(--tint-2);
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .deck-meta {
   display: block;
-  color: var(--text-muted);
+  color: var(--text);
+  opacity: 0.7;
   font-size: 0.85rem;
 }
 
@@ -86,10 +94,10 @@ button:disabled {
 #fc-topic {
   display: block;
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.6rem 0.9rem;
   margin: 0.5rem 0 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
   background: var(--bg);
   color: var(--text);
 }
@@ -110,15 +118,14 @@ button:disabled {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
   margin: 1rem 0;
 }
 
 .card-item {
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-sm);
+  background: var(--tint-1);
 }
 
 .card-item button {
@@ -135,23 +142,23 @@ button:disabled {
 .add-card-form input {
   flex: 1;
   min-width: 120px;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--border);
   background: var(--bg);
   color: var(--text);
 }
 
 .drill-progress {
+  font-family: var(--font-display);
   color: var(--text-muted);
   font-size: 0.85rem;
 }
 
 .flip-card {
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--surface);
-  min-height: 180px;
+  border-radius: var(--radius);
+  background: var(--tint-3);
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -164,15 +171,19 @@ button:disabled {
 }
 
 .flip-card-label {
+  font-family: var(--font-display);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text);
+  opacity: 0.6;
   margin: 0;
 }
 
 .flip-card-content {
-  font-size: 1.2rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
   margin: 0;
   text-wrap: balance;
 }

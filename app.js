@@ -28,9 +28,10 @@
         card.className = 'tool-card';
         card.href = '#' + tool.id;
         card.innerHTML =
+          '<span class="tool-card-icon">' + tool.icon + '</span>' +
           '<h2>' + TM.escapeHtml(tool.name) + '</h2>' +
           '<p>' + TM.escapeHtml(tool.description) + '</p>' +
-          '<span class="tool-card-cta">Open →</span>';
+          '<span class="tool-card-cta">Open <span class="arrow">→</span></span>';
         catalogGrid.appendChild(card);
       });
     }

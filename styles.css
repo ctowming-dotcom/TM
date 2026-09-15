@@ -1,28 +1,40 @@
 :root {
   color-scheme: light dark;
-  --bg: #f7f7fb;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --text: #1a1a2e;
-  --text-muted: #5c5c74;
-  --border: #dfdfea;
-  --accent: #4f46e5;
+  --text: #16181d;
+  --text-muted: #5a5e68;
+  --border: #e7e7ec;
+  --accent: #ff5c6c;
   --accent-contrast: #ffffff;
   --success: #1a7f4b;
   --error: #c0392b;
-  --radius: 10px;
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --tint-1: #ffd9dc;
+  --tint-2: #c9f3ec;
+  --tint-3: #ffe9b8;
+  --card-badge-bg: rgba(255, 255, 255, 0.55);
+  --font-display: "Fredoka", sans-serif;
+  --font-body: "Karla", sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #14141f;
-    --surface: #1e1e2e;
-    --text: #eaeaf2;
-    --text-muted: #a3a3b8;
-    --border: #33334a;
-    --accent: #8b7ff5;
-    --accent-contrast: #14141f;
+    --bg: #16181d;
+    --surface: #1f2128;
+    --text: #f1f1f5;
+    --text-muted: #a7abb5;
+    --border: #2c2f37;
+    --accent: #ff7b88;
+    --accent-contrast: #16181d;
     --success: #4ade80;
     --error: #f87171;
+    --tint-1: #402530;
+    --tint-2: #1c3a37;
+    --tint-3: #3a2e1a;
+    --card-badge-bg: rgba(255, 255, 255, 0.12);
   }
 }
 
@@ -32,7 +44,7 @@
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
@@ -47,74 +59,117 @@ button {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
 }
 
 .brand {
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
   color: var(--text);
   text-decoration: none;
 }
 
 .btn-settings {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.4rem 0.9rem;
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1.1rem;
+  font-weight: 700;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
 main#app {
   max-width: 900px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 3rem;
+  padding: 1rem 1.5rem 3rem;
+}
+
+#catalog-view h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2.6rem;
+  margin: 0;
 }
 
 .lede {
   color: var(--text-muted);
-  margin-top: 0.25rem;
+  margin-top: 0.4rem;
 }
 
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
 }
 
 .tool-card {
-  display: block;
-  padding: 1.25rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
   border-radius: var(--radius);
   text-decoration: none;
   color: var(--text);
-  transition: border-color 0.15s ease;
+  transition: transform 0.15s ease;
+}
+
+.tool-card:nth-child(3n + 1) {
+  background: var(--tint-1);
+}
+.tool-card:nth-child(3n + 2) {
+  background: var(--tint-2);
+}
+.tool-card:nth-child(3n + 3) {
+  background: var(--tint-3);
 }
 
 .tool-card:hover,
 .tool-card:focus-visible {
-  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.tool-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--card-badge-bg);
+  color: var(--text);
 }
 
 .tool-card h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.1rem;
+  font-family: var(--font-display);
+  margin: 0 0 0.35rem;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
 .tool-card p {
-  margin: 0 0 0.75rem;
-  color: var(--text-muted);
+  margin: 0;
+  color: var(--text);
+  opacity: 0.75;
   font-size: 0.95rem;
 }
 
 .tool-card-cta {
-  color: var(--accent);
-  font-weight: 600;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
   font-size: 0.9rem;
+}
+
+.tool-card-cta .arrow {
+  font-size: 1.05rem;
 }
 
 .btn-back {
@@ -122,6 +177,7 @@ main#app {
   border: none;
   color: var(--accent);
   cursor: pointer;
+  font-weight: 700;
   font-size: 0.95rem;
   padding: 0;
   margin-bottom: 1.25rem;
@@ -149,6 +205,11 @@ main#app {
   border: 1px solid var(--border);
 }
 
+.settings-panel-inner h2 {
+  font-family: var(--font-display);
+  margin-top: 0;
+}
+
 .settings-panel-inner label {
   display: block;
   margin-top: 1rem;
@@ -158,9 +219,9 @@ main#app {
 
 .settings-panel-inner input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.5rem 0.75rem;
   margin-top: 0.25rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
@@ -175,11 +236,12 @@ main#app {
 .settings-actions button {
   flex: 1;
   padding: 0.5rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text);
   cursor: pointer;
+  font-weight: 700;
 }
 
 #save-api-key {
