@@ -48,7 +48,7 @@ pastel tint per card (coral/teal/amber) so new cards keep cycling through
 it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
 Google Fonts. Full dark-mode token set in `styles.css`.
 
-### Phase 1 — Portal shell + 1 tool (current)
+### Phase 1 — Portal shell + 2 tools (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
 - **Quiz Generator**: static question bank bundled with the tool (starter
@@ -56,6 +56,10 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   each with a short explanation shown after answering). No AI call, no key
   needed. Renders an interactive quiz with immediate feedback; saves attempt
   history to `tm.quizAttempts`.
+- **Fuel System Overview**: interactive SVG diagram of a jet engine's fuel
+  system (adapted from a supplied reference file). Toggle between start and
+  shutdown flow states; hover a component for its title and description.
+  No stored state — purely explanatory, no localStorage key.
 - Flashcard Trainer was built for Phase 1, then removed by request — see
   git history if it's wanted back (it used a BYOK Anthropic key, called
   directly from client JS with the `anthropic-dangerous-direct-browser-access:
