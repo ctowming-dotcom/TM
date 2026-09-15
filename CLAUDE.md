@@ -27,8 +27,11 @@ tools' code.
 - `tools/<tool-id>/` — one folder per tool (its markup fragment, `.js`, `.css`).
 - `tools.js` — shared registry: plain array of `{ id, name, description, entry }`
   metadata. Catalog view renders cards by iterating it; tool views mount by id.
-- **Adding a tool later**: create its folder, add one entry to `tools.js`, add
-  its section container to `index.html`. No existing tool's files change.
+- **Adding a tool later**: create its folder, add one entry to `tools.js`,
+  and link its `.css`/`.js` files in `index.html` (plain script/link tags —
+  no bundler). Each tool calls `TM.registerTool(id, { mount })` at load time;
+  the router calls `mount(container)` when its hash is active. No existing
+  tool's files change.
 
 ### Data model (localStorage, prefixed `tm.*`)
 

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Tools Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="tools/quiz-generator/quiz-generator.css">
+  <link rel="stylesheet" href="tools/flashcard-trainer/flashcard-trainer.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#">Learning Tools</a>
+    <button class="btn-settings" id="settings-toggle" type="button" aria-haspopup="dialog" aria-controls="settings-panel">Settings</button>
+  </header>
+
+  <main id="app">
+    <section id="catalog-view" class="view">
+      <h1>Tools</h1>
+      <p class="lede">Pick a tool to start practicing.</p>
+      <div id="catalog-grid" class="catalog-grid"></div>
+    </section>
+
+    <section id="tool-view" class="view" hidden>
+      <button class="btn-back" id="back-to-tools" type="button">← Back to tools</button>
+      <div id="tool-container"></div>
+    </section>
+  </main>
+
+  <div id="settings-panel" class="settings-panel" hidden role="dialog" aria-labelledby="settings-title">
+    <div class="settings-panel-inner">
+      <h2 id="settings-title">Settings</h2>
+      <p>Your Anthropic API key is used only by the Flashcard Trainer's "Generate with AI" feature. It's stored in this browser only, and sent only directly to Anthropic when generating a deck.</p>
+      <label for="api-key-input">Anthropic API key</label>
+      <input type="password" id="api-key-input" autocomplete="off" placeholder="sk-ant-...">
+      <div class="settings-actions">
+        <button type="button" id="save-api-key">Save</button>
+        <button type="button" id="clear-api-key">Clear</button>
+        <button type="button" id="close-settings">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>Built with vanilla HTML, CSS &amp; JavaScript — no frameworks, no build step.</p>
+  </footer>
+
+  <script src="storage.js"></script>
+  <script src="tools.js"></script>
+  <script src="app.js"></script>
+  <script src="tools/quiz-generator/questions.js"></script>
+  <script src="tools/quiz-generator/quiz-generator.js"></script>
+  <script src="tools/flashcard-trainer/flashcard-trainer.js"></script>
+</body>
+</html>

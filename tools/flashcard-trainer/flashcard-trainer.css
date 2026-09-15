@@ -1,0 +1,183 @@
+.flashcards-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn-new-deck,
+.btn-generate,
+.btn-blank,
+.btn-study,
+.btn-edit,
+.btn-delete,
+.btn-flip,
+.btn-prev,
+.btn-next,
+.add-card-form button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn-new-deck,
+.btn-generate,
+.add-card-form button,
+.btn-flip {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.deck-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.deck-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.deck-meta {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.deck-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.flashcards-new,
+.flashcards-detail,
+.flashcards-drill {
+  max-width: 560px;
+}
+
+.flashcards-new label {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+#fc-topic {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.new-deck-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.fc-status {
+  margin-top: 1rem;
+  color: var(--text-muted);
+}
+
+.card-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.card-item {
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.card-item button {
+  margin-top: 0.5rem;
+}
+
+.add-card-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.add-card-form input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.drill-progress {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.flip-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem;
+  cursor: pointer;
+  margin: 1rem 0;
+  gap: 0.5rem;
+}
+
+.flip-card-label {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.flip-card-content {
+  font-size: 1.2rem;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.drill-actions {
+  display: flex;
+  gap: 0.75rem;
+}
