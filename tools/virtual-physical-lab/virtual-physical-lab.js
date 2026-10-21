@@ -34,6 +34,29 @@
   var MIN_RPM = ANCHORS[0].rpm;
   var MAX_RPM = ANCHORS[ANCHORS.length - 1].rpm;
 
+  // Mode 1 = as logged (PSIG, degC, Gal/hr, lbf). Mode 2 = SI (Pa, K, L/hr, N & kgf).
+  var PSI_TO_PA = 6894.757293168;
+  var GAL_TO_L = 3.785411784;
+  var LBF_TO_N = 4.4482216153;
+  var N_TO_KGF = 1 / 9.80665;
+
+  function fmtPressure(psig, mode) {
+    return mode === 2 ? Math.round(psig * PSI_TO_PA).toLocaleString() + ' Pa' : psig.toFixed(3) + ' PSIG';
+  }
+  function fmtTemp(degC, mode) {
+    return mode === 2 ? (degC + 273.15).toFixed(1) + ' K' : degC.toFixed(1) + ' °C';
+  }
+  function fmtFuel(galHr, mode) {
+    return mode === 2 ? (galHr * GAL_TO_L).toFixed(2) + ' L/hr' : galHr.toFixed(2) + ' Gal/hr';
+  }
+  function fmtThrust(lbf, mode) {
+    if (mode === 2) {
+      var n = lbf * LBF_TO_N;
+      return n.toFixed(1) + ' N · ' + (n * N_TO_KGF).toFixed(2) + ' kgf';
+    }
+    return lbf.toFixed(1) + ' lbf';
+  }
+
   var DESC = {
     inlet: ['Air Intake (Inlet Section)', 'To capture and smoothly deliver air to the compressor with minimum energy loss.'],
     compressor: ['Compressor Section', 'To increase the pressure of the incoming air before it enters the combustion chamber.'],
@@ -129,18 +152,22 @@
       '<label for="vlab-throttle">Throttle</label>' +
       '<input type="range" id="vlab-throttle" min="0" max="100" value="0" step="1">' +
       '<span class="vlab-throttle-pct">0%</span>' +
+      '<div class="vlab-mode-toggle">' +
+      '<button type="button" class="vlab-mode-btn active" data-mode="1">Mode 1 · PSIG / °C / lbf / Gal-hr</button>' +
+      '<button type="button" class="vlab-mode-btn" data-mode="2">Mode 2 · Pa / K / N+kgf / L-hr</button>' +
+      '</div>' +
       '</div>' +
 
       '<div class="vlab-panel">' +
       '<div class="vlab-gauge"><span class="vlab-gauge-label">RPM</span><span class="vlab-gauge-value vlab-val-rpm">0</span></div>' +
-      '<div class="vlab-gauge"><span class="vlab-gauge-label">Thrust (lbf)</span><span class="vlab-gauge-value vlab-val-thrust">0.0</span></div>' +
+      '<div class="vlab-gauge"><span class="vlab-gauge-label">Thrust</span><span class="vlab-gauge-value vlab-val-thrust">0.0 lbf</span></div>' +
 
-      '<div class="vlab-tile vlab-tile-1" data-comp="inlet"><span class="vlab-tile-label">T1 / P1 · Inlet</span><span class="vlab-tile-val"><b class="vlab-val-t1">0.0</b> °C &nbsp;·&nbsp; <b class="vlab-val-p1">0.000</b> PSIG</span></div>' +
-      '<div class="vlab-tile vlab-tile-2" data-comp="compressor"><span class="vlab-tile-label">T2 / P2 · Compressor</span><span class="vlab-tile-val"><b class="vlab-val-t2">0.0</b> °C &nbsp;·&nbsp; <b class="vlab-val-p2">0.00</b> PSIG</span></div>' +
-      '<div class="vlab-tile vlab-tile-3" data-comp="combustor"><span class="vlab-tile-label">T3 / P3 · Combustor</span><span class="vlab-tile-val"><b class="vlab-val-t3">0.0</b> °C &nbsp;·&nbsp; <b class="vlab-val-p3">0.00</b> PSIG</span></div>' +
-      '<div class="vlab-tile vlab-tile-4" data-comp="exhaust"><span class="vlab-tile-label">T4 / P4 · Exhaust (EGT)</span><span class="vlab-tile-val"><b class="vlab-val-t4">0.0</b> °C &nbsp;·&nbsp; <b class="vlab-val-p4">0.000</b> PSIG</span></div>' +
+      '<div class="vlab-tile vlab-tile-1" data-comp="inlet"><span class="vlab-tile-label">T1 / P1 · Inlet</span><span class="vlab-tile-val vlab-val-tp1"></span></div>' +
+      '<div class="vlab-tile vlab-tile-2" data-comp="compressor"><span class="vlab-tile-label">T2 / P2 · Compressor</span><span class="vlab-tile-val vlab-val-tp2"></span></div>' +
+      '<div class="vlab-tile vlab-tile-3" data-comp="combustor"><span class="vlab-tile-label">T3 / P3 · Combustor</span><span class="vlab-tile-val vlab-val-tp3"></span></div>' +
+      '<div class="vlab-tile vlab-tile-4" data-comp="exhaust"><span class="vlab-tile-label">T4 / P4 · Exhaust (EGT)</span><span class="vlab-tile-val vlab-val-tp4"></span></div>' +
 
-      '<div class="vlab-tile"><span class="vlab-tile-label">Fuel Flow</span><span class="vlab-tile-val"><b class="vlab-val-fuel">0.00</b> Gal/hr</span></div>' +
+      '<div class="vlab-tile"><span class="vlab-tile-label">Fuel Flow</span><span class="vlab-tile-val vlab-val-fuel"></span></div>' +
       '<div class="vlab-tile vlab-tile-cpr" data-comp="cpr"><span class="vlab-tile-label">Compressor Pressure Ratio</span><span class="vlab-tile-val">P2/P1 = <b class="vlab-val-cpr">0.0</b></span></div>' +
       '</div>' +
 
@@ -153,10 +180,10 @@
 
     var valRpm = root.querySelector('.vlab-val-rpm');
     var valThrust = root.querySelector('.vlab-val-thrust');
-    var valT1 = root.querySelector('.vlab-val-t1'), valP1 = root.querySelector('.vlab-val-p1');
-    var valT2 = root.querySelector('.vlab-val-t2'), valP2 = root.querySelector('.vlab-val-p2');
-    var valT3 = root.querySelector('.vlab-val-t3'), valP3 = root.querySelector('.vlab-val-p3');
-    var valT4 = root.querySelector('.vlab-val-t4'), valP4 = root.querySelector('.vlab-val-p4');
+    var valTp1 = root.querySelector('.vlab-val-tp1');
+    var valTp2 = root.querySelector('.vlab-val-tp2');
+    var valTp3 = root.querySelector('.vlab-val-tp3');
+    var valTp4 = root.querySelector('.vlab-val-tp4');
     var valFuel = root.querySelector('.vlab-val-fuel');
     var valCpr = root.querySelector('.vlab-val-cpr');
 
@@ -218,6 +245,7 @@
     var compAngle = 0, turbAngle = 0;
     var rafId = null;
     var lastTime = null;
+    var unitMode = 1;
 
     function updateThrottle() {
       var pct = Number(throttleInput.value);
@@ -225,6 +253,14 @@
       targetRpm = MIN_RPM + (MAX_RPM - MIN_RPM) * (pct / 100);
     }
     throttleInput.addEventListener('input', updateThrottle);
+
+    var modeButtons = root.querySelectorAll('.vlab-mode-btn');
+    modeButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        unitMode = Number(btn.getAttribute('data-mode'));
+        modeButtons.forEach(function (b) { b.classList.toggle('active', b === btn); });
+      });
+    });
 
     function frame(now) {
       if (lastTime == null) lastTime = now;
@@ -249,16 +285,12 @@
       var cpr = p1 > 0.0001 ? p2 / p1 : 0;
 
       valRpm.textContent = Math.round(currentRpm).toLocaleString();
-      valThrust.textContent = thrust.toFixed(1);
-      valT1.textContent = t1.toFixed(1);
-      valP1.textContent = p1.toFixed(3);
-      valT2.textContent = t2.toFixed(1);
-      valP2.textContent = p2.toFixed(2);
-      valT3.textContent = t3.toFixed(1);
-      valP3.textContent = p3.toFixed(2);
-      valT4.textContent = t4.toFixed(1);
-      valP4.textContent = p4.toFixed(3);
-      valFuel.textContent = fuelFlow.toFixed(2);
+      valThrust.textContent = fmtThrust(thrust, unitMode);
+      valTp1.innerHTML = '<b>' + fmtTemp(t1, unitMode) + '</b> &nbsp;·&nbsp; <b>' + fmtPressure(p1, unitMode) + '</b>';
+      valTp2.innerHTML = '<b>' + fmtTemp(t2, unitMode) + '</b> &nbsp;·&nbsp; <b>' + fmtPressure(p2, unitMode) + '</b>';
+      valTp3.innerHTML = '<b>' + fmtTemp(t3, unitMode) + '</b> &nbsp;·&nbsp; <b>' + fmtPressure(p3, unitMode) + '</b>';
+      valTp4.innerHTML = '<b>' + fmtTemp(t4, unitMode) + '</b> &nbsp;·&nbsp; <b>' + fmtPressure(p4, unitMode) + '</b>';
+      valFuel.innerHTML = '<b>' + fmtFuel(fuelFlow, unitMode) + '</b>';
       valCpr.textContent = cpr.toFixed(1);
 
       // Spin fans: faster with RPM

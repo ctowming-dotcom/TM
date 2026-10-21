@@ -135,6 +135,29 @@
   text-align: right;
 }
 
+.vlab-mode-toggle {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.vlab-mode-btn {
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.vlab-mode-btn.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
 .vlab-panel {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

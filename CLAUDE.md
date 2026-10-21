@@ -65,14 +65,19 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   throttle slider driving RPM. Compressor/turbine fans spin and airflow
   particles speed up with RPM; the combustor glow and exhaust jet scale
   with fuel flow/thrust. Live readouts for RPM, thrust, T1–T4/P1–P4 per
-  stage, fuel flow, and Compressor Pressure Ratio (CPR = P2/P1). Hover a
-  stage or the CPR tile for its purpose/explanation (text sourced from the
-  supplied lab answer key, `Lab_1_Engine_Run_ANS_v8.0.docx`). The RPM→
-  readout model is 22 real anchor points extracted from the ascending
+  stage, fuel flow, and Compressor Pressure Ratio (CPR = P2/P1, unchanged by
+  unit mode since it's a ratio). A Mode 1/Mode 2 toggle switches every
+  readout's units: Mode 1 is as-logged (PSIG, °C, Gal/hr, lbf — the
+  default), Mode 2 is SI (Pa, K, L/hr, thrust shown as both N and kgf).
+  Hover a stage or the CPR tile for its purpose/explanation (text sourced
+  from the supplied lab answer key, `Lab_1_Engine_Run_ANS_v8.0.docx`). The
+  RPM→readout model is 22 real anchor points extracted from the ascending
   throttle sweep in the supplied `Engine_Run_Sample_Result.xlsx`, linearly
   interpolated; column mapping (P4=nozzle exit press, T4=EGT, not the
-  sheet's own same-named columns) was verified against the answer key's
-  worked peak-RPM figures. Unlike the two diagram tools above, this one
+  sheet's own same-named columns) and the unit conversions were both
+  verified against the answer key's worked peak-RPM figures (near-exact
+  match, e.g. fuel flow converts to 18.66 L/hr in Mode 2 vs the key's
+  18.66 L/HR). Unlike the two diagram tools above, this one
   **does** use the portal's own Bright Lab chrome (fonts/accent/tiles) —
   only the engine graphic's colors are semantic (blue=cool, orange/red=hot).
   Uses the portal's `TM.registerTool`/`mount` pattern plus one addition:
