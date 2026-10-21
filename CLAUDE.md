@@ -46,7 +46,7 @@ pastel tint per card (coral/teal/amber) so new cards keep cycling through
 it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
 Google Fonts. Full dark-mode token set in `styles.css`.
 
-### Phase 1 — Portal shell + 2 tools (current)
+### Phase 1 — Portal shell + 3 tools (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
 - **Fuel System Overview**: interactive SVG diagram of a jet engine's fuel
@@ -60,6 +60,26 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   Both diagram tools keep their own reference-sheet visual style (not the
   portal's Bright Lab palette) since their colors are semantic — e.g. green
   = open/flowing, red = closed or a return line, amber = active selection.
+- **Virtual Lab on Engine Practical** (`virtual-physical-lab`): animated
+  engine cross-section (inlet/compressor/combustor/turbine/exhaust) with a
+  throttle slider driving RPM. Compressor/turbine fans spin and airflow
+  particles speed up with RPM; the combustor glow and exhaust jet scale
+  with fuel flow/thrust. Live readouts for RPM, thrust, T1–T4/P1–P4 per
+  stage, fuel flow, and Compressor Pressure Ratio (CPR = P2/P1). Hover a
+  stage or the CPR tile for its purpose/explanation (text sourced from the
+  supplied lab answer key, `Lab_1_Engine_Run_ANS_v8.0.docx`). The RPM→
+  readout model is 22 real anchor points extracted from the ascending
+  throttle sweep in the supplied `Engine_Run_Sample_Result.xlsx`, linearly
+  interpolated; column mapping (P4=nozzle exit press, T4=EGT, not the
+  sheet's own same-named columns) was verified against the answer key's
+  worked peak-RPM figures. Unlike the two diagram tools above, this one
+  **does** use the portal's own Bright Lab chrome (fonts/accent/tiles) —
+  only the engine graphic's colors are semantic (blue=cool, orange/red=hot).
+  Uses the portal's `TM.registerTool`/`mount` pattern plus one addition:
+  returns an `unmount` (cancels its `requestAnimationFrame` loop) — `app.js`
+  was patched to call the outgoing tool's `unmount` on direct hash-to-hash
+  tool switches, not just when returning to the catalog (a latent gap that
+  only mattered once a tool had a continuous animation loop).
 - Quiz Generator and Flashcard Trainer were both built for Phase 1, then
   removed by request — see git history if either is wanted back. Quiz
   Generator: static Web Basics question bank, scored, saved attempt history
@@ -69,14 +89,11 @@ Google Fonts. Full dark-mode token set in `styles.css`.
 
 ### Phase 2 — Scaffolded topics, content pending
 
-Five tools registered as placeholders ("Coming soon" card using shared
+Four tools registered as placeholders ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
-Lab look — not a reference-sheet style, since there's no diagram yet).
-Each is just a `mount()` stub in its own folder, ready to be replaced with
-real content without touching any other tool:
+Lab look). Each is just a `mount()` stub in its own folder, ready to be
+replaced with real content without touching any other tool:
 
-- `virtual-physical-lab` — Virtual Lab on Engine Practical (folder/id kept
-  as `virtual-physical-lab`; display name renamed by request)
 - `air-system` — Air System
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
@@ -89,8 +106,8 @@ Starting System, APU System, Fire Protection System.
 
 ### Future phases
 
-- Fill in real content for the five Phase 2 placeholders above (likely
-  following the Fuel/Oil diagram pattern, if built from a similar supplied
-  reference file).
+- Fill in real content for the four remaining Phase 2 placeholders above
+  (likely following the Fuel/Oil diagram pattern, or the Virtual Lab's
+  data-driven-simulation pattern, depending on what's supplied for each).
 - Add further tools via the registry pattern above; scope and specifics TBD
   per tool when planned.

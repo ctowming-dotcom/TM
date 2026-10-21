@@ -1,0 +1,204 @@
+.vlab {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.vlab-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  margin: 0 0 0.4rem;
+}
+
+.vlab-header p {
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  max-width: 640px;
+}
+
+.vlab-stage {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.vlab-engine {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.vlab-casing {
+  fill: #e9edf2;
+  stroke: #aab2bd;
+  stroke-width: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vlab-casing {
+    fill: #262b33;
+    stroke: #444c59;
+  }
+}
+
+.vlab-divider {
+  stroke: #aab2bd;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  opacity: 0.6;
+}
+
+.vlab-zone-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--text);
+}
+
+.vlab-zone-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.vlab-fan-hub {
+  fill: #6b7482;
+}
+
+.vlab-blade-cool {
+  stroke: #4d7fa8;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.vlab-blade-hot {
+  stroke: #b5473b;
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.vlab-flame {
+  fill: url(#vlab-flame-grad);
+}
+
+.vlab-combustor-flicker {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vlab-flicker 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes vlab-flicker {
+  from { transform: scale(0.96); opacity: 0.9; }
+  to { transform: scale(1.04); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vlab-combustor-flicker {
+    animation: none;
+  }
+}
+
+.vlab-jet {
+  fill: url(#vlab-jet-grad);
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+
+.vlab-particle {
+  opacity: 0.9;
+}
+
+.vlab-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
+}
+
+.vlab-controls label {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.vlab-controls input[type="range"] {
+  flex: 1;
+  min-width: 200px;
+  accent-color: var(--accent);
+}
+
+.vlab-throttle-pct {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 3.5rem;
+  text-align: right;
+}
+
+.vlab-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.vlab-gauge,
+.vlab-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.vlab-gauge-label,
+.vlab-tile-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.vlab-gauge-value {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.vlab-tile-val {
+  font-size: 0.95rem;
+}
+
+.vlab-tile-val b {
+  font-family: var(--font-display);
+}
+
+.vlab-tile-1 { border-left: 4px solid #8a8f98; }
+.vlab-tile-2 { border-left: 4px solid #2e9e52; }
+.vlab-tile-3 { border-left: 4px solid #d1392b; }
+.vlab-tile-4 { border-left: 4px solid #3d7fd1; }
+
+.vlab-tile-cpr {
+  border-left: 4px solid var(--accent);
+}
+
+.vlab-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 280px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  z-index: 50;
+}
+
+.vlab-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}

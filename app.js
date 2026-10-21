@@ -43,6 +43,7 @@
         location.hash = '';
         return;
       }
+      if (activeModule && activeModule.unmount) activeModule.unmount();
       catalogView.hidden = true;
       toolView.hidden = false;
       toolContainer.innerHTML = '';
