@@ -77,9 +77,14 @@ real content without touching any other tool:
 
 - `virtual-physical-lab` — Virtual Physical Lab for Engine Run
 - `air-system` — Air System
-- `fire-system` — Fire System
+- `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
+  display name renamed by request)
 - `apu-system` — APU System
 - `starting-system` — Starting System
+
+Catalog order (set by request, `tools.js` array order): Virtual Physical
+Lab for Engine Run, Oil System Overview, Fuel System Overview, Air System,
+Starting System, APU System, Fire Protection System.
 
 ### Future phases
 

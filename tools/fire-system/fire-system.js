@@ -6,8 +6,8 @@
       '<div class="placeholder-tool">' +
       '<div class="placeholder-icon">' + ICON + '</div>' +
       '<span class="placeholder-badge">Coming soon</span>' +
-      '<h2>Fire System</h2>' +
-      '<p>Interactive diagram of the engine fire detection and suppression system. Content is being built — check back soon.</p>' +
+      '<h2>Fire Protection System</h2>' +
+      '<p>Interactive diagram of the engine fire protection system — detection and suppression. Content is being built — check back soon.</p>' +
       '</div>';
   }
 
