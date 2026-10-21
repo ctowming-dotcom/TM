@@ -6,7 +6,7 @@
       '<div class="placeholder-tool">' +
       '<div class="placeholder-icon">' + ICON + '</div>' +
       '<span class="placeholder-badge">Coming soon</span>' +
-      '<h2>Virtual Physical Lab for Engine Run</h2>' +
+      '<h2>Virtual Lab on Engine Practical</h2>' +
       '<p>A hands-on virtual lab for running through engine start-up and operation procedures. Content is being built — check back soon.</p>' +
       '</div>';
   }

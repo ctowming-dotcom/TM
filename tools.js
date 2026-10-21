@@ -4,7 +4,7 @@
   window.TM.tools = [
     {
       id: 'virtual-physical-lab',
-      name: 'Virtual Physical Lab for Engine Run',
+      name: 'Virtual Lab on Engine Practical',
       description: 'A hands-on virtual lab for running through engine start-up and operation procedures.',
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v5.5L5.5 17a2 2 0 0 0 1.8 2.9h9.4a2 2 0 0 0 1.8-2.9L14 8.5V3"></path><path d="M7.5 14.5h9"></path></svg>',
     },

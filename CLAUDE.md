@@ -75,15 +75,16 @@ Lab look — not a reference-sheet style, since there's no diagram yet).
 Each is just a `mount()` stub in its own folder, ready to be replaced with
 real content without touching any other tool:
 
-- `virtual-physical-lab` — Virtual Physical Lab for Engine Run
+- `virtual-physical-lab` — Virtual Lab on Engine Practical (folder/id kept
+  as `virtual-physical-lab`; display name renamed by request)
 - `air-system` — Air System
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
 - `apu-system` — APU System
 - `starting-system` — Starting System
 
-Catalog order (set by request, `tools.js` array order): Virtual Physical
-Lab for Engine Run, Oil System Overview, Fuel System Overview, Air System,
+Catalog order (set by request, `tools.js` array order): Virtual Lab on
+Engine Practical, Oil System Overview, Fuel System Overview, Air System,
 Starting System, APU System, Fire Protection System.
 
 ### Future phases
