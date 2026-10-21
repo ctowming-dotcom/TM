@@ -14,5 +14,35 @@
       description: 'Interactive turbofan oil system diagram — switch spool configuration, toggle oil circuits, and hover a component for details.',
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7.5 6 11a6 6 0 1 1-12 0c0-3.5 3-7 6-11z"></path></svg>',
     },
+    {
+      id: 'virtual-physical-lab',
+      name: 'Virtual Physical Lab for Engine Run',
+      description: 'A hands-on virtual lab for running through engine start-up and operation procedures.',
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v5.5L5.5 17a2 2 0 0 0 1.8 2.9h9.4a2 2 0 0 0 1.8-2.9L14 8.5V3"></path><path d="M7.5 14.5h9"></path></svg>',
+    },
+    {
+      id: 'air-system',
+      name: 'Air System',
+      description: "Interactive diagram of the engine's bleed air and pressurization system.",
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h11.5a2.5 2.5 0 1 0-2-4"></path><path d="M3 14h15.5a2.5 2.5 0 1 1-2 4"></path><path d="M3 11h8"></path></svg>',
+    },
+    {
+      id: 'fire-system',
+      name: 'Fire System',
+      description: 'Interactive diagram of the engine fire detection and suppression system.',
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5a2.5 2.5 0 0 0 5 0c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7.5 7.5 0 1 1-15 0c0-1.15.43-2.29 1-3z"></path></svg>',
+    },
+    {
+      id: 'apu-system',
+      name: 'APU System',
+      description: 'Interactive diagram of the Auxiliary Power Unit and its systems.',
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"></path></svg>',
+    },
+    {
+      id: 'starting-system',
+      name: 'Starting System',
+      description: 'Interactive diagram of the engine starting sequence and components.',
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v7"></path><path d="M7 5.5a8 8 0 1 0 10 0"></path></svg>',
+    },
   ];
 })();

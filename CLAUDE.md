@@ -67,7 +67,24 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   BYOK Anthropic key, called directly from client JS with the
   `anthropic-dangerous-direct-browser-access: true` header, no backend.
 
+### Phase 2 — Scaffolded topics, content pending
+
+Five tools registered as placeholders ("Coming soon" card using shared
+`.placeholder-tool` styling from `styles.css`, in the portal's own Bright
+Lab look — not a reference-sheet style, since there's no diagram yet).
+Each is just a `mount()` stub in its own folder, ready to be replaced with
+real content without touching any other tool:
+
+- `virtual-physical-lab` — Virtual Physical Lab for Engine Run
+- `air-system` — Air System
+- `fire-system` — Fire System
+- `apu-system` — APU System
+- `starting-system` — Starting System
+
 ### Future phases
 
-- Add more tools via the registry pattern above; scope and specifics TBD per
-  tool when planned.
+- Fill in real content for the five Phase 2 placeholders above (likely
+  following the Fuel/Oil diagram pattern, if built from a similar supplied
+  reference file).
+- Add further tools via the registry pattern above; scope and specifics TBD
+  per tool when planned.
