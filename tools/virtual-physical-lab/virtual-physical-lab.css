@@ -1,18 +1,19 @@
 .vlab {
-  max-width: 1100px;
+  max-width: 1500px;
   margin: 0 auto;
 }
 
 .vlab-header h1 {
   font-family: var(--font-display);
-  font-size: 1.9rem;
-  margin: 0 0 0.4rem;
+  font-size: 2.3rem;
+  margin: 0 0 0.5rem;
 }
 
 .vlab-header p {
   color: var(--text-muted);
   margin: 0 0 1.5rem;
-  max-width: 640px;
+  max-width: 760px;
+  font-size: 1.1rem;
 }
 
 .vlab-stage {
@@ -28,30 +29,44 @@
   height: auto;
 }
 
+.vlab-metal-1 { stop-color: #f6f8fa; }
+.vlab-metal-2 { stop-color: #c3cbd5; }
+.vlab-metal-3 { stop-color: #e4e9ee; }
+
+.vlab-can-1 { stop-color: #d8d2cd; }
+.vlab-can-2 { stop-color: #efe9e3; }
+
+@media (prefers-color-scheme: dark) {
+  .vlab-metal-1 { stop-color: #3c424b; }
+  .vlab-metal-2 { stop-color: #22262d; }
+  .vlab-metal-3 { stop-color: #2e333b; }
+  .vlab-can-1 { stop-color: #3a332e; }
+  .vlab-can-2 { stop-color: #4a4139; }
+}
+
 .vlab-casing {
-  fill: #e9edf2;
-  stroke: #aab2bd;
-  stroke-width: 2;
+  fill: url(#vlab-metal-grad);
+  stroke: #8d97a3;
+  stroke-width: 2.5;
 }
 
 @media (prefers-color-scheme: dark) {
   .vlab-casing {
-    fill: #262b33;
-    stroke: #444c59;
+    stroke: #515863;
   }
 }
 
 .vlab-divider {
-  stroke: #aab2bd;
+  stroke: #8d97a3;
   stroke-width: 1.5;
   stroke-dasharray: 5 5;
-  opacity: 0.6;
+  opacity: 0.55;
 }
 
 .vlab-zone-label {
   font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 700;
   text-anchor: middle;
   fill: var(--text);
 }
@@ -59,10 +74,6 @@
 .vlab-zone-hit {
   fill: transparent;
   cursor: pointer;
-}
-
-.vlab-fan-hub {
-  fill: #6b7482;
 }
 
 .vlab-shaft {
@@ -103,11 +114,15 @@
 }
 
 .vlab-combustor-liner {
-  fill: none;
-  stroke: #aab2bd;
-  stroke-width: 1.5;
-  stroke-dasharray: 3 4;
-  opacity: 0.7;
+  fill: url(#vlab-can-grad);
+  stroke: #b7ada5;
+  stroke-width: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vlab-combustor-liner {
+    stroke: #5c5349;
+  }
 }
 
 .vlab-flame {
@@ -144,43 +159,46 @@
 .vlab-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 1.5rem 0;
+  gap: 1.1rem;
+  margin: 1.75rem 0;
   flex-wrap: wrap;
 }
 
 .vlab-controls label {
   font-family: var(--font-display);
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .vlab-controls input[type="range"] {
   flex: 1;
-  min-width: 200px;
+  min-width: 220px;
   accent-color: var(--accent);
+  height: 1.3rem;
 }
 
 .vlab-throttle-pct {
   font-family: var(--font-display);
   font-weight: 700;
+  font-size: 1.25rem;
   color: var(--accent);
-  min-width: 3.5rem;
+  min-width: 4rem;
   text-align: right;
 }
 
 .vlab-mode-toggle {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
 .vlab-mode-btn {
-  padding: 0.4rem 0.9rem;
+  padding: 0.5rem 1.1rem;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -193,8 +211,8 @@
 
 .vlab-panel {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.9rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.1rem;
 }
 
 .vlab-gauge,
@@ -202,15 +220,15 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.9rem 1.1rem;
+  padding: 1.1rem 1.3rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
 .vlab-gauge-label,
 .vlab-tile-label {
-  font-size: 0.78rem;
+  font-size: 0.92rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -218,12 +236,12 @@
 
 .vlab-gauge-value {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 2.1rem;
   font-weight: 700;
 }
 
 .vlab-tile-val {
-  font-size: 0.95rem;
+  font-size: 1.2rem;
 }
 
 .vlab-tile-val b {
@@ -242,12 +260,12 @@
 .vlab-tooltip {
   position: fixed;
   display: none;
-  max-width: 280px;
+  max-width: 300px;
   background: var(--text);
   color: var(--bg);
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1.5;
-  padding: 0.65rem 0.85rem;
+  padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   pointer-events: none;
   z-index: 50;
@@ -256,5 +274,5 @@
 .vlab-tooltip .t-title {
   display: block;
   font-weight: 700;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
 }

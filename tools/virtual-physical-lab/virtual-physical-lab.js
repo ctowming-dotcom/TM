@@ -95,8 +95,8 @@
   function bladeRow(x, wallTopY, isRotor, hot) {
     var cls = isRotor ? ('vlab-blade-rotor ' + (hot ? 'vlab-blade-rotor-hot' : 'vlab-blade-rotor-cool')) : 'vlab-blade-stator';
     var topOuter = wallTopY + 4, botOuter = 420 - wallTopY - 4;
-    var top = '<path class="' + cls + '" d="M' + x + ',' + topOuter + ' L' + (x + 16) + ',' + topOuter + ' L' + (x + 9) + ',' + SHAFT_TOP + ' L' + (x - 3) + ',' + SHAFT_TOP + ' Z"></path>';
-    var bot = '<path class="' + cls + '" d="M' + x + ',' + botOuter + ' L' + (x + 16) + ',' + botOuter + ' L' + (x + 9) + ',' + SHAFT_BOTTOM + ' L' + (x - 3) + ',' + SHAFT_BOTTOM + ' Z"></path>';
+    var top = '<path class="' + cls + '" d="M' + x + ',' + topOuter + ' Q' + (x + 11) + ',' + (topOuter - 7) + ' ' + (x + 18) + ',' + topOuter + ' L' + (x + 10) + ',' + SHAFT_TOP + ' Q' + (x + 4) + ',' + (SHAFT_TOP + 5) + ' ' + (x - 4) + ',' + SHAFT_TOP + ' Z"></path>';
+    var bot = '<path class="' + cls + '" d="M' + x + ',' + botOuter + ' Q' + (x + 11) + ',' + (botOuter + 7) + ' ' + (x + 18) + ',' + botOuter + ' L' + (x + 10) + ',' + SHAFT_BOTTOM + ' Q' + (x + 4) + ',' + (SHAFT_BOTTOM - 5) + ' ' + (x - 4) + ',' + SHAFT_BOTTOM + ' Z"></path>';
     return top + bot;
   }
 
@@ -133,6 +133,18 @@
       '<stop offset="45%" stop-color="#ff9a3d"></stop>' +
       '<stop offset="100%" stop-color="#d1392b"></stop>' +
       '</radialGradient>' +
+      '<linearGradient id="vlab-metal-grad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" class="vlab-metal-1"></stop>' +
+      '<stop offset="18%" class="vlab-metal-2"></stop>' +
+      '<stop offset="50%" class="vlab-metal-3"></stop>' +
+      '<stop offset="82%" class="vlab-metal-2"></stop>' +
+      '<stop offset="100%" class="vlab-metal-1"></stop>' +
+      '</linearGradient>' +
+      '<linearGradient id="vlab-can-grad" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" class="vlab-can-1"></stop>' +
+      '<stop offset="50%" class="vlab-can-2"></stop>' +
+      '<stop offset="100%" class="vlab-can-1"></stop>' +
+      '</linearGradient>' +
       '<pattern id="vlab-spin-cool" class="vlab-spin-pattern-cool" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
       '<rect width="14" height="14" fill="#5a8fc2"></rect>' +
       '<rect width="7" height="14" fill="#3d6690"></rect>' +
@@ -143,7 +155,7 @@
       '</pattern>' +
       '</defs>' +
 
-      '<path class="vlab-casing" d="M20,130 L60,120 L220,120 L430,155 L460,112 L650,112 L685,158 L860,158 L1000,175 L1150,185 L1150,235 L1000,245 L860,262 L685,262 L650,308 L460,308 L430,265 L220,300 L60,300 L20,290 Z"></path>' +
+      '<path class="vlab-casing" d="M20,130 L60,120 L220,120 Q430,120 430,155 Q460,155 460,112 L650,112 Q685,112 685,158 L860,158 Q1000,158 1000,175 Q1150,175 1150,185 L1150,235 Q1000,235 1000,245 Q860,245 860,262 L685,262 Q650,262 650,308 L460,308 Q430,308 430,265 Q220,265 220,300 L60,300 L20,290 Z"></path>' +
       '<line class="vlab-divider" x1="220" y1="95" x2="220" y2="325"></line>' +
       '<line class="vlab-divider" x1="430" y1="95" x2="430" y2="325"></line>' +
       '<line class="vlab-divider" x1="650" y1="95" x2="650" y2="325"></line>' +

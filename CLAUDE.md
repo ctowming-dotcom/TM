@@ -68,11 +68,16 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   "spin" via a scrolling diagonal-stripe SVG pattern (`patternTransform`
   translate each frame) — the standard technical-drawing convention for
   showing rotation in a 2D side profile, since blades can't visibly turn
-  in that view; stator vanes stay plain gray and static. Airflow particles
-  speed up and shift cool→hot→exhaust color with RPM; the combustor glow
-  and exhaust jet scale with fuel flow/thrust. Live readouts for RPM,
-  thrust, T1–T4/P1–P4 per stage, fuel flow, and Compressor Pressure Ratio
-  (CPR = P2/P1, unchanged by
+  in that view; stator vanes stay plain gray and static. Casing uses a
+  smoothed bezier silhouette with a metallic linear-gradient fill (light/
+  dark variants via CSS-styled `<stop>` elements, not separate gradient
+  defs); combustor is a solid warm-toned can, not just an outline. Panel
+  widened to `max-width: 1500px` and all text sized up (headings, tile
+  labels/values, tooltip, controls) for legibility at that width. Airflow
+  particles speed up and shift cool→hot→exhaust color with RPM; the
+  combustor glow and exhaust jet scale with fuel flow/thrust. Live
+  readouts for RPM, thrust, T1–T4/P1–P4 per stage, fuel flow, and
+  Compressor Pressure Ratio (CPR = P2/P1, unchanged by
   unit mode since it's a ratio). A Mode 1/Mode 2 toggle switches every
   readout's units: Mode 1 is as-logged (PSIG, °C, Gal/hr, lbf — the
   default), Mode 2 is SI (Pa, K, L/hr, thrust shown as both N and kgf).
