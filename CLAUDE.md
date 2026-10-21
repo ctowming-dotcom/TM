@@ -61,11 +61,18 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   portal's Bright Lab palette) since their colors are semantic — e.g. green
   = open/flowing, red = closed or a return line, amber = active selection.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): animated
-  engine cross-section (inlet/compressor/combustor/turbine/exhaust) with a
-  throttle slider driving RPM. Compressor/turbine fans spin and airflow
-  particles speed up with RPM; the combustor glow and exhaust jet scale
-  with fuel flow/thrust. Live readouts for RPM, thrust, T1–T4/P1–P4 per
-  stage, fuel flow, and Compressor Pressure Ratio (CPR = P2/P1, unchanged by
+  side-profile cutaway of a generic single-spool turbojet — tapered
+  nacelle silhouette (converging compressor, bulging combustor can,
+  converging turbine, nozzle), alternating rotor/stator blade rows on a
+  shared shaft, with a throttle slider driving RPM. Rotor blades + shaft
+  "spin" via a scrolling diagonal-stripe SVG pattern (`patternTransform`
+  translate each frame) — the standard technical-drawing convention for
+  showing rotation in a 2D side profile, since blades can't visibly turn
+  in that view; stator vanes stay plain gray and static. Airflow particles
+  speed up and shift cool→hot→exhaust color with RPM; the combustor glow
+  and exhaust jet scale with fuel flow/thrust. Live readouts for RPM,
+  thrust, T1–T4/P1–P4 per stage, fuel flow, and Compressor Pressure Ratio
+  (CPR = P2/P1, unchanged by
   unit mode since it's a ratio). A Mode 1/Mode 2 toggle switches every
   readout's units: Mode 1 is as-logged (PSIG, °C, Gal/hr, lbf — the
   default), Mode 2 is SI (Pa, K, L/hr, thrust shown as both N and kgf).

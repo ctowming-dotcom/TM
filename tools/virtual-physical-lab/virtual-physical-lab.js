@@ -80,13 +80,37 @@
     return last[key];
   }
 
-  function fanSvg(bladeClass) {
-    var blades = '';
-    for (var i = 0; i < 8; i++) {
-      var angle = i * 45;
-      blades += '<line class="' + bladeClass + '" x1="0" y1="0" x2="0" y2="-46" transform="rotate(' + angle + ')"></line>';
-    }
-    return '<circle class="vlab-fan-hub" r="12"></circle>' + blades;
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Compressor wall converges from the inlet (y=120) to the combustor (y=155);
+  // turbine wall holds roughly level between the combustor and nozzle necks.
+  function compressorWallY(x) { return lerp(120, 155, (x - 220) / (430 - 220)); }
+  var TURBINE_WALL_Y = 158;
+  var SHAFT_TOP = 196, SHAFT_BOTTOM = 224;
+
+  // One blade cross-section, top half + its mirror below the shaft. Rotor
+  // blades (attached to the shaft) get the animated diagonal-stripe fill
+  // that reads as spin in a side profile; stator vanes (attached to the
+  // casing) are fixed, plain gray.
+  function bladeRow(x, wallTopY, isRotor, hot) {
+    var cls = isRotor ? ('vlab-blade-rotor ' + (hot ? 'vlab-blade-rotor-hot' : 'vlab-blade-rotor-cool')) : 'vlab-blade-stator';
+    var topOuter = wallTopY + 4, botOuter = 420 - wallTopY - 4;
+    var top = '<path class="' + cls + '" d="M' + x + ',' + topOuter + ' L' + (x + 16) + ',' + topOuter + ' L' + (x + 9) + ',' + SHAFT_TOP + ' L' + (x - 3) + ',' + SHAFT_TOP + ' Z"></path>';
+    var bot = '<path class="' + cls + '" d="M' + x + ',' + botOuter + ' L' + (x + 16) + ',' + botOuter + ' L' + (x + 9) + ',' + SHAFT_BOTTOM + ' L' + (x - 3) + ',' + SHAFT_BOTTOM + ' Z"></path>';
+    return top + bot;
+  }
+
+  function buildCompressorRows() {
+    var xs = [250, 290, 330, 370, 410];
+    var out = '';
+    xs.forEach(function (x, i) { out += bladeRow(x, compressorWallY(x), i % 2 === 0, false); });
+    return out;
+  }
+  function buildTurbineRows() {
+    var xs = [700, 760, 820];
+    var out = '';
+    xs.forEach(function (x, i) { out += bladeRow(x, TURBINE_WALL_Y, i % 2 === 1, true); });
+    return out;
   }
 
   function mount(container) {
@@ -109,19 +133,30 @@
       '<stop offset="45%" stop-color="#ff9a3d"></stop>' +
       '<stop offset="100%" stop-color="#d1392b"></stop>' +
       '</radialGradient>' +
+      '<pattern id="vlab-spin-cool" class="vlab-spin-pattern-cool" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+      '<rect width="14" height="14" fill="#5a8fc2"></rect>' +
+      '<rect width="7" height="14" fill="#3d6690"></rect>' +
+      '</pattern>' +
+      '<pattern id="vlab-spin-hot" class="vlab-spin-pattern-hot" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
+      '<rect width="14" height="14" fill="#e0725a"></rect>' +
+      '<rect width="7" height="14" fill="#b5473b"></rect>' +
+      '</pattern>' +
       '</defs>' +
 
-      '<rect class="vlab-casing" x="20" y="120" width="1140" height="180" rx="42"></rect>' +
-      '<line class="vlab-divider" x1="220" y1="120" x2="220" y2="300"></line>' +
-      '<line class="vlab-divider" x1="430" y1="120" x2="430" y2="300"></line>' +
-      '<line class="vlab-divider" x1="650" y1="120" x2="650" y2="300"></line>' +
-      '<line class="vlab-divider" x1="860" y1="120" x2="860" y2="300"></line>' +
+      '<path class="vlab-casing" d="M20,130 L60,120 L220,120 L430,155 L460,112 L650,112 L685,158 L860,158 L1000,175 L1150,185 L1150,235 L1000,245 L860,262 L685,262 L650,308 L460,308 L430,265 L220,300 L60,300 L20,290 Z"></path>' +
+      '<line class="vlab-divider" x1="220" y1="95" x2="220" y2="325"></line>' +
+      '<line class="vlab-divider" x1="430" y1="95" x2="430" y2="325"></line>' +
+      '<line class="vlab-divider" x1="650" y1="95" x2="650" y2="325"></line>' +
+      '<line class="vlab-divider" x1="860" y1="95" x2="860" y2="325"></line>' +
 
       '<g class="vlab-flow"></g>' +
 
-      '<g class="vlab-compressor-spin" transform="translate(300,210)">' + fanSvg('vlab-blade-cool') + '</g>' +
-      '<g class="vlab-compressor-spin" transform="translate(365,210) scale(0.8)">' + fanSvg('vlab-blade-cool') + '</g>' +
+      '<rect class="vlab-shaft vlab-spin-shaft" x="235" y="' + SHAFT_TOP + '" width="615" height="' + (SHAFT_BOTTOM - SHAFT_TOP) + '"></rect>' +
+      '<path class="vlab-spinner vlab-spin-shaft" d="M215,196 L240,210 L215,224 Z"></path>' +
 
+      buildCompressorRows() +
+
+      '<rect class="vlab-combustor-liner" x="445" y="128" width="190" height="164" rx="24"></rect>' +
       '<g class="vlab-combustor-intensity" transform="translate(540,210)">' +
       '<g class="vlab-combustor-flicker">' +
       '<ellipse class="vlab-flame" cx="-18" cy="0" rx="46" ry="30"></ellipse>' +
@@ -130,21 +165,21 @@
       '</g>' +
       '</g>' +
 
-      '<g class="vlab-turbine-spin" transform="translate(755,210) scale(0.85)">' + fanSvg('vlab-blade-hot') + '</g>' +
+      buildTurbineRows() +
 
-      '<path class="vlab-jet" d="M1160,210 L1240,188 L1240,232 Z"></path>' +
+      '<path class="vlab-jet" d="M1150,185 L1150,235 L1240,210 Z"></path>' +
 
-      '<rect class="vlab-zone-hit" data-comp="inlet" x="20" y="120" width="200" height="180"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="compressor" x="220" y="120" width="210" height="180"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="combustor" x="430" y="120" width="220" height="180"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="turbine" x="650" y="120" width="210" height="180"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="exhaust" x="860" y="120" width="300" height="180"></rect>' +
+      '<rect class="vlab-zone-hit" data-comp="inlet" x="20" y="95" width="200" height="230"></rect>' +
+      '<rect class="vlab-zone-hit" data-comp="compressor" x="220" y="95" width="210" height="230"></rect>' +
+      '<rect class="vlab-zone-hit" data-comp="combustor" x="430" y="95" width="220" height="230"></rect>' +
+      '<rect class="vlab-zone-hit" data-comp="turbine" x="650" y="95" width="210" height="230"></rect>' +
+      '<rect class="vlab-zone-hit" data-comp="exhaust" x="860" y="95" width="300" height="230"></rect>' +
 
-      '<text class="vlab-zone-label" x="120" y="340">Inlet</text>' +
-      '<text class="vlab-zone-label" x="325" y="340">Compressor</text>' +
-      '<text class="vlab-zone-label" x="540" y="340">Combustor</text>' +
-      '<text class="vlab-zone-label" x="755" y="340">Turbine</text>' +
-      '<text class="vlab-zone-label" x="1010" y="340">Exhaust</text>' +
+      '<text class="vlab-zone-label" x="120" y="350">Inlet</text>' +
+      '<text class="vlab-zone-label" x="325" y="350">Compressor</text>' +
+      '<text class="vlab-zone-label" x="540" y="350">Combustor</text>' +
+      '<text class="vlab-zone-label" x="755" y="350">Turbine</text>' +
+      '<text class="vlab-zone-label" x="1010" y="350">Exhaust</text>' +
       '</svg>' +
       '</div>' +
 
@@ -187,10 +222,8 @@
     var valFuel = root.querySelector('.vlab-val-fuel');
     var valCpr = root.querySelector('.vlab-val-cpr');
 
-    var compressorSpins = root.querySelectorAll('.vlab-compressor-spin');
-    var compressorBases = [];
-    compressorSpins.forEach(function (g) { compressorBases.push(g.getAttribute('transform')); });
-    var turbineSpin = root.querySelector('.vlab-turbine-spin');
+    var spinPatternCool = root.querySelector('.vlab-spin-pattern-cool');
+    var spinPatternHot = root.querySelector('.vlab-spin-pattern-hot');
     var combustorIntensity = root.querySelector('.vlab-combustor-intensity');
     var jet = root.querySelector('.vlab-jet');
     var flowGroup = root.querySelector('.vlab-flow');
@@ -242,7 +275,7 @@
 
     var targetRpm = MIN_RPM;
     var currentRpm = MIN_RPM;
-    var compAngle = 0, turbAngle = 0;
+    var compSpinOffset = 0, turbSpinOffset = 0;
     var rafId = null;
     var lastTime = null;
     var unitMode = 1;
@@ -293,14 +326,14 @@
       valFuel.innerHTML = '<b>' + fmtFuel(fuelFlow, unitMode) + '</b>';
       valCpr.textContent = cpr.toFixed(1);
 
-      // Spin fans: faster with RPM
-      var rotSpeed = (0.6 + frac * 9) * dt;
-      compAngle = (compAngle + rotSpeed) % 360;
-      turbAngle = (turbAngle - rotSpeed * 1.15) % 360;
-      compressorSpins.forEach(function (g, idx) {
-        g.setAttribute('transform', compressorBases[idx] + ' rotate(' + compAngle + ')');
-      });
-      turbineSpin.setAttribute('transform', 'translate(755,210) scale(0.85) rotate(' + turbAngle + ')');
+      // Shaft/rotor "spin": scroll the diagonal stripe pattern — the
+      // standard technical-drawing convention for depicting rotation in a
+      // side profile that can't literally show blades turning.
+      var spinSpeed = (1.2 + frac * 14) * dt;
+      compSpinOffset = (compSpinOffset + spinSpeed) % 1000;
+      turbSpinOffset = (turbSpinOffset + spinSpeed * 1.15) % 1000;
+      spinPatternCool.setAttribute('patternTransform', 'translate(' + compSpinOffset + ',0) rotate(45)');
+      spinPatternHot.setAttribute('patternTransform', 'translate(' + turbSpinOffset + ',0) rotate(45)');
 
       // Combustor glow intensity scales with fuel flow
       var fuelFrac = Math.min(1, fuelFlow / 5);

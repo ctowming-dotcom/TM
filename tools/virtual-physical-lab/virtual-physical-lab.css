@@ -65,16 +65,49 @@
   fill: #6b7482;
 }
 
-.vlab-blade-cool {
-  stroke: #4d7fa8;
-  stroke-width: 9;
-  stroke-linecap: round;
+.vlab-shaft {
+  fill: url(#vlab-spin-cool);
+  stroke: #5a6572;
+  stroke-width: 1.5;
 }
 
-.vlab-blade-hot {
+.vlab-spinner {
+  fill: url(#vlab-spin-cool);
+  stroke: #5a6572;
+  stroke-width: 1.5;
+}
+
+.vlab-blade-rotor-cool {
+  fill: url(#vlab-spin-cool);
+  stroke: #3d6690;
+  stroke-width: 1;
+}
+
+.vlab-blade-rotor-hot {
+  fill: url(#vlab-spin-hot);
   stroke: #b5473b;
-  stroke-width: 9;
-  stroke-linecap: round;
+  stroke-width: 1;
+}
+
+.vlab-blade-stator {
+  fill: #9aa3ad;
+  stroke: #7c8591;
+  stroke-width: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vlab-blade-stator {
+    fill: #5a6270;
+    stroke: #444c59;
+  }
+}
+
+.vlab-combustor-liner {
+  fill: none;
+  stroke: #aab2bd;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  opacity: 0.7;
 }
 
 .vlab-flame {
