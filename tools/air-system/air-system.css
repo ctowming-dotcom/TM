@@ -1,0 +1,219 @@
+.air-sys {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.air-sys-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+  margin: 0 0 0.5rem;
+}
+
+.air-sys-header p {
+  color: var(--text-muted);
+  margin: 0 0 1.5rem;
+  max-width: 760px;
+  font-size: 1.1rem;
+}
+
+.air-sys-toggle {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.air-sys-mode-btn {
+  padding: 0.6rem 1.3rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.air-sys-mode-btn.active {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-color: var(--accent);
+}
+
+.air-sys-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .air-sys-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.air-sys-stage {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.air-sys-engine {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.air-metal-1 { stop-color: #f6f8fa; }
+.air-metal-2 { stop-color: #c3cbd5; }
+.air-metal-3 { stop-color: #e4e9ee; }
+.air-can-1 { stop-color: #d8d2cd; }
+.air-can-2 { stop-color: #efe9e3; }
+
+@media (prefers-color-scheme: dark) {
+  .air-metal-1 { stop-color: #3c424b; }
+  .air-metal-2 { stop-color: #22262d; }
+  .air-metal-3 { stop-color: #2e333b; }
+  .air-can-1 { stop-color: #3a332e; }
+  .air-can-2 { stop-color: #4a4139; }
+}
+
+.air-sys-casing {
+  fill: url(#air-metal-grad);
+  stroke: #8d97a3;
+  stroke-width: 2.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .air-sys-casing { stroke: #515863; }
+}
+
+.air-sys-divider {
+  stroke: #8d97a3;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+  opacity: 0.55;
+}
+
+.air-sys-shaft {
+  fill: #9aa3ad;
+  stroke: #7c8591;
+  stroke-width: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .air-sys-shaft { fill: #5a6270; stroke: #444c59; }
+}
+
+.air-sys-combustor {
+  fill: url(#air-can-grad);
+  stroke: #b7ada5;
+  stroke-width: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .air-sys-combustor { stroke: #5c5349; }
+}
+
+.air-sys-zone-label {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 700;
+  text-anchor: middle;
+  fill: var(--text);
+}
+
+.air-sys-marker {
+  cursor: pointer;
+}
+
+.air-sys-marker-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.5;
+  opacity: 0.55;
+}
+
+.air-sys-marker-dot {
+  fill: var(--accent);
+  stroke: var(--bg);
+  stroke-width: 2;
+}
+
+.air-sys-marker.is-hovered .air-sys-marker-ring {
+  opacity: 1;
+  r: 17;
+}
+
+.air-sys-mode-internal .air-sys-marker-dot,
+.air-sys-mode-internal .air-sys-marker-ring {
+  stroke: var(--bg);
+}
+
+.air-sys-mode-internal .air-sys-marker-dot { fill: #3d7fd1; }
+.air-sys-mode-internal .air-sys-marker-ring { stroke: #3d7fd1; }
+.air-sys-mode-internal .air-sys-marker.is-hovered .air-sys-marker-ring { stroke: #3d7fd1; }
+
+.air-sys-mode-external .air-sys-marker-dot { fill: #d1392b; }
+.air-sys-mode-external .air-sys-marker-ring { stroke: #d1392b; }
+.air-sys-mode-external .air-sys-marker.is-hovered .air-sys-marker-ring { stroke: #d1392b; }
+
+.air-sys-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.air-sys-list-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.8rem 1rem;
+  cursor: default;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.air-sys-list-item.is-hovered {
+  border-color: var(--accent);
+}
+
+.air-sys-list-name {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.air-sys-list-desc {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.air-sys-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 300px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  z-index: 50;
+}
+
+.air-sys-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}

@@ -46,7 +46,7 @@ pastel tint per card (coral/teal/amber) so new cards keep cycling through
 it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
 Google Fonts. Full dark-mode token set in `styles.css`.
 
-### Phase 1 — Portal shell + 3 tools (current)
+### Phase 1 — Portal shell + 4 tools (current)
 
 - Shell: header, catalog view, hash-routed tool view, footer, tool registry.
 - **Fuel System Overview**: interactive SVG diagram of a jet engine's fuel
@@ -103,15 +103,27 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   to `tm.quizAttempts` via `storage.js` (also removed). Flashcard Trainer:
   BYOK Anthropic key, called directly from client JS with the
   `anthropic-dangerous-direct-browser-access: true` header, no backend.
+- **Air System** (`air-system`): static engine cutaway (same metallic-
+  gradient casing style as the Virtual Lab, no animation/throttle) with an
+  Internal/External toggle. Each mode shows its own set of colored markers
+  (blue=internal, red=external) positioned on the engine at the relevant
+  component, plus a synced list of the same items beside the diagram —
+  hovering either a marker or its list entry highlights both. 6 internal
+  functions (turbine blade/disc/NGV/combustor-liner cooling, labyrinth
+  seal, thrust bearing load relief) and 7 external (customer bleed,
+  nacelle ventilation, generator/EEC/igniter cooling, turbine case
+  cooling/ACC, anti-icing). Content sourced from the supplied deck
+  `Chapter_11_Air_System_v1_2hr.pptx`. Uses the portal's Bright Lab chrome
+  like the Virtual Lab (not a reference-sheet style) since there's no
+  single supplied diagram to adapt verbatim — just slide text and photos.
 
 ### Phase 2 — Scaffolded topics, content pending
 
-Four tools registered as placeholders ("Coming soon" card using shared
+Three tools registered as placeholders ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
 Lab look). Each is just a `mount()` stub in its own folder, ready to be
 replaced with real content without touching any other tool:
 
-- `air-system` — Air System
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
 - `apu-system` — APU System
@@ -123,7 +135,7 @@ Starting System, APU System, Fire Protection System.
 
 ### Future phases
 
-- Fill in real content for the four remaining Phase 2 placeholders above
+- Fill in real content for the three remaining Phase 2 placeholders above
   (likely following the Fuel/Oil diagram pattern, or the Virtual Lab's
   data-driven-simulation pattern, depending on what's supplied for each).
 - Add further tools via the registry pattern above; scope and specifics TBD
