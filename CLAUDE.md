@@ -645,6 +645,13 @@ automatically or by hand:
     defaults on mount) and a floating Copy-changes panel shows live,
     paste-ready position/size data for both marker sets — same
     one-browser-only caveat as every other tool's copy of this pattern.
+    The panel is `position: fixed` in the bottom-right corner (APU
+    System's exact `.apu-sys-edit-panel` layout: `right: 20px; bottom:
+    20px; width: 320px`), not `position: sticky` spanning the content
+    column — an initial sticky version sat high enough at common
+    viewport heights to overlap Panel 1's own markers and silently
+    swallow the pointerdown drag was supposed to reach, caught by
+    Playwright testing before it shipped.
   - **"Try It" buttons stay in sync with the reference markers**: the
     `BUTTONS` config (used by the "Try It" panel below, see its own
     entry further down) no longer duplicates its own `xPct`/`yPct` —
