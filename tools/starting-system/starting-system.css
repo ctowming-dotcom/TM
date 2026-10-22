@@ -1,0 +1,295 @@
+.ss-diagram {
+  --ink: #eaf3fb;
+  --muted: #9db6cc;
+  --line: #2f5a7d;
+  --card: #0f2033;
+  --page: #173350;
+  --box: #5aa9d6;
+  --elec: #f2b134;
+  --pneu: #38bdf8;
+  --mech: #cbd5e1;
+  --spark: #fb923c;
+  --on: #4ade80;
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 36px 44px 30px;
+  color: var(--ink);
+}
+
+.ss-diagram * {
+  box-sizing: border-box;
+}
+
+.ss-diagram .kicker {
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--elec);
+  margin: 0 0 4px;
+}
+
+.ss-diagram h1 {
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 34px;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.ss-diagram .ss-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 22px;
+}
+
+.ss-diagram .ss-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.ss-diagram .ss-nav,
+.ss-diagram .ss-play {
+  border: 1px solid var(--line);
+  background: var(--page);
+  color: var(--ink);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ss-diagram .ss-nav:hover:not(:disabled),
+.ss-diagram .ss-play:hover {
+  background: #1d3e61;
+}
+
+.ss-diagram .ss-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.ss-diagram .ss-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.ss-diagram .ss-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--page);
+  padding: 0;
+  cursor: pointer;
+}
+
+.ss-diagram .ss-dot.active {
+  background: var(--elec);
+  border-color: var(--elec);
+}
+
+.ss-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ss-diagram .ss-box rect {
+  fill: var(--page);
+  stroke: var(--box);
+  stroke-width: 1.3;
+  transition: stroke 0.3s, fill 0.3s, stroke-width 0.15s;
+}
+
+.ss-diagram .ss-box {
+  cursor: pointer;
+}
+
+.ss-diagram .ss-box:hover rect,
+.ss-diagram .ss-box.is-hovered rect {
+  fill: #1d3e61;
+  stroke-width: 2.2;
+}
+
+.ss-diagram .ss-box.active rect {
+  stroke: var(--elec);
+  stroke-width: 2.4;
+}
+
+.ss-diagram .ss-box-label {
+  font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--ink);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.ss-diagram .ss-box-label.small {
+  font-size: 13px;
+}
+
+.ss-diagram .ss-box-sub {
+  font-family: -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  fill: var(--muted);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.ss-diagram .ss-arrow {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 12 8;
+  opacity: 0.3;
+  transition: opacity 0.3s;
+}
+
+.ss-diagram .ss-arrow.active {
+  opacity: 1;
+  animation: ss-flowmove 0.7s linear infinite;
+}
+
+@keyframes ss-flowmove {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ss-diagram .ss-arrow.active {
+    animation: none;
+  }
+}
+
+.ss-diagram .ss-arrow.elec.active { stroke: var(--elec); }
+.ss-diagram .ss-arrow.pneu.active { stroke: var(--pneu); }
+.ss-diagram .ss-arrow.mech.active { stroke: var(--mech); }
+.ss-diagram .ss-arrow.spark.active { stroke: var(--spark); }
+
+.ss-diagram .ss-arrowhead-elec { fill: var(--elec); }
+.ss-diagram .ss-arrowhead-pneu { fill: var(--pneu); }
+.ss-diagram .ss-arrowhead-mech { fill: var(--mech); }
+.ss-diagram .ss-arrowhead-spark { fill: var(--spark); }
+
+.ss-diagram .ss-readout {
+  margin-top: 18px;
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.ss-diagram .ss-step-text {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.ss-diagram .ss-step-num {
+  color: var(--elec);
+  font-weight: 700;
+}
+
+.ss-diagram .ss-step-desc b {
+  color: var(--ink);
+}
+
+.ss-diagram .ss-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ss-diagram .ss-badge {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--card);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.ss-diagram .ss-badge.on {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: var(--on);
+  color: var(--on);
+}
+
+.ss-diagram .ss-badge-n2 {
+  color: var(--ink);
+  background: var(--card);
+}
+
+.ss-diagram .ss-badge-n2 b {
+  color: var(--elec);
+}
+
+.ss-diagram .ss-ref {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+.ss-diagram .ss-ref-title {
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ss-diagram .ss-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.ss-diagram .ss-list-item {
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.ss-diagram .ss-list-item.is-hovered {
+  border-color: var(--box);
+  background: #1d3e61;
+}
+
+.ss-diagram .ss-list-name {
+  display: block;
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--box);
+  margin-bottom: 4px;
+}
+
+.ss-diagram .ss-list-desc {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}

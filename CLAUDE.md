@@ -445,9 +445,65 @@ automatically or by hand:
     Lab chrome, since its spool colors are semantic (LP=yellow/N1,
     IP=green/N2, HP=orange/N3, held consistent across every section).
 
+- **Starting System** (`starting-system`): a step-through (not
+  hover-only) teaching tool for a twin-spool engine start sequence —
+  distinct from every other tool here in that its diagram doesn't
+  explore freely (no spool/mode toggle, no hover-driven flow); instead
+  a linear 10-step sequence (`STEPS[]`, text sourced from the supplied
+  "Start Sequence for a Twin Spool Engine (Part 1)" slide, each step's
+  key term(s) bolded to match the slide's own bolding) drives which
+  block-diagram components and connecting arrows are "live" at that
+  point in the start — reusing Fuel/Oil's dark reference-sheet palette
+  and box/pipe-flow visual language (same `--ink`/`--muted`/`--line`/
+  `--card`/`--page`/`--box` custom properties as Fuel System, same
+  dashed-and-animated-flow technique as Oil/Fuel/Air System) rather than
+  inventing a new look.
+  - **Block diagram**: redrawn in SVG from the supplied reference block
+    diagram (which was itself photos of real parts, not a clean
+    schematic) as 9 labelled boxes (`COMPONENTS`, each with a name/desc
+    pair reused below for both the hover behavior and the permanent
+    reference list) connected by 8 fixed-path arrows (`a1`–`a8`,
+    hand-plotted elbow paths, not computed layout, since the diagram
+    never changes shape) split into four "circuits" by color — electrical
+    (`elec`, amber: EIVMU → EEC → Ignition Unit → Igniter Plug, and
+    EEC → ECAM page), spark (`spark`, orange: Igniter Plug → Engine),
+    pneumatic (`pneu`, blue: Starter Air Supply → Starter Control Valve →
+    Starter Motor), and mechanical (`mech`, light gray: Starter Motor →
+    Engine) — one SVG `<marker>` arrowhead per circuit color, reused by
+    every arrow of that circuit via `marker-end`.
+  - **Step-through, not free exploration**: each `STEPS[]` entry lists
+    which component ids and arrow ids are "live" for that step; `
+    applyStep(index)` toggles an `active` class on exactly those
+    `.ss-box`/`.ss-arrow` elements (inactive arrows sit dim and static,
+    active ones brighten to their circuit color and run the marching-
+    dashes flow animation) — e.g. the pneumatic+mechanical arrows and
+    Starter Control Valve/Motor light up from step 2 (valve opens)
+    through step 8 (RPM/EGT rising), then go dark at step 9 ("starter
+    cut-out"), matching the slide's own text. Controls: Prev/Next,
+    a row of 10 clickable step dots, and a Play/Pause that auto-advances
+    one step every 3.2s (stops at the last step rather than looping,
+    since this is a one-way sequence, not a cycle) — any manual Prev/
+    Next/dot click stops auto-play first, so the two controls can't
+    fight over `current`. Returns an `unmount` (clears the play
+    interval) via the same `window.TM.toolModules[...].unmount = …`
+    pattern as Virtual Lab/Turbofan, for the same reason (a live timer
+    must stop on tool-switch).
+  - **Readout row**: three on/off badges (Starter / Ignition / Fuel,
+    derived per-step from the same narrative — e.g. both go off together
+    at the cut-out step) plus an N2 readout showing each step's
+    approximate RPM language straight from the slide ("~15% N2", "20–25%
+    N2", etc.) rather than a continuous simulated number, since the
+    source is discrete step text, not a dataset like the Virtual Lab's.
+  - **Component reference list**: `.ss-list`, same fixed-list-plus-
+    two-way-hover-highlight pattern Fuel System just got (`data-comp`
+    keys, `setActive()` toggling `.is-hovered` on both the diagram box
+    and its list entry) — listed in `COMPONENTS` object order, which
+    doesn't change with the step (unlike Oil System's list, Starting
+    System's component set is fixed, so no per-step rebuild is needed).
+
 ### Phase 2 — Scaffolded topics, content pending
 
-Three tools registered as placeholders ("Coming soon" card using shared
+Two tools registered as placeholders ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
 Lab look). Each is just a `mount()` stub in its own folder, ready to be
 replaced with real content without touching any other tool:
@@ -455,7 +511,6 @@ replaced with real content without touching any other tool:
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
 - `apu-system` — APU System
-- `starting-system` — Starting System
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
 Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
@@ -464,8 +519,9 @@ System.
 
 ### Future phases
 
-- Fill in real content for the three Phase 2 placeholders above (likely
-  following the Fuel/Oil diagram pattern, or the Virtual Lab's
-  data-driven-simulation pattern, depending on what's supplied for each).
+- Fill in real content for the two Phase 2 placeholders above (likely
+  following the Fuel/Oil diagram pattern, the Starting System's step-
+  through pattern, or the Virtual Lab's data-driven-simulation pattern,
+  depending on what's supplied for each).
 - Add further tools via the registry pattern above; scope and specifics TBD
   per tool when planned.
