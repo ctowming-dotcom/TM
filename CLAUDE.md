@@ -232,17 +232,87 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   changes panel is still how a change becomes the new default for
   everyone, by landing in this file.
 
+- **Turbofan Engine** (`turbofan-engine`): interactive schematic teaching
+  spool count, N-number naming, and bypass ratio — distinct from the
+  Fuel/Oil/Virtual-Lab tools above in that its engine diagram is drawn
+  entirely in SVG (no reference image for the main diagram; adapted from
+  a self-contained HTML/JS animation the user supplied), with one
+  supporting static reference image for the concentric-shaft section
+  (see below). An "Engine configuration" toggle (Triple spool / Twin
+  spool / Single spool) switches both the schematic's visible shafts/
+  stages and every other section's content to match:
+  - **Engine schematic**: a static nacelle/core cutaway (shell, bypass
+    duct, combustor) with up to 3 concentric shaft `<rect>`s (`LP`/`IP`/
+    `HP`, hidden per mode) and per-stage compressor/turbine blade groups
+    positioned by fixed pixel coordinates (`SPOOLS[].stages[]`, in a
+    1180×475 viewBox) — a plainer, non-animated-airflow sibling of the
+    Virtual Lab's SVG-over-image approach, chosen here because the
+    diagram itself (not a photo) needed to gain/lose whole shafts
+    between modes. Rotation is cosmetic: each stage's white highlight
+    band and each rotor-view's blade fan (`.tf-spin`, one per visible
+    spool, 20 blades each) spin every frame via a plain
+    `requestAnimationFrame` loop keyed to that spool's independent
+    `speed` (0–100%, draggable per-spool sliders, reset button, a Pause
+    toggle, and a "Show one rotating spool at a time" isolate toggle
+    that cycles through the visible spools one at a time) — no gas-path
+    particle system like the Virtual Lab, since this diagram's teaching
+    point is spool/shaft relationships, not flow routing. Top labels
+    (LP FAN / IP COMPRESSOR / HP COMPRESSOR / COMBUSTOR / HP·IP·LP
+    TURBINE) and the stage column widths are computed per mode from
+    each visible component's own geometry (`componentCenter`/
+    `componentSpan`) rather than hardcoded per mode, so the three modes
+    share one label-layout function; single-spool mode is the one
+    special case (one combined "FAN / COMPRESSOR" label instead of a
+    separate LP FAN label, since there's only one stage to name).
+    Returns an `unmount` (cancels the rAF loop) via the same
+    `window.TM.toolModules['turbofan-engine'].unmount = …` pattern as
+    the Virtual Lab, for the same reason (a continuous animation loop
+    must stop on tool-switch, not just on return-to-catalog).
+  - **N-number naming**: deliberately NOT a fixed LP=N1/IP=N2/HP=N3
+    table, since that mapping only holds in triple-spool mode — a
+    twin-spool engine's HP spool is N2, not N3, because N-numbering
+    counts outward-to-inward among whichever spools are actually
+    present, not a fixed per-spool label. `nNumberFor(spool)` computes
+    this as the spool's 1-based index within the current mode's visible-
+    spool list (already in LP→IP→HP order), so the rotor-view labels,
+    speed-control headers, and the "Naming convention" panel's cards all
+    relabel automatically when the mode changes — e.g. HP reads "N3" in
+    triple-spool mode and "N2" in twin-spool mode with no special-casing
+    beyond that one function.
+  - **Concentric shaft arrangement**: a static supporting image
+    (`tools/turbofan-engine/spool-cutaway.png`, 1448×1086, converted
+    from a user-supplied triple-spool cutaway reference via `ffmpeg`
+    since the local Pillow install was broken) alongside prose
+    explaining the HP/IP/LP shafts nest inside one another (HP
+    innermost/shortest/fastest, LP outermost/longest/slowest) — this
+    physical nesting isn't visible in the flat schematic above (its
+    shafts are drawn as parallel bars, not a true cross-section), so a
+    real reference image carries this specific point instead. Static,
+    not mode-switched or edit-gated — unlike Air System/Virtual Lab,
+    this tool has no password-gated edit mode at all, since nothing in
+    it is user-editable content (no marker positions, no retypable
+    descriptions).
+  - **High bypass vs. low bypass**: a separate static two-card
+    comparison (not tied to the spool-count toggle, since bypass ratio
+    and spool count are independent design choices) — each card a small
+    schematic nacelle/fan/core SVG built by one parameterized
+    `bypassSvg({fanR, coreR})` helper (only the fan radius differs
+    between the two), plus typical BPR/fan-size/core-share stats and a
+    short explanation (military/supersonic low-bypass vs. commercial
+    high-bypass).
+  - Uses the portal's `TM.registerTool`/`mount` pattern. Like the Fuel/
+    Oil diagram tools (and unlike Virtual Lab/Air System), it keeps its
+    own dark reference-sheet visual style rather than the portal's Bright
+    Lab chrome, since its spool colors are semantic (LP=yellow/N1,
+    IP=green/N2, HP=orange/N3, held consistent across every section).
+
 ### Phase 2 — Scaffolded topics, content pending
 
-Four tools registered as placeholders ("Coming soon" card using shared
+Three tools registered as placeholders ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
 Lab look). Each is just a `mount()` stub in its own folder, ready to be
 replaced with real content without touching any other tool:
 
-- `turbofan-engine` — Turbofan Engine (parked right after Virtual Lab on
-  Engine Practical in the catalog, by request; no reference material
-  supplied yet, unlike the other three below which at least have a
-  defined scope/name from earlier planning)
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
 - `apu-system` — APU System
@@ -255,7 +325,7 @@ System.
 
 ### Future phases
 
-- Fill in real content for the four Phase 2 placeholders above (likely
+- Fill in real content for the three Phase 2 placeholders above (likely
   following the Fuel/Oil diagram pattern, or the Virtual Lab's
   data-driven-simulation pattern, depending on what's supplied for each).
 - Add further tools via the registry pattern above; scope and specifics TBD

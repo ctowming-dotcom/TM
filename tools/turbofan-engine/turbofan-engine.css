@@ -1,0 +1,289 @@
+.turbofan-diagram {
+  --bg: #071323;
+  --bg2: #122940;
+  --panel: #0c1c31;
+  --panel2: #132840;
+  --text: #eaf4ff;
+  --muted: #97afc9;
+  --line: #385065;
+  --line2: #32506a;
+  --lp: #f6c83c;
+  --ip: #34d38a;
+  --hp: #fa873b;
+  background: linear-gradient(135deg, var(--bg), var(--bg2));
+  color: var(--text);
+  font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+  border-radius: 10px;
+  padding: 22px;
+}
+
+.turbofan-diagram * {
+  box-sizing: border-box;
+}
+
+.turbofan-diagram h1 {
+  font-size: clamp(20px, 3vw, 30px);
+  margin: 0;
+  color: var(--text);
+}
+
+.turbofan-diagram h3 {
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.turbofan-diagram p {
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+.turbofan-diagram .tf-panel {
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 9px 30px rgba(0, 0, 0, 0.2);
+}
+
+.turbofan-diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.turbofan-diagram .tf-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.turbofan-diagram .tf-control {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 13px;
+  background: var(--panel2);
+}
+
+.turbofan-diagram .tf-control strong {
+  font-size: 16px;
+}
+
+.turbofan-diagram .tf-control header {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.turbofan-diagram .tf-control small {
+  font-size: 12px;
+  color: #a8bfd6;
+}
+
+.turbofan-diagram input[type="range"] {
+  width: 100%;
+}
+
+.turbofan-diagram button {
+  border: 1px solid #5d7896;
+  border-radius: 9px;
+  background: #1c3854;
+  color: #fff;
+  font-weight: 650;
+  font: inherit;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.turbofan-diagram button:hover {
+  background: #2b516f;
+}
+
+.turbofan-diagram button.tf-active {
+  background: #355f83;
+  border-color: #8cb6d8;
+}
+
+.turbofan-diagram .tf-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  align-items: center;
+}
+
+.turbofan-diagram .tf-note {
+  font-size: 13px;
+  color: #b4c9dd;
+}
+
+.turbofan-diagram .tf-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 2px 0 10px;
+}
+
+.turbofan-diagram .tf-rotors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.turbofan-diagram .tf-rotor-cell {
+  background: #142a42;
+  border: 1px solid #34506d;
+  border-radius: 10px;
+  padding: 9px;
+  text-align: center;
+}
+
+.turbofan-diagram .tf-rotor-cell svg {
+  width: min(100%, 200px);
+  margin: auto;
+}
+
+.turbofan-diagram .tf-rotor-cell b {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.turbofan-diagram .tf-legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #bed2e8;
+  margin-top: 10px;
+}
+
+.turbofan-diagram .tf-key {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.turbofan-diagram .tf-pill {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #17304a;
+  border: 1px solid #3d5b78;
+  color: #d8e9f8;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.turbofan-diagram .tf-spacer {
+  flex: 1;
+}
+
+.turbofan-diagram .tf-naming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.turbofan-diagram .tf-naming-card {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 14px;
+  background: var(--panel2);
+  border-left: 4px solid var(--card-clr, var(--line2));
+}
+
+.turbofan-diagram .tf-naming-card b {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+  color: var(--card-clr, var(--text));
+}
+
+.turbofan-diagram .tf-naming-card span {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.turbofan-diagram .tf-cutaway-wrap {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.turbofan-diagram .tf-cutaway-wrap img {
+  max-width: 480px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line2);
+}
+
+.turbofan-diagram .tf-cutaway-text {
+  flex: 1;
+  min-width: 260px;
+}
+
+.turbofan-diagram .tf-cutaway-text ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.turbofan-diagram .tf-cutaway-text li b {
+  color: var(--text);
+}
+
+.turbofan-diagram .tf-bypass-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.turbofan-diagram .tf-bypass-card {
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 14px;
+  background: var(--panel2);
+}
+
+.turbofan-diagram .tf-bypass-card svg {
+  background: #09182a;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+}
+
+.turbofan-diagram .tf-bypass-stats {
+  display: flex;
+  gap: 18px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.turbofan-diagram .tf-bypass-stats div {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.turbofan-diagram .tf-bypass-stats b {
+  display: block;
+  font-size: 18px;
+  color: var(--text);
+}
+
+.turbofan-diagram .tf-bypass-card p {
+  font-size: 13.5px;
+  margin-top: 10px;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .turbofan-diagram .tf-controls,
+  .turbofan-diagram .tf-rotors {
+    grid-template-columns: 1fr;
+  }
+}
