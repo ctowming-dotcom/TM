@@ -57,36 +57,66 @@
     return lbf.toFixed(1) + ' lbf';
   }
 
-  var DESC = {
-    inlet: ['Air Intake (Inlet Section)', 'To capture and smoothly deliver air to the compressor with minimum energy loss.'],
-    compressor: ['Compressor Section', 'To increase the pressure of the incoming air before it enters the combustion chamber.'],
-    combustor: ['Combustion Chamber (Combustor)', 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.'],
-    turbine: ['Turbine Section', 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.'],
-    exhaust: ['Exhaust (Nozzle Section)', 'To convert the remaining gas energy into high-speed jet thrust.'],
-    cpr: ['Compressor Pressure Ratio (CPR)', 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.'],
-  };
+  // Engine parts: position (percentage over the image) plus the name/desc
+  // shown in the hover tooltip. Both position and wording are editable in
+  // edit mode (see EDIT_PASSWORD below).
+  var PARTS = [
+    { comp: 'inlet', xPct: 21.9, yPct: 41.4, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 42.4, yPct: 18.0, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 53.8, yPct: 23.2, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 52.5, yPct: 35.4, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
+    { comp: 'exhaust', xPct: 71.7, yPct: 50.0, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+  ];
+  var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
   // Airflow path traced over the static image to match the actual gas
   // route visible in it: straight in through the intake, up through the
   // centrifugal compressor to its diffuser exit, down through the short
   // elbow into the turbine inlet, then rearward through the annular
   // passage around the nozzle centerbody, converging back to the shaft
-  // centerline at the centerbody's tip before the exhaust. The lower path
-  // is the same route mirrored about the centerline (y=192), matching the
-  // engine's own top/bottom symmetry in the cutaway.
-  var FLOW_PATH_UPPER = 'M15,192 Q100,170 174,159 Q260,140 337,69 Q375,40 400,95 Q415,120 430,145 Q500,175 569,192 L780,192';
-  var FLOW_PATH_LOWER = 'M15,192 Q100,214 174,225 Q260,244 337,315 Q375,344 400,289 Q415,264 430,239 Q500,209 569,192 L780,192';
-
-  // Marker positions are percentages over the static engine-diagram.png,
-  // matched by eye to the 5 yellow sensor dots already drawn on that
-  // image (inlet / compressor exit / combustor / turbine / exhaust).
-  var MARKERS = [
-    { comp: 'inlet', xPct: 21.9, yPct: 41.4 },
-    { comp: 'compressor', xPct: 42.4, yPct: 18.0 },
-    { comp: 'combustor', xPct: 53.8, yPct: 23.2 },
-    { comp: 'turbine', xPct: 52.5, yPct: 35.4 },
-    { comp: 'exhaust', xPct: 71.7, yPct: 50.0 },
+  // centerline at the centerbody's tip before the exhaust. Stored as a
+  // handful of waypoints (not a fixed path string) so the route can be
+  // reshaped in edit mode; a smooth curve is rebuilt through them each
+  // time one moves. The lower route mirrors the upper one about the
+  // centerline (y=192), matching the engine's own top/bottom symmetry.
+  var UPPER_WAYPOINTS = [
+    { x: 15, y: 192 }, { x: 174, y: 159 }, { x: 337, y: 69 },
+    { x: 400, y: 95 }, { x: 430, y: 145 }, { x: 569, y: 192 }, { x: 780, y: 192 },
   ];
+
+  // Two independent combustor glows (pixel coordinates over the 794x384
+  // image), one per duct — draggable in edit mode.
+  var GLOWS = [
+    { x: 420, y: 90 },
+    { x: 420, y: 294 },
+  ];
+
+  var EDIT_PASSWORD = 'APP';
+
+  function mirrorPoints(points) {
+    return points.map(function (p) { return { x: p.x, y: p.y !== 192 ? 384 - p.y : p.y }; });
+  }
+
+  // Smooth curve through an arbitrary list of waypoints (uniform
+  // Catmull-Rom converted to cubic Bezier) so dragging any single
+  // waypoint reshapes the route without the user needing to manage
+  // separate curve-control handles.
+  function pathFromPoints(points) {
+    if (points.length < 2) return '';
+    var d = 'M' + points[0].x + ',' + points[0].y;
+    for (var i = 0; i < points.length - 1; i++) {
+      var p0 = points[i === 0 ? 0 : i - 1];
+      var p1 = points[i];
+      var p2 = points[i + 1];
+      var p3 = points[i + 2 < points.length ? i + 2 : i + 1];
+      var c1x = p1.x + (p2.x - p0.x) / 6;
+      var c1y = p1.y + (p2.y - p0.y) / 6;
+      var c2x = p2.x - (p3.x - p1.x) / 6;
+      var c2y = p2.y - (p3.y - p1.y) / 6;
+      d += ' C' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1) + ' ' + p2.x + ',' + p2.y;
+    }
+    return d;
+  }
 
   function interp(rpm, key) {
     if (rpm <= ANCHORS[0].rpm) return ANCHORS[0][key];
@@ -102,12 +132,26 @@
     return last[key];
   }
 
+  function glowMarkup(idx) {
+    return '<g class="vlab-combustor-intensity" data-glow="' + idx + '">' +
+      '<g class="vlab-combustor-flicker">' +
+      '<ellipse class="vlab-flame" cx="-16" cy="0" rx="70" ry="60"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="14" cy="-10" rx="52" ry="40"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="18" cy="14" rx="46" ry="36"></ellipse>' +
+      '</g>' +
+      '</g>';
+  }
+
   function mount(container) {
     container.innerHTML =
       '<div class="vlab">' +
       '<div class="vlab-header">' +
       '<h1>Virtual Lab on Engine Practical</h1>' +
       '<p>Push the throttle to increase engine RPM, and watch pressure, temperature, fuel flow and thrust respond across the engine in real time.</p>' +
+      '</div>' +
+
+      '<div class="vlab-edit-bar">' +
+      '<button type="button" class="vlab-edit-btn" title="Edit part positions/wording, flow route and combustor glows">✎ Edit</button>' +
       '</div>' +
 
       '<div class="vlab-stage">' +
@@ -127,27 +171,25 @@
       '</radialGradient>' +
       '</defs>' +
 
-      '<g class="vlab-combustor-intensity" transform="translate(452,195)">' +
-      '<g class="vlab-combustor-flicker">' +
-      '<ellipse class="vlab-flame" cx="-16" cy="0" rx="70" ry="60"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="14" cy="-10" rx="52" ry="40"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="18" cy="14" rx="46" ry="36"></ellipse>' +
-      '</g>' +
-      '</g>' +
+      glowMarkup(0) + glowMarkup(1) +
 
-      '<path class="vlab-flow-path-upper" d="' + FLOW_PATH_UPPER + '" fill="none" stroke="none"></path>' +
-      '<path class="vlab-flow-path-lower" d="' + FLOW_PATH_LOWER + '" fill="none" stroke="none"></path>' +
+      '<path class="vlab-flow-path-upper" fill="none" stroke="none"></path>' +
+      '<path class="vlab-flow-path-lower" fill="none" stroke="none"></path>' +
       '<g class="vlab-flow"></g>' +
 
       '<path class="vlab-jet" d="M770,165 L770,220 L870,192 Z"></path>' +
+
+      '<g class="vlab-glow-handles"></g>' +
+      '<g class="vlab-waypoint-handles"></g>' +
       '</svg>' +
 
-      '<div class="vlab-hot-markers">' +
-      MARKERS.map(function (m) {
-        return '<span class="vlab-marker" data-comp="' + m.comp + '" style="left:' + m.xPct + '%; top:' + m.yPct + '%;"></span>';
-      }).join('') +
+      '<div class="vlab-hot-markers"></div>' +
       '</div>' +
       '</div>' +
+
+      '<div class="vlab-edit-parts" hidden>' +
+      '<p class="vlab-edit-parts-hint">Drag the circular part markers, the diamond flow waypoints, or the square glow handles on the diagram above. Click a name/description below to retype it.</p>' +
+      '<ul class="vlab-edit-parts-list"></ul>' +
       '</div>' +
 
       '<div class="vlab-controls">' +
@@ -174,9 +216,27 @@
       '</div>' +
 
       '<div class="vlab-tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
+
+      '<div class="vlab-edit-panel" hidden>' +
+      '<p>When done, copy this and send it back.</p>' +
+      '<button type="button" class="vlab-edit-copy">Copy changes</button>' +
+      '<textarea readonly></textarea>' +
+      '</div>' +
       '</div>';
 
     var root = container.querySelector('.vlab');
+    var svg = root.querySelector('.vlab-overlay');
+    var imageWrap = root.querySelector('.vlab-image-wrap');
+    var markerLayer = root.querySelector('.vlab-hot-markers');
+    var editBtn = root.querySelector('.vlab-edit-btn');
+    var editPartsBox = root.querySelector('.vlab-edit-parts');
+    var editPartsList = root.querySelector('.vlab-edit-parts-list');
+    var editPanel = root.querySelector('.vlab-edit-panel');
+    var editPanelText = editPanel.querySelector('textarea');
+    var editCopyBtn = editPanel.querySelector('.vlab-edit-copy');
+    var waypointHandleLayer = root.querySelector('.vlab-waypoint-handles');
+    var glowHandleLayer = root.querySelector('.vlab-glow-handles');
+
     var throttleInput = root.querySelector('#vlab-throttle');
     var throttlePctEl = root.querySelector('.vlab-throttle-pct');
 
@@ -189,19 +249,23 @@
     var valFuel = root.querySelector('.vlab-val-fuel');
     var valCpr = root.querySelector('.vlab-val-cpr');
 
-    var combustorIntensity = root.querySelector('.vlab-combustor-intensity');
+    var glowEls = root.querySelectorAll('.vlab-combustor-intensity');
     var jet = root.querySelector('.vlab-jet');
     var flowGroup = root.querySelector('.vlab-flow');
+    var flowPathUpper = root.querySelector('.vlab-flow-path-upper');
+    var flowPathLower = root.querySelector('.vlab-flow-path-lower');
+
+    var editUnlocked = false;
+    var pathLengthUpper, pathLengthLower;
 
     // Tooltip (same pattern as the Fuel/Oil/Air System diagram tools)
     var tooltip = root.querySelector('.vlab-tooltip');
     var tTitle = tooltip.querySelector('.t-title');
     var tDesc = tooltip.querySelector('.t-desc');
-    function showTip(evt, key) {
-      var d = DESC[key];
-      if (!d) return;
-      tTitle.textContent = d[0];
-      tDesc.textContent = d[1];
+    function showTip(evt, info) {
+      if (!info) return;
+      tTitle.textContent = info.name;
+      tDesc.textContent = info.desc;
       tooltip.style.display = 'block';
       positionTip(evt);
     }
@@ -218,21 +282,193 @@
     function hideTip() {
       tooltip.style.display = 'none';
     }
-    root.querySelectorAll('[data-comp]').forEach(function (el) {
-      var key = el.getAttribute('data-comp');
-      el.addEventListener('mouseenter', function (e) { showTip(e, key); });
+    root.querySelector('[data-comp="cpr"]').addEventListener('mouseenter', function (e) { showTip(e, CPR_INFO); });
+    root.querySelector('[data-comp="cpr"]').addEventListener('mousemove', positionTip);
+    root.querySelector('[data-comp="cpr"]').addEventListener('mouseleave', hideTip);
+    root.querySelectorAll('.vlab-tile[data-comp]').forEach(function (el) {
+      var comp = el.getAttribute('data-comp');
+      if (comp === 'cpr') return;
+      var part = PARTS.filter(function (p) { return p.comp === comp; })[0];
+      el.addEventListener('mouseenter', function (e) { showTip(e, part); });
       el.addEventListener('mousemove', positionTip);
       el.addEventListener('mouseleave', hideTip);
     });
 
+    // --- Part markers (HTML overlay, percentage-positioned like Air System) ---
+    function renderMarkers() {
+      markerLayer.innerHTML = PARTS.map(function (p) {
+        return '<span class="vlab-marker" data-comp="' + p.comp + '" style="left:' + p.xPct + '%; top:' + p.yPct + '%;"></span>';
+      }).join('');
+      markerLayer.querySelectorAll('.vlab-marker').forEach(function (el, i) {
+        var part = PARTS[i];
+        el.addEventListener('mouseenter', function (e) { if (!editUnlocked) showTip(e, part); });
+        el.addEventListener('mousemove', positionTip);
+        el.addEventListener('mouseleave', hideTip);
+        el.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          hideTip();
+          el.setPointerCapture(evt.pointerId);
+          el.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var x = Math.max(0, Math.min(100, ((moveEvt.clientX - rect.left) / rect.width) * 100));
+            var y = Math.max(0, Math.min(100, ((moveEvt.clientY - rect.top) / rect.height) * 100));
+            part.xPct = x; part.yPct = y;
+            el.style.left = x + '%'; el.style.top = y + '%';
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            el.classList.remove('dragging');
+            el.releasePointerCapture(upEvt.pointerId);
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onUp);
+          }
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+
+    function renderEditPartsList() {
+      editPartsList.innerHTML = PARTS.map(function (p) {
+        return '<li class="vlab-edit-parts-item" data-comp="' + p.comp + '">' +
+          '<span class="vlab-edit-parts-name" data-field="name">' + TM.escapeHtml(p.name) + '</span>' +
+          '<span class="vlab-edit-parts-desc" data-field="desc">' + TM.escapeHtml(p.desc) + '</span>' +
+          '</li>';
+      }).join('');
+      editPartsList.querySelectorAll('.vlab-edit-parts-item').forEach(function (li, i) {
+        var part = PARTS[i];
+        ['name', 'desc'].forEach(function (field) {
+          var el = li.querySelector('[data-field="' + field + '"]');
+          el.addEventListener('input', function () { part[field] = el.textContent; updateEditPanel(); });
+        });
+      });
+    }
+
+    // --- SVG coordinate conversion (for dragging flow waypoints / glows) ---
+    function svgPoint(evt) {
+      var pt = svg.createSVGPoint();
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function rebuildFlowPaths() {
+      flowPathUpper.setAttribute('d', pathFromPoints(UPPER_WAYPOINTS));
+      flowPathLower.setAttribute('d', pathFromPoints(mirrorPoints(UPPER_WAYPOINTS)));
+      pathLengthUpper = flowPathUpper.getTotalLength();
+      pathLengthLower = flowPathLower.getTotalLength();
+    }
+
+    function renderWaypointHandles() {
+      waypointHandleLayer.innerHTML = UPPER_WAYPOINTS.map(function (p, i) {
+        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 6) + '" y="' + (p.y - 6) + '" width="12" height="12" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>';
+      }).join('');
+      waypointHandleLayer.querySelectorAll('.vlab-waypoint-handle').forEach(function (el) {
+        var i = Number(el.getAttribute('data-i'));
+        el.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          el.setPointerCapture(evt.pointerId);
+          function onMove(moveEvt) {
+            var p = svgPoint(moveEvt);
+            UPPER_WAYPOINTS[i] = { x: Math.round(p.x), y: Math.round(p.y) };
+            rebuildFlowPaths();
+            renderWaypointHandles();
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            el.releasePointerCapture(upEvt.pointerId);
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onUp);
+          }
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+
+    function renderGlowHandles() {
+      glowHandleLayer.innerHTML = GLOWS.map(function (g, i) {
+        return '<circle class="vlab-glow-handle" data-i="' + i + '" cx="' + g.x + '" cy="' + g.y + '" r="9"></circle>';
+      }).join('');
+      glowHandleLayer.querySelectorAll('.vlab-glow-handle').forEach(function (el) {
+        var i = Number(el.getAttribute('data-i'));
+        el.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          el.setPointerCapture(evt.pointerId);
+          function onMove(moveEvt) {
+            var p = svgPoint(moveEvt);
+            GLOWS[i] = { x: Math.round(p.x), y: Math.round(p.y) };
+            el.setAttribute('cx', GLOWS[i].x);
+            el.setAttribute('cy', GLOWS[i].y);
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            el.releasePointerCapture(upEvt.pointerId);
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onUp);
+          }
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+
+    function setEditMode(on) {
+      editUnlocked = on;
+      root.classList.toggle('vlab-edit', on);
+      editPartsBox.hidden = !on;
+      editPanel.hidden = !on;
+      editPartsList.querySelectorAll('[data-field]').forEach(function (el) {
+        el.contentEditable = on ? 'true' : 'false';
+      });
+      editBtn.textContent = on ? '✓ Editing (click to stop)' : '✎ Edit';
+      editBtn.classList.toggle('active', on);
+      if (on) updateEditPanel();
+    }
+
+    editBtn.addEventListener('click', function () {
+      if (editUnlocked) { setEditMode(false); return; }
+      var pw = window.prompt('Enter the edit password:');
+      if (pw === null) return;
+      if (pw === EDIT_PASSWORD) setEditMode(true);
+      else window.alert('Incorrect password.');
+    });
+
+    function updateEditPanel() {
+      if (!editUnlocked) return;
+      var partsCode = '  var PARTS = [\n' + PARTS.map(function (p) {
+        return '    { comp: ' + JSON.stringify(p.comp) + ', xPct: ' + (Math.round(p.xPct * 10) / 10) +
+          ', yPct: ' + (Math.round(p.yPct * 10) / 10) + ', name: ' + JSON.stringify(p.name) + ', desc: ' + JSON.stringify(p.desc) + ' },';
+      }).join('\n') + '\n  ];';
+      var waypointsCode = '  var UPPER_WAYPOINTS = [\n    ' +
+        UPPER_WAYPOINTS.map(function (p) { return '{ x: ' + p.x + ', y: ' + p.y + ' }'; }).join(', ') +
+        '\n  ];';
+      var glowsCode = '  var GLOWS = [\n    ' +
+        GLOWS.map(function (g) { return '{ x: ' + g.x + ', y: ' + g.y + ' }'; }).join(',\n    ') +
+        '\n  ];';
+      editPanelText.value = partsCode + '\n\n' + waypointsCode + '\n\n' + glowsCode;
+    }
+
+    editCopyBtn.addEventListener('click', function () {
+      editPanelText.focus();
+      editPanelText.select();
+      try { document.execCommand('copy'); } catch (e) { /* selection stays, can copy manually */ }
+    });
+
+    renderMarkers();
+    renderEditPartsList();
+    rebuildFlowPaths();
+    renderWaypointHandles();
+    renderGlowHandles();
+
     // Airflow arrows, overlaid on the static image and travelling along the
-    // actual gas route traced over it (FLOW_PATH_UPPER/LOWER above) — the
-    // picture can't show literal blade rotation, so motion is carried by
-    // these arrows plus the combustor glow / exhaust jet instead.
-    var flowPathUpper = root.querySelector('.vlab-flow-path-upper');
-    var flowPathLower = root.querySelector('.vlab-flow-path-lower');
-    var pathLengthUpper = flowPathUpper.getTotalLength();
-    var pathLengthLower = flowPathLower.getTotalLength();
+    // actual gas route traced over it — the picture can't show literal
+    // blade rotation, so motion is carried by these arrows plus the
+    // combustor glows / exhaust jet instead. (pathLengthUpper/Lower were
+    // already set by rebuildFlowPaths() above.)
     var TANGENT_EPS = 1.5;
 
     function pointAndAngle(pathEl, totalLength, dist) {
@@ -252,13 +488,10 @@
       el.setAttribute('d', 'M -7,-4.5 L 6,0 L -7,4.5 L -3,0 Z');
       flowGroup.appendChild(el);
       var onUpper = i % 2 === 0;
-      var pathEl = onUpper ? flowPathUpper : flowPathLower;
-      var totalLength = onUpper ? pathLengthUpper : pathLengthLower;
       particles.push({
         el: el,
-        pathEl: pathEl,
-        totalLength: totalLength,
-        dist: (i / PARTICLE_COUNT) * totalLength,
+        onUpper: onUpper,
+        dist: (i / PARTICLE_COUNT) * (onUpper ? pathLengthUpper : pathLengthLower),
       });
     }
 
@@ -314,10 +547,14 @@
       valFuel.innerHTML = '<b>' + fmtFuel(fuelFlow, unitMode) + '</b>';
       valCpr.textContent = cpr.toFixed(1);
 
-      // Combustor glow intensity scales with fuel flow
+      // Combustor glow intensity scales with fuel flow (both ducts)
       var fuelFrac = Math.min(1, fuelFlow / 5);
-      combustorIntensity.style.opacity = String(0.25 + fuelFrac * 0.65);
-      combustorIntensity.setAttribute('transform', 'translate(452,195) scale(' + (0.7 + fuelFrac * 0.5) + ')');
+      glowEls.forEach(function (gel) {
+        var idx = Number(gel.getAttribute('data-glow'));
+        var g = GLOWS[idx];
+        gel.style.opacity = String(0.25 + fuelFrac * 0.65);
+        gel.setAttribute('transform', 'translate(' + g.x + ',' + g.y + ') scale(' + (0.7 + fuelFrac * 0.5) + ')');
+      });
 
       // Exhaust jet scales with thrust
       var thrustFrac = Math.min(1, thrust / 15);
@@ -325,14 +562,15 @@
       jet.style.transform = 'scaleX(' + (0.3 + thrustFrac * 1.3) + ')';
 
       // Airflow arrow speed scales with RPM; color shifts cool → hot →
-      // exhaust by fraction travelled along the path (compressor exit
-      // ~35%, turbine/annular passage ~55-100%).
+      // exhaust by fraction travelled along the path.
       var speed = (1.5 + frac * 11) * dt;
       particles.forEach(function (p) {
+        var pathEl = p.onUpper ? flowPathUpper : flowPathLower;
+        var totalLength = p.onUpper ? pathLengthUpper : pathLengthLower;
         p.dist += speed;
-        if (p.dist > p.totalLength) p.dist -= p.totalLength;
-        var pt = pointAndAngle(p.pathEl, p.totalLength, p.dist);
-        var travelFrac = p.dist / p.totalLength;
+        if (p.dist > totalLength) p.dist -= totalLength;
+        var pt = pointAndAngle(pathEl, totalLength, p.dist);
+        var travelFrac = p.dist / totalLength;
         var color = travelFrac < 0.35 ? '#6fb7e8' : (travelFrac < 0.72 ? '#ff8a4d' : '#ffb98a');
         p.el.setAttribute('fill', color);
         p.el.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ') rotate(' + pt.angle.toFixed(1) + ')');
