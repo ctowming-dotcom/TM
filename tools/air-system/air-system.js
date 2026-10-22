@@ -25,21 +25,21 @@
   // Airflow route for each mode: a short sequence of waypoints (not tied
   // to INTERNAL_ITEMS/EXTERNAL_ITEMS — a separate, independent path) drawn
   // as a yellow flowing line with arrowheads, and shown as numbered yellow
-  // boxes in flow order. Positions are rough defaults meant to be dragged
-  // into place in edit mode, same as the circle markers.
+  // boxes in flow order. Positions below are the teacher's own dragged
+  // layout (baked in from the Copy-changes panel), not placeholders.
   var INTERNAL_FLOW = [
-    { xPct: 38, yPct: 30 },
-    { xPct: 50, yPct: 22 },
-    { xPct: 62, yPct: 25 },
-    { xPct: 71, yPct: 35 },
-    { xPct: 80, yPct: 45 },
+    { xPct: 12.5, yPct: 26.2 },
+    { xPct: 45.2, yPct: 25.3 },
+    { xPct: 53.7, yPct: 36.9 },
+    { xPct: 68.2, yPct: 36.3 },
+    { xPct: 80.6, yPct: 24.5 },
   ];
   var EXTERNAL_FLOW = [
-    { xPct: 15, yPct: 20 },
-    { xPct: 30, yPct: 15 },
-    { xPct: 45, yPct: 18 },
-    { xPct: 60, yPct: 15 },
-    { xPct: 75, yPct: 20 },
+    { xPct: 10.5, yPct: 14.4 },
+    { xPct: 42.4, yPct: 15.8 },
+    { xPct: 51.1, yPct: 13.4 },
+    { xPct: 77.4, yPct: 12.7 },
+    { xPct: 96.9, yPct: 26.2 },
   ];
 
   var EDIT_PASSWORD = 'APP';
