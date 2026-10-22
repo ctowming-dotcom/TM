@@ -60,41 +60,45 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   Both diagram tools keep their own reference-sheet visual style (not the
   portal's Bright Lab palette) since their colors are semantic — e.g. green
   = open/flowing, red = closed or a return line, amber = active selection.
-- **Virtual Lab on Engine Practical** (`virtual-physical-lab`): animated
-  side-profile cutaway of a generic single-spool turbojet — tapered
-  nacelle silhouette (converging compressor, bulging combustor can,
-  converging turbine, nozzle), alternating rotor/stator blade rows on a
-  shared shaft, with a throttle slider driving RPM. Rotor blades + shaft
-  "spin" via a scrolling diagonal-stripe SVG pattern (`patternTransform`
-  translate each frame) — the standard technical-drawing convention for
-  showing rotation in a 2D side profile, since blades can't visibly turn
-  in that view; stator vanes stay plain gray and static. Casing uses a
-  smoothed bezier silhouette with a metallic linear-gradient fill (light/
-  dark variants via CSS-styled `<stop>` elements, not separate gradient
-  defs); combustor is a solid warm-toned can, not just an outline. Panel
-  widened to `max-width: 1500px` and all text sized up (headings, tile
-  labels/values, tooltip, controls) for legibility at that width. Airflow
-  particles speed up and shift cool→hot→exhaust color with RPM; the
-  combustor glow and exhaust jet scale with fuel flow/thrust. Live
-  readouts for RPM, thrust, T1–T4/P1–P4 per stage, fuel flow, and
-  Compressor Pressure Ratio (CPR = P2/P1, unchanged by
-  unit mode since it's a ratio). A Mode 1/Mode 2 toggle switches every
-  readout's units: Mode 1 is as-logged (PSIG, °C, Gal/hr, lbf — the
-  default), Mode 2 is SI (Pa, K, L/hr, thrust shown as both N and kgf).
-  Hover a stage or the CPR tile for its purpose/explanation (text sourced
-  from the supplied lab answer key, `Lab_1_Engine_Run_ANS_v8.0.docx`). The
-  RPM→readout model is 22 real anchor points extracted from the ascending
-  throttle sweep in the supplied `Engine_Run_Sample_Result.xlsx`, linearly
-  interpolated; column mapping (P4=nozzle exit press, T4=EGT, not the
-  sheet's own same-named columns) and the unit conversions were both
-  verified against the answer key's worked peak-RPM figures (near-exact
-  match, e.g. fuel flow converts to 18.66 L/hr in Mode 2 vs the key's
-  18.66 L/HR). Unlike the two diagram tools above, this one
-  **does** use the portal's own Bright Lab chrome (fonts/accent/tiles) —
-  only the engine graphic's colors are semantic (blue=cool, orange/red=hot).
-  Uses the portal's `TM.registerTool`/`mount` pattern plus one addition:
-  returns an `unmount` (cancels its `requestAnimationFrame` loop) — `app.js`
-  was patched to call the outgoing tool's `unmount` on direct hash-to-hash
+- **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
+  reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`
+  — a user-supplied centrifugal-compressor turbojet diagram, cropped to
+  drop its baked-in T1–T5 label strip, keeping just the engine art and its
+  5 yellow sensor dots) with a throttle slider driving RPM, and animation
+  overlaid on top of the picture rather than drawn into it: an SVG layer
+  (`viewBox` matched to the image's pixel size) holds airflow particles
+  that speed up and shift cool→hot→exhaust color with RPM along the
+  engine's centerline, a pulsing combustor glow that scales with fuel
+  flow, and an exhaust jet gradient that scales with thrust. The image
+  can't show literal blade rotation (no shapes to animate in a raster
+  picture), so that part of the previous animated-SVG version was dropped
+  — motion now reads entirely through flow/glow/jet. 5 invisible
+  percentage-positioned hover markers sit exactly on the image's own
+  yellow dots (inlet / compressor exit / combustor / turbine / exhaust)
+  for tooltips, the same marker-overlay pattern as the Air System tool.
+  Panel widened to `max-width: 1500px` and all text sized up (headings,
+  tile labels/values, tooltip, controls) for legibility at that width.
+  Live readouts for RPM, thrust, T1–T4/P1–P4 per stage, fuel flow, and
+  Compressor Pressure Ratio (CPR = P2/P1, unchanged by unit mode since
+  it's a ratio) — only 4 of the image's 5 dots carry live data (the 5th,
+  "turbine", is tooltip-only) since the underlying real dataset has only
+  4 measured stations; a 5th number was never fabricated to fill it. A
+  Mode 1/Mode 2 toggle switches every readout's units: Mode 1 is as-logged
+  (PSIG, °C, Gal/hr, lbf — the default), Mode 2 is SI (Pa, K, L/hr, thrust
+  shown as both N and kgf). Hover a stage or the CPR tile for its
+  purpose/explanation (text sourced from the supplied lab answer key,
+  `Lab_1_Engine_Run_ANS_v8.0.docx`). The RPM→readout model is 22 real
+  anchor points extracted from the ascending throttle sweep in the
+  supplied `Engine_Run_Sample_Result.xlsx`, linearly interpolated; column
+  mapping (P4=nozzle exit press, T4=EGT, not the sheet's own same-named
+  columns) and the unit conversions were both verified against the answer
+  key's worked peak-RPM figures (near-exact match, e.g. fuel flow converts
+  to 18.66 L/hr in Mode 2 vs the key's 18.66 L/HR). Unlike the Fuel/Oil
+  diagram tools, this one uses the portal's own Bright Lab chrome (fonts/
+  accent/tiles) around the reference image. Uses the portal's
+  `TM.registerTool`/`mount` pattern plus one addition: returns an
+  `unmount` (cancels its `requestAnimationFrame` loop) — `app.js` was
+  patched to call the outgoing tool's `unmount` on direct hash-to-hash
   tool switches, not just when returning to the catalog (a latent gap that
   only mattered once a tool had a continuous animation loop).
 - Quiz Generator and Flashcard Trainer were both built for Phase 1, then

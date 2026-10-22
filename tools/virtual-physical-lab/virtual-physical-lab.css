@@ -23,106 +23,47 @@
   padding: 1.25rem;
 }
 
-.vlab-engine {
+.vlab-image-wrap {
+  position: relative;
+  line-height: 0;
+}
+
+.vlab-image {
   display: block;
   width: 100%;
   height: auto;
+  border-radius: var(--radius-sm);
+  background: #b3b4b4;
 }
 
-.vlab-metal-1 { stop-color: #f6f8fa; }
-.vlab-metal-2 { stop-color: #c3cbd5; }
-.vlab-metal-3 { stop-color: #e4e9ee; }
-
-.vlab-can-1 { stop-color: #d8d2cd; }
-.vlab-can-2 { stop-color: #efe9e3; }
-
-@media (prefers-color-scheme: dark) {
-  .vlab-metal-1 { stop-color: #3c424b; }
-  .vlab-metal-2 { stop-color: #22262d; }
-  .vlab-metal-3 { stop-color: #2e333b; }
-  .vlab-can-1 { stop-color: #3a332e; }
-  .vlab-can-2 { stop-color: #4a4139; }
+.vlab-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-.vlab-casing {
-  fill: url(#vlab-metal-grad);
-  stroke: #8d97a3;
-  stroke-width: 2.5;
+.vlab-hot-markers {
+  position: absolute;
+  inset: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .vlab-casing {
-    stroke: #515863;
-  }
-}
-
-.vlab-divider {
-  stroke: #8d97a3;
-  stroke-width: 1.5;
-  stroke-dasharray: 5 5;
-  opacity: 0.55;
-}
-
-.vlab-zone-label {
-  font-family: var(--font-display);
-  font-size: 19px;
-  font-weight: 700;
-  text-anchor: middle;
-  fill: var(--text);
-}
-
-.vlab-zone-hit {
-  fill: transparent;
+.vlab-marker {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+  border-radius: 50%;
+  border: 2px solid transparent;
   cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.vlab-shaft {
-  fill: url(#vlab-spin-cool);
-  stroke: #5a6572;
-  stroke-width: 1.5;
-}
-
-.vlab-spinner {
-  fill: url(#vlab-spin-cool);
-  stroke: #5a6572;
-  stroke-width: 1.5;
-}
-
-.vlab-blade-rotor-cool {
-  fill: url(#vlab-spin-cool);
-  stroke: #3d6690;
-  stroke-width: 1;
-}
-
-.vlab-blade-rotor-hot {
-  fill: url(#vlab-spin-hot);
-  stroke: #b5473b;
-  stroke-width: 1;
-}
-
-.vlab-blade-stator {
-  fill: #9aa3ad;
-  stroke: #7c8591;
-  stroke-width: 1;
-}
-
-@media (prefers-color-scheme: dark) {
-  .vlab-blade-stator {
-    fill: #5a6270;
-    stroke: #444c59;
-  }
-}
-
-.vlab-combustor-liner {
-  fill: url(#vlab-can-grad);
-  stroke: #b7ada5;
-  stroke-width: 2;
-}
-
-@media (prefers-color-scheme: dark) {
-  .vlab-combustor-liner {
-    stroke: #5c5349;
-  }
+.vlab-marker:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(255, 92, 108, 0.25);
 }
 
 .vlab-flame {

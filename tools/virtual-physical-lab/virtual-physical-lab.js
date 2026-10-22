@@ -66,6 +66,17 @@
     cpr: ['Compressor Pressure Ratio (CPR)', 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.'],
   };
 
+  // Marker positions are percentages over the static engine-diagram.png,
+  // matched by eye to the 5 yellow sensor dots already drawn on that
+  // image (inlet / compressor exit / combustor / turbine / exhaust).
+  var MARKERS = [
+    { comp: 'inlet', xPct: 21.9, yPct: 41.4 },
+    { comp: 'compressor', xPct: 42.4, yPct: 18.0 },
+    { comp: 'combustor', xPct: 53.8, yPct: 23.2 },
+    { comp: 'turbine', xPct: 52.5, yPct: 35.4 },
+    { comp: 'exhaust', xPct: 71.7, yPct: 50.0 },
+  ];
+
   function interp(rpm, key) {
     if (rpm <= ANCHORS[0].rpm) return ANCHORS[0][key];
     var last = ANCHORS[ANCHORS.length - 1];
@@ -80,39 +91,6 @@
     return last[key];
   }
 
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
-  // Compressor wall converges from the inlet (y=120) to the combustor (y=155);
-  // turbine wall holds roughly level between the combustor and nozzle necks.
-  function compressorWallY(x) { return lerp(120, 155, (x - 220) / (430 - 220)); }
-  var TURBINE_WALL_Y = 158;
-  var SHAFT_TOP = 196, SHAFT_BOTTOM = 224;
-
-  // One blade cross-section, top half + its mirror below the shaft. Rotor
-  // blades (attached to the shaft) get the animated diagonal-stripe fill
-  // that reads as spin in a side profile; stator vanes (attached to the
-  // casing) are fixed, plain gray.
-  function bladeRow(x, wallTopY, isRotor, hot) {
-    var cls = isRotor ? ('vlab-blade-rotor ' + (hot ? 'vlab-blade-rotor-hot' : 'vlab-blade-rotor-cool')) : 'vlab-blade-stator';
-    var topOuter = wallTopY + 4, botOuter = 420 - wallTopY - 4;
-    var top = '<path class="' + cls + '" d="M' + x + ',' + topOuter + ' Q' + (x + 11) + ',' + (topOuter - 7) + ' ' + (x + 18) + ',' + topOuter + ' L' + (x + 10) + ',' + SHAFT_TOP + ' Q' + (x + 4) + ',' + (SHAFT_TOP + 5) + ' ' + (x - 4) + ',' + SHAFT_TOP + ' Z"></path>';
-    var bot = '<path class="' + cls + '" d="M' + x + ',' + botOuter + ' Q' + (x + 11) + ',' + (botOuter + 7) + ' ' + (x + 18) + ',' + botOuter + ' L' + (x + 10) + ',' + SHAFT_BOTTOM + ' Q' + (x + 4) + ',' + (SHAFT_BOTTOM - 5) + ' ' + (x - 4) + ',' + SHAFT_BOTTOM + ' Z"></path>';
-    return top + bot;
-  }
-
-  function buildCompressorRows() {
-    var xs = [250, 290, 330, 370, 410];
-    var out = '';
-    xs.forEach(function (x, i) { out += bladeRow(x, compressorWallY(x), i % 2 === 0, false); });
-    return out;
-  }
-  function buildTurbineRows() {
-    var xs = [700, 760, 820];
-    var out = '';
-    xs.forEach(function (x, i) { out += bladeRow(x, TURBINE_WALL_Y, i % 2 === 1, true); });
-    return out;
-  }
-
   function mount(container) {
     container.innerHTML =
       '<div class="vlab">' +
@@ -122,7 +100,10 @@
       '</div>' +
 
       '<div class="vlab-stage">' +
-      '<svg class="vlab-engine" viewBox="0 0 1260 420" xmlns="http://www.w3.org/2000/svg">' +
+      '<div class="vlab-image-wrap">' +
+      '<img class="vlab-image" src="tools/virtual-physical-lab/engine-diagram.png" alt="Cutaway diagram of a single-spool turbojet: intake, centrifugal compressor, combustor, turbine and exhaust, with five sensor points marked.">' +
+
+      '<svg class="vlab-overlay" viewBox="0 0 794 384" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">' +
       '<defs>' +
       '<linearGradient id="vlab-jet-grad" x1="0" y1="0" x2="1" y2="0">' +
       '<stop offset="0%" stop-color="#ff7a3d" stop-opacity="0.95"></stop>' +
@@ -133,66 +114,27 @@
       '<stop offset="45%" stop-color="#ff9a3d"></stop>' +
       '<stop offset="100%" stop-color="#d1392b"></stop>' +
       '</radialGradient>' +
-      '<linearGradient id="vlab-metal-grad" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" class="vlab-metal-1"></stop>' +
-      '<stop offset="18%" class="vlab-metal-2"></stop>' +
-      '<stop offset="50%" class="vlab-metal-3"></stop>' +
-      '<stop offset="82%" class="vlab-metal-2"></stop>' +
-      '<stop offset="100%" class="vlab-metal-1"></stop>' +
-      '</linearGradient>' +
-      '<linearGradient id="vlab-can-grad" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" class="vlab-can-1"></stop>' +
-      '<stop offset="50%" class="vlab-can-2"></stop>' +
-      '<stop offset="100%" class="vlab-can-1"></stop>' +
-      '</linearGradient>' +
-      '<pattern id="vlab-spin-cool" class="vlab-spin-pattern-cool" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
-      '<rect width="14" height="14" fill="#5a8fc2"></rect>' +
-      '<rect width="7" height="14" fill="#3d6690"></rect>' +
-      '</pattern>' +
-      '<pattern id="vlab-spin-hot" class="vlab-spin-pattern-hot" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
-      '<rect width="14" height="14" fill="#e0725a"></rect>' +
-      '<rect width="7" height="14" fill="#b5473b"></rect>' +
-      '</pattern>' +
       '</defs>' +
 
-      '<path class="vlab-casing" d="M20,130 L60,120 L220,120 Q430,120 430,155 Q460,155 460,112 L650,112 Q685,112 685,158 L860,158 Q1000,158 1000,175 Q1150,175 1150,185 L1150,235 Q1000,235 1000,245 Q860,245 860,262 L685,262 Q650,262 650,308 L460,308 Q430,308 430,265 Q220,265 220,300 L60,300 L20,290 Z"></path>' +
-      '<line class="vlab-divider" x1="220" y1="95" x2="220" y2="325"></line>' +
-      '<line class="vlab-divider" x1="430" y1="95" x2="430" y2="325"></line>' +
-      '<line class="vlab-divider" x1="650" y1="95" x2="650" y2="325"></line>' +
-      '<line class="vlab-divider" x1="860" y1="95" x2="860" y2="325"></line>' +
+      '<g class="vlab-combustor-intensity" transform="translate(452,195)">' +
+      '<g class="vlab-combustor-flicker">' +
+      '<ellipse class="vlab-flame" cx="-16" cy="0" rx="70" ry="60"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="14" cy="-10" rx="52" ry="40"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="18" cy="14" rx="46" ry="36"></ellipse>' +
+      '</g>' +
+      '</g>' +
 
       '<g class="vlab-flow"></g>' +
 
-      '<rect class="vlab-shaft vlab-spin-shaft" x="235" y="' + SHAFT_TOP + '" width="615" height="' + (SHAFT_BOTTOM - SHAFT_TOP) + '"></rect>' +
-      '<path class="vlab-spinner vlab-spin-shaft" d="M215,196 L240,210 L215,224 Z"></path>' +
-
-      buildCompressorRows() +
-
-      '<rect class="vlab-combustor-liner" x="445" y="128" width="190" height="164" rx="24"></rect>' +
-      '<g class="vlab-combustor-intensity" transform="translate(540,210)">' +
-      '<g class="vlab-combustor-flicker">' +
-      '<ellipse class="vlab-flame" cx="-18" cy="0" rx="46" ry="30"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="10" cy="-8" rx="34" ry="20"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="14" cy="10" rx="30" ry="18"></ellipse>' +
-      '</g>' +
-      '</g>' +
-
-      buildTurbineRows() +
-
-      '<path class="vlab-jet" d="M1150,185 L1150,235 L1240,210 Z"></path>' +
-
-      '<rect class="vlab-zone-hit" data-comp="inlet" x="20" y="95" width="200" height="230"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="compressor" x="220" y="95" width="210" height="230"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="combustor" x="430" y="95" width="220" height="230"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="turbine" x="650" y="95" width="210" height="230"></rect>' +
-      '<rect class="vlab-zone-hit" data-comp="exhaust" x="860" y="95" width="300" height="230"></rect>' +
-
-      '<text class="vlab-zone-label" x="120" y="350">Inlet</text>' +
-      '<text class="vlab-zone-label" x="325" y="350">Compressor</text>' +
-      '<text class="vlab-zone-label" x="540" y="350">Combustor</text>' +
-      '<text class="vlab-zone-label" x="755" y="350">Turbine</text>' +
-      '<text class="vlab-zone-label" x="1010" y="350">Exhaust</text>' +
+      '<path class="vlab-jet" d="M770,165 L770,220 L870,192 Z"></path>' +
       '</svg>' +
+
+      '<div class="vlab-hot-markers">' +
+      MARKERS.map(function (m) {
+        return '<span class="vlab-marker" data-comp="' + m.comp + '" style="left:' + m.xPct + '%; top:' + m.yPct + '%;"></span>';
+      }).join('') +
+      '</div>' +
+      '</div>' +
       '</div>' +
 
       '<div class="vlab-controls">' +
@@ -234,13 +176,11 @@
     var valFuel = root.querySelector('.vlab-val-fuel');
     var valCpr = root.querySelector('.vlab-val-cpr');
 
-    var spinPatternCool = root.querySelector('.vlab-spin-pattern-cool');
-    var spinPatternHot = root.querySelector('.vlab-spin-pattern-hot');
     var combustorIntensity = root.querySelector('.vlab-combustor-intensity');
     var jet = root.querySelector('.vlab-jet');
     var flowGroup = root.querySelector('.vlab-flow');
 
-    // Tooltip (same pattern as the Fuel/Oil diagram tools)
+    // Tooltip (same pattern as the Fuel/Oil/Air System diagram tools)
     var tooltip = root.querySelector('.vlab-tooltip');
     var tTitle = tooltip.querySelector('.t-title');
     var tDesc = tooltip.querySelector('.t-desc');
@@ -272,22 +212,23 @@
       el.addEventListener('mouseleave', hideTip);
     });
 
-    // Airflow particles
+    // Airflow particles, overlaid on the static image along its centerline —
+    // the picture can't show literal rotation, so animation is carried by
+    // flow speed/color and the combustor glow / exhaust jet instead.
     var PARTICLE_COUNT = 10;
-    var PATH_START = 40, PATH_END = 1150;
+    var PATH_START = 15, PATH_END = 770;
     var particles = [];
     for (var i = 0; i < PARTICLE_COUNT; i++) {
       var el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
       el.setAttribute('class', 'vlab-particle');
       el.setAttribute('r', '5');
-      el.setAttribute('cy', '210');
+      el.setAttribute('cy', '192');
       flowGroup.appendChild(el);
       particles.push({ el: el, x: PATH_START + (i / PARTICLE_COUNT) * (PATH_END - PATH_START) });
     }
 
     var targetRpm = MIN_RPM;
     var currentRpm = MIN_RPM;
-    var compSpinOffset = 0, turbSpinOffset = 0;
     var rafId = null;
     var lastTime = null;
     var unitMode = 1;
@@ -338,32 +279,24 @@
       valFuel.innerHTML = '<b>' + fmtFuel(fuelFlow, unitMode) + '</b>';
       valCpr.textContent = cpr.toFixed(1);
 
-      // Shaft/rotor "spin": scroll the diagonal stripe pattern — the
-      // standard technical-drawing convention for depicting rotation in a
-      // side profile that can't literally show blades turning.
-      var spinSpeed = (1.2 + frac * 14) * dt;
-      compSpinOffset = (compSpinOffset + spinSpeed) % 1000;
-      turbSpinOffset = (turbSpinOffset + spinSpeed * 1.15) % 1000;
-      spinPatternCool.setAttribute('patternTransform', 'translate(' + compSpinOffset + ',0) rotate(45)');
-      spinPatternHot.setAttribute('patternTransform', 'translate(' + turbSpinOffset + ',0) rotate(45)');
-
       // Combustor glow intensity scales with fuel flow
       var fuelFrac = Math.min(1, fuelFlow / 5);
-      combustorIntensity.style.opacity = String(0.35 + fuelFrac * 0.65);
-      combustorIntensity.setAttribute('transform', 'translate(540,210) scale(' + (0.75 + fuelFrac * 0.45) + ')');
+      combustorIntensity.style.opacity = String(0.25 + fuelFrac * 0.65);
+      combustorIntensity.setAttribute('transform', 'translate(452,195) scale(' + (0.7 + fuelFrac * 0.5) + ')');
 
       // Exhaust jet scales with thrust
       var thrustFrac = Math.min(1, thrust / 15);
       jet.style.opacity = String(0.15 + thrustFrac * 0.85);
       jet.style.transform = 'scaleX(' + (0.3 + thrustFrac * 1.3) + ')';
 
-      // Airflow particle speed scales with RPM
-      var speed = (2 + frac * 14) * dt;
+      // Airflow particle speed scales with RPM; color shifts cool → hot →
+      // exhaust along the flow path (compressor exit ~x330, turbine ~x580).
+      var speed = (1.5 + frac * 11) * dt;
       particles.forEach(function (p) {
         p.x += speed;
         if (p.x > PATH_END) p.x = PATH_START + (p.x - PATH_END);
         p.el.setAttribute('cx', p.x.toFixed(1));
-        var color = p.x < 430 ? '#6fb7e8' : (p.x < 860 ? '#ff8a4d' : '#ffb98a');
+        var color = p.x < 330 ? '#6fb7e8' : (p.x < 580 ? '#ff8a4d' : '#ffb98a');
         p.el.setAttribute('fill', color);
       });
 
