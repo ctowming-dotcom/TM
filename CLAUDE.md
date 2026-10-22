@@ -611,9 +611,7 @@ automatically or by hand:
   `fire-panel-overview.jpg` (the 20VU fire panel, its overhead-panel
   location, and the 115VU engine master/mode panel) and
   `fdu-dual-loop.jpg` (the APU's Loop A/Loop B dual-loop circuit into
-  its FDU). No edit mode — nothing here is user-editable content, same
-  reasoning as the Turbofan Engine's shaft-arrangement panel and the
-  Starting System.
+  its FDU).
   - **Hover markers + reference lists**: both images get the same
     image-plus-overlay treatment as Air System/APU System —
     `PANEL_MARKERS` (17 points: each engine's FIRE pushbutton/Agent 1/
@@ -625,6 +623,44 @@ automatically or by hand:
     implementation across both images (a single shared `.fs-tooltip`
     element appended once in `mount()`, not per-image, since only one
     marker can be hovered at a time).
+  - **Edit mode** (added by follow-up request — "allow me to edit the
+    size and location of the circle in edit mode for fire protection"
+    — reversing the tool's original "no edit mode, nothing here is
+    user-editable" stance): a password-gated "✎ Edit" button (password
+    `APP`, same casual click-guard as every other tool's edit mode) in
+    a `.fs-toolbar` next to the title. Unlocked, every `PANEL_MARKERS`/
+    `LOOP_MARKERS` circle becomes draggable from its body (to
+    reposition `xPct`/`yPct`) and gets a small white corner resize
+    handle (`.fs-marker-resize`, same drag-to-resize mechanics as APU
+    System/Virtual Lab — radius from the handle's distance to the
+    marker's own center, converted to a % of image width, with
+    `evt.stopPropagation()`/an `evt.target === resizeHandle` check on
+    the body's own drag handler so the two drags never fight). Marker
+    size (`rPct`, default 2.2 for every marker — close to the previous
+    fixed 22px at this image's ~1024px width) uses the same `aspect-
+    ratio: 1/1` convention as APU/Virtual Lab rather than a hardcoded
+    pixel size, so it can shrink/grow in edit mode. Edits persist to
+    `localStorage` (`tm.fireSystem.panelMarkers`/`loopMarkers`, one
+    `{xPct, yPct, rPct}` per marker id, restored over the hardcoded
+    defaults on mount) and a floating Copy-changes panel shows live,
+    paste-ready position/size data for both marker sets — same
+    one-browser-only caveat as every other tool's copy of this pattern.
+  - **"Try It" buttons stay in sync with the reference markers**: the
+    `BUTTONS` config (used by the "Try It" panel below, see its own
+    entry further down) no longer duplicates its own `xPct`/`yPct` —
+    it looks up each button's position from the matching
+    `PANEL_MARKERS[id]` entry at render time, and `refreshButtonPositions()`
+    re-reads that position after every marker drag. So dragging, say,
+    the `eng1-fire-pb` circle in the first "Fire Panel & Cockpit
+    Location" panel immediately moves the corresponding FIRE switch
+    button in "Try It" to match, with no page reload — keeping "Try
+    It" an accurate copy of wherever the reference panel says the real
+    control sits, rather than a second, independently-editable set of
+    positions that could drift out of sync. Button *size* is not
+    affected by a marker's `rPct` — it stays fixed per button type
+    (fire switches bigger than test/agent buttons), since that size
+    difference encodes what kind of control it is, not a per-instance
+    style choice.
   - **Main Engine vs. APU comparison**: a plain `<table>` built from
     `COMPARISON` (Location of Bottle, Extinguishing Method, Warning
     Signal, Number of Bottles — each row's answer taken directly from

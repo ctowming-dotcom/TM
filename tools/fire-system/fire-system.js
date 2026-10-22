@@ -5,99 +5,105 @@
   // 20VU fire panel + cockpit location + 115VU engine mode panel) and
   // fdu-dual-loop.jpg (the APU's Loop A / Loop B dual-loop detection
   // circuit) — with hover markers overlaid at percentage positions,
-  // same image-plus-overlay pattern as Air System/APU System. No edit
-  // mode: nothing here is user-editable content, same reasoning as the
-  // Turbofan Engine's shaft-arrangement panel.
+  // same image-plus-overlay pattern as Air System/APU System.
+  //
+  // rPct is each marker's diameter as a % of the image's displayed
+  // width (CSS aspect-ratio: 1/1 keeps it a true circle regardless of
+  // the image's own aspect ratio) — same convention as APU System/
+  // Virtual Lab. Both xPct/yPct and rPct are editable in edit mode
+  // (password-gated "✎ Edit", same password as the other tools) by
+  // request ("allow me to edit the size and location of the circle in
+  // edit mode for fire protection").
   var PANEL_MARKERS = {
     'eng1-fire-pb': {
-      name: 'ENG 1 FIRE Pushbutton', xPct: 19.9, yPct: 16.1,
+      name: 'ENG 1 FIRE Pushbutton', xPct: 19.9, yPct: 16.1, rPct: 2.2,
       desc: 'The guarded red pushbutton for engine 1. Pushing it arms the fire extinguishing system and automatically cuts off fuel, hydraulic, bleed air, and electrical supplies to that engine.',
     },
     'agent1-eng1': {
-      name: 'ENG 1 — AGENT 1 (Squib/Disch)', xPct: 8.7, yPct: 13.6,
+      name: 'ENG 1 — AGENT 1 (Squib/Disch)', xPct: 8.7, yPct: 13.6, rPct: 2.2,
       desc: 'Fires the first extinguisher bottle into the engine 1 nacelle. Pressed after the ENG FIRE pushbutton, once the fire warning has had time to clear on its own.',
     },
     'agent2-eng1': {
-      name: 'ENG 1 — AGENT 2 (Squib/Disch)', xPct: 30.7, yPct: 11.9,
+      name: 'ENG 1 — AGENT 2 (Squib/Disch)', xPct: 30.7, yPct: 11.9, rPct: 2.2,
       desc: 'Fires the second, backup extinguisher bottle into the engine 1 nacelle, if the fire warning persists after Agent 1 has been discharged.',
     },
     'test-eng1': {
-      name: 'ENG 1 — TEST', xPct: 8.7, yPct: 19.5,
+      name: 'ENG 1 — TEST', xPct: 8.7, yPct: 19.5, rPct: 2.2,
       desc: 'Checks the engine 1 fire detection and warning circuit without an actual fire present.',
     },
     'apu-fire-pb': {
-      name: 'APU FIRE Pushbutton', xPct: 41.5, yPct: 12.4,
+      name: 'APU FIRE Pushbutton', xPct: 41.5, yPct: 12.4, rPct: 2.2,
       desc: 'The guarded red pushbutton for the APU. Pushing it arms the APU fire extinguishing system and shuts down the APU’s fuel and electrical supplies.',
     },
     'apu-agent': {
-      name: 'APU — AGENT (Squib/Disch)', xPct: 36.6, yPct: 23.4,
+      name: 'APU — AGENT (Squib/Disch)', xPct: 36.6, yPct: 23.4, rPct: 2.2,
       desc: 'Fires the APU’s single extinguisher bottle. The APU only carries one bottle (unlike each main engine’s two), since it has no second engine nearby still needing thrust and is usually shut down entirely once a fire is confirmed.',
     },
     'apu-test': {
-      name: 'APU — TEST', xPct: 47.2, yPct: 19.5,
+      name: 'APU — TEST', xPct: 47.2, yPct: 19.5, rPct: 2.2,
       desc: 'Checks the APU fire detection and warning circuit without an actual fire present.',
     },
     'agent1-eng2': {
-      name: 'ENG 2 — AGENT 1 (Squib/Disch)', xPct: 53.1, yPct: 13.6,
+      name: 'ENG 2 — AGENT 1 (Squib/Disch)', xPct: 53.1, yPct: 13.6, rPct: 2.2,
       desc: 'Fires the first extinguisher bottle into the engine 2 nacelle. Pressed after the ENG FIRE pushbutton, once the fire warning has had time to clear on its own.',
     },
     'eng2-fire-pb': {
-      name: 'ENG 2 FIRE Pushbutton', xPct: 64.2, yPct: 16.1,
+      name: 'ENG 2 FIRE Pushbutton', xPct: 64.2, yPct: 16.1, rPct: 2.2,
       desc: 'The guarded red pushbutton for engine 2. Pushing it arms the fire extinguishing system and automatically cuts off fuel, hydraulic, bleed air, and electrical supplies to that engine.',
     },
     'agent2-eng2': {
-      name: 'ENG 2 — AGENT 2 (Squib/Disch)', xPct: 75.1, yPct: 13.6,
+      name: 'ENG 2 — AGENT 2 (Squib/Disch)', xPct: 75.1, yPct: 13.6, rPct: 2.2,
       desc: 'Fires the second, backup extinguisher bottle into the engine 2 nacelle, if the fire warning persists after Agent 1 has been discharged.',
     },
     'test-eng2': {
-      name: 'ENG 2 — TEST', xPct: 75.1, yPct: 19.5,
+      name: 'ENG 2 — TEST', xPct: 75.1, yPct: 19.5, rPct: 2.2,
       desc: 'Checks the engine 2 fire detection and warning circuit without an actual fire present.',
     },
     'overhead-location': {
-      name: 'Fire Panel Location — Overhead Panel', xPct: 51.3, yPct: 34.8,
+      name: 'Fire Panel Location — Overhead Panel', xPct: 51.3, yPct: 34.8, rPct: 2.2,
       desc: 'This whole fire panel (labelled 20VU) is physically mounted on the cockpit’s overhead panel, within easy reach of both pilots.',
     },
     'pedestal-location': {
-      name: 'Engine Mode Panel Location — Pedestal', xPct: 51.1, yPct: 73.9,
+      name: 'Engine Mode Panel Location — Pedestal', xPct: 51.1, yPct: 73.9, rPct: 2.2,
       desc: 'The engine master switches and MODE selector (labelled 115VU) sit on the center pedestal between the two pilots, next to the thrust levers.',
     },
     'eng1-master': {
-      name: 'ENG 1 Master Switch', xPct: 78.6, yPct: 71.7,
+      name: 'ENG 1 Master Switch', xPct: 78.6, yPct: 71.7, rPct: 2.2,
       desc: 'ON starts/keeps engine 1 running; OFF shuts off its fuel supply. Used in the shutdown step before pushing the ENG FIRE pushbutton.',
     },
     'eng2-master': {
-      name: 'ENG 2 Master Switch', xPct: 90.8, yPct: 71.7,
+      name: 'ENG 2 Master Switch', xPct: 90.8, yPct: 71.7, rPct: 2.2,
       desc: 'ON starts/keeps engine 2 running; OFF shuts off its fuel supply. Used in the shutdown step before pushing the ENG FIRE pushbutton.',
     },
     'mode-selector': {
-      name: 'MODE Selector (CRANK / NORM / IGN START)', xPct: 84.5, yPct: 82.9,
+      name: 'MODE Selector (CRANK / NORM / IGN START)', xPct: 84.5, yPct: 82.9, rPct: 2.2,
       desc: 'Selects the engine start mode — CRANK (dry-motor the engine with no fuel/ignition), NORM (normal automatic start), or IGN START (manual ignition override). Not part of the fire logic itself, but shares the same 115VU panel.',
     },
     'eng1-fire-fault': {
-      name: 'ENG 1 FIRE/FAULT Light', xPct: 77.1, yPct: 87.3,
+      name: 'ENG 1 FIRE/FAULT Light', xPct: 77.1, yPct: 87.3, rPct: 2.2,
       desc: 'Illuminates red (FIRE) or amber (FAULT) to repeat the engine 1 fire/fault state on the pedestal panel, next to the master switch the pilot is about to use.',
     },
     'eng2-fire-fault': {
-      name: 'ENG 2 FIRE/FAULT Light', xPct: 92.3, yPct: 87.3,
+      name: 'ENG 2 FIRE/FAULT Light', xPct: 92.3, yPct: 87.3, rPct: 2.2,
       desc: 'Illuminates red (FIRE) or amber (FAULT) to repeat the engine 2 fire/fault state on the pedestal panel, next to the master switch the pilot is about to use.',
     },
   };
 
   var LOOP_MARKERS = {
     'loop-a': {
-      name: 'Loop A', xPct: 42, yPct: 62,
+      name: 'Loop A', xPct: 42, yPct: 62, rPct: 2.2,
       desc: 'One of two identical fire-sensing loops routed around the nacelle. Loop A and Loop B are electrically independent and run in parallel, not in series — so damage to one loop’s wiring doesn’t take out fire detection entirely.',
     },
     'loop-b': {
-      name: 'Loop B', xPct: 42, yPct: 69,
+      name: 'Loop B', xPct: 42, yPct: 69, rPct: 2.2,
       desc: 'The second of the two identical, parallel fire-sensing loops. Having two independent loops means the FDU can cross-check them: agreement between both gives a confident fire signal, while a mismatch points to a fault in one loop rather than a real fire.',
     },
     'sensing-element': {
-      name: 'Fire-Sensing Element', xPct: 36.6, yPct: 58.1,
+      name: 'Fire-Sensing Element', xPct: 36.6, yPct: 58.1, rPct: 2.2,
       desc: 'A continuous heat-sensitive element running the length of each loop. Its electrical properties change when it detects an overheat/fire condition, which is what the FDU actually measures.',
     },
     'fdu-box': {
-      name: 'Fire Detection Unit (FDU)', xPct: 77.6, yPct: 68.4,
+      name: 'Fire Detection Unit (FDU)', xPct: 77.6, yPct: 68.4, rPct: 2.2,
       desc: 'Continuously monitors both loops’ signals. If both loops agree a fire condition is present, it raises a Fire signal; if a loop’s own reading looks abnormal (e.g. open/shorted wiring) rather than a genuine fire, it raises a Fault signal instead. One FDU per engine/APU, each wired to that engine’s own Loop A/Loop B.',
     },
   };
@@ -151,24 +157,26 @@
     },
   ];
 
-  // Interactive fire-panel buttons: same positions as the matching
-  // PANEL_MARKERS entries above (so they sit exactly where the real
-  // buttons are on the overhead panel), but rendered as clickable
-  // <button> elements with state-driven feedback instead of hover-only
-  // info markers — added by request ("I want students to press 'button'
-  // and see what will happen").
+  // Interactive fire-panel buttons: positioned from the matching
+  // PANEL_MARKERS entry's own xPct/yPct (looked up live, not duplicated
+  // here) so they always sit exactly where the real control is on the
+  // overhead panel — including after a PANEL_MARKERS circle is dragged
+  // in edit mode, so "Try It" stays in sync with the reference panel
+  // above it. Button *size* stays fixed per type (fire switches bigger
+  // than test/agent buttons, encoding what kind of control it is) rather
+  // than following the marker's own editable rPct.
   var BUTTONS = {
-    'eng1-fire-pb': { type: 'fire', unit: 'eng1', xPct: 19.9, yPct: 16.1 },
-    'eng2-fire-pb': { type: 'fire', unit: 'eng2', xPct: 64.2, yPct: 16.1 },
-    'apu-fire-pb': { type: 'fire', unit: 'apu', xPct: 41.5, yPct: 12.4 },
-    'test-eng1': { type: 'test', unit: 'eng1', xPct: 8.7, yPct: 19.5 },
-    'test-eng2': { type: 'test', unit: 'eng2', xPct: 75.1, yPct: 19.5 },
-    'apu-test': { type: 'test', unit: 'apu', xPct: 47.2, yPct: 19.5 },
-    'agent1-eng1': { type: 'agent', unit: 'eng1', agent: 1, xPct: 8.7, yPct: 13.6 },
-    'agent2-eng1': { type: 'agent', unit: 'eng1', agent: 2, xPct: 30.7, yPct: 11.9 },
-    'agent1-eng2': { type: 'agent', unit: 'eng2', agent: 1, xPct: 53.1, yPct: 13.6 },
-    'agent2-eng2': { type: 'agent', unit: 'eng2', agent: 2, xPct: 75.1, yPct: 13.6 },
-    'apu-agent': { type: 'agent', unit: 'apu', agent: 1, xPct: 36.6, yPct: 23.4 },
+    'eng1-fire-pb': { type: 'fire', unit: 'eng1' },
+    'eng2-fire-pb': { type: 'fire', unit: 'eng2' },
+    'apu-fire-pb': { type: 'fire', unit: 'apu' },
+    'test-eng1': { type: 'test', unit: 'eng1' },
+    'test-eng2': { type: 'test', unit: 'eng2' },
+    'apu-test': { type: 'test', unit: 'apu' },
+    'agent1-eng1': { type: 'agent', unit: 'eng1', agent: 1 },
+    'agent2-eng1': { type: 'agent', unit: 'eng1', agent: 2 },
+    'agent1-eng2': { type: 'agent', unit: 'eng2', agent: 1 },
+    'agent2-eng2': { type: 'agent', unit: 'eng2', agent: 2 },
+    'apu-agent': { type: 'agent', unit: 'apu', agent: 1 },
   };
   var UNITS = ['eng1', 'eng2', 'apu'];
   var UNIT_LABEL = { eng1: 'ENG 1', eng2: 'ENG 2', apu: 'APU' };
@@ -183,10 +191,39 @@
       var b = BUTTONS[id];
       var info = PANEL_MARKERS[id];
       return '<button type="button" class="fs-btn fs-btn-' + b.type + '" data-btn="' + id +
-        '" style="left:' + b.xPct + '%; top:' + b.yPct + '%;" aria-label="' +
-        TM.escapeHtml(info ? info.name : id) + '"></button>';
+        '" style="left:' + info.xPct + '%; top:' + info.yPct + '%;" aria-label="' +
+        TM.escapeHtml(info.name) + '"></button>';
     }).join('');
   }
+
+  var EDIT_PASSWORD = 'APP';
+  var STORAGE_KEY_PANEL_MARKERS = 'tm.fireSystem.panelMarkers';
+  var STORAGE_KEY_LOOP_MARKERS = 'tm.fireSystem.loopMarkers';
+
+  function restoreMarkerPositions(key, markers) {
+    try {
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!saved || typeof saved !== 'object') return;
+      Object.keys(markers).forEach(function (id) {
+        var s = saved[id];
+        if (!s) return;
+        if (typeof s.xPct === 'number') markers[id].xPct = s.xPct;
+        if (typeof s.yPct === 'number') markers[id].yPct = s.yPct;
+        if (typeof s.rPct === 'number') markers[id].rPct = s.rPct;
+      });
+    } catch (e) { /* corrupt/blocked storage — keep defaults */ }
+  }
+  function persistMarkerPositions(key, markers) {
+    var out = {};
+    Object.keys(markers).forEach(function (id) {
+      out[id] = { xPct: markers[id].xPct, yPct: markers[id].yPct, rPct: markers[id].rPct };
+    });
+    try { window.localStorage.setItem(key, JSON.stringify(out)); } catch (e) { /* storage full/blocked */ }
+  }
+  restoreMarkerPositions(STORAGE_KEY_PANEL_MARKERS, PANEL_MARKERS);
+  restoreMarkerPositions(STORAGE_KEY_LOOP_MARKERS, LOOP_MARKERS);
 
   function unitBadgesHtml() {
     return UNITS.map(function (u) {
@@ -202,7 +239,9 @@
   function markerHtml(layerClass, markers) {
     return Object.keys(markers).map(function (id) {
       var m = markers[id];
-      return '<span class="fs-marker" data-marker="' + id + '" style="left:' + m.xPct + '%; top:' + m.yPct + '%;"></span>';
+      return '<span class="fs-marker" data-marker="' + id + '" style="left:' + m.xPct + '%; top:' + m.yPct + '%; width:' + m.rPct + '%;">' +
+        '<span class="fs-marker-resize"></span>' +
+        '</span>';
     }).join('');
   }
   function listHtml(markers) {
@@ -218,9 +257,14 @@
   function mount(container) {
     container.innerHTML =
       '<div class="fs-diagram">' +
+      '<div class="fs-toolbar">' +
+      '<div>' +
       '<p class="kicker">Official (Open)</p>' +
       '<h1>Engine Fire Protection System</h1>' +
-      '<p class="fs-sub">Hover any marker for its function. Based on the supplied fire panel and dual-loop detection reference.</p>' +
+      '<p class="fs-sub">Hover any marker for its function. In edit mode: drag a marker to move it, or its corner handle to resize it. Based on the supplied fire panel and dual-loop detection reference.</p>' +
+      '</div>' +
+      '<button type="button" class="fs-edit-btn" title="Edit markers">✎ Edit</button>' +
+      '</div>' +
 
       '<div class="fs-panel">' +
       '<h2 class="fs-section-title">Fire Panel &amp; Cockpit Location</h2>' +
@@ -281,9 +325,23 @@
       '</ol>' +
       '</div>' +
 
+      '<div class="fs-edit-panel" hidden>' +
+      '<p>Drag a marker to move it, or its corner handle to resize it. When done:</p>' +
+      '<button type="button" class="fs-edit-copy">Copy changes</button>' +
+      '<textarea readonly></textarea>' +
+      '</div>' +
+
       '</div>';
 
     var root = container.querySelector('.fs-diagram');
+    var imageWraps = root.querySelectorAll('.fs-image-wrap');
+    var panelImageWrap = imageWraps[0];
+    var loopImageWrap = imageWraps[1];
+    var editBtn = root.querySelector('.fs-edit-btn');
+    var editPanel = root.querySelector('.fs-edit-panel');
+    var editPanelText = editPanel.querySelector('textarea');
+    var editCopyBtn = editPanel.querySelector('.fs-edit-copy');
+    var editUnlocked = false;
     var tooltip = document.createElement('div');
     tooltip.className = 'fs-tooltip';
     tooltip.innerHTML = '<span class="t-title"></span><span class="t-desc"></span>';
@@ -316,13 +374,95 @@
       });
     }
 
-    function wireMarkers(wrap, markers) {
+    // Buttons in the "Try It" panel read their position from
+    // PANEL_MARKERS live, so a dragged marker keeps that panel in sync.
+    function refreshButtonPositions() {
+      Object.keys(BUTTONS).forEach(function (id) {
+        var btn = root.querySelector('[data-btn="' + id + '"]');
+        var info = PANEL_MARKERS[id];
+        if (!btn || !info) return;
+        btn.style.left = info.xPct + '%';
+        btn.style.top = info.yPct + '%';
+      });
+    }
+
+    function formatMarkers(varName, markers) {
+      var lines = Object.keys(markers).map(function (id) {
+        var m = markers[id];
+        return '    "' + id + '": { xPct: ' + (Math.round(m.xPct * 10) / 10) + ', yPct: ' + (Math.round(m.yPct * 10) / 10) + ', rPct: ' + (Math.round(m.rPct * 10) / 10) + ' },';
+      });
+      return '  // ' + varName + ' positions/sizes:\n' + lines.join('\n');
+    }
+    function updateEditPanel() {
+      if (!editUnlocked) return;
+      editPanelText.value =
+        formatMarkers('PANEL_MARKERS', PANEL_MARKERS) + '\n\n' +
+        formatMarkers('LOOP_MARKERS', LOOP_MARKERS);
+      persistMarkerPositions(STORAGE_KEY_PANEL_MARKERS, PANEL_MARKERS);
+      persistMarkerPositions(STORAGE_KEY_LOOP_MARKERS, LOOP_MARKERS);
+    }
+
+    function wireMarkers(wrap, imageWrap, markers) {
       wrap.querySelectorAll('.fs-marker').forEach(function (el) {
         var id = el.getAttribute('data-marker');
         var m = markers[id];
-        el.addEventListener('mouseenter', function (e) { showTip(e, m); setActive(id, true); });
+        var resizeHandle = el.querySelector('.fs-marker-resize');
+
+        el.addEventListener('mouseenter', function (e) { if (!editUnlocked) showTip(e, m); setActive(id, true); });
         el.addEventListener('mousemove', positionTip);
         el.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
+
+        el.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked || evt.target === resizeHandle) return;
+          evt.preventDefault();
+          el.setPointerCapture(evt.pointerId);
+          el.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var x = Math.max(0, Math.min(100, ((moveEvt.clientX - rect.left) / rect.width) * 100));
+            var y = Math.max(0, Math.min(100, ((moveEvt.clientY - rect.top) / rect.height) * 100));
+            m.xPct = x;
+            m.yPct = y;
+            el.style.left = x + '%';
+            el.style.top = y + '%';
+            refreshButtonPositions();
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            el.classList.remove('dragging');
+            el.releasePointerCapture(upEvt.pointerId);
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onUp);
+          }
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerup', onUp);
+        });
+
+        resizeHandle.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          evt.stopPropagation();
+          resizeHandle.setPointerCapture(evt.pointerId);
+          resizeHandle.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var cx = rect.left + (m.xPct / 100) * rect.width;
+            var cy = rect.top + (m.yPct / 100) * rect.height;
+            var dx = moveEvt.clientX - cx, dy = moveEvt.clientY - cy;
+            var distPx = Math.sqrt(dx * dx + dy * dy);
+            m.rPct = Math.max(1, Math.min(10, (distPx / rect.width) * 100));
+            el.style.width = m.rPct + '%';
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            resizeHandle.classList.remove('dragging');
+            resizeHandle.releasePointerCapture(upEvt.pointerId);
+            resizeHandle.removeEventListener('pointermove', onMove);
+            resizeHandle.removeEventListener('pointerup', onUp);
+          }
+          resizeHandle.addEventListener('pointermove', onMove);
+          resizeHandle.addEventListener('pointerup', onUp);
+        });
       });
     }
     function wireList(markers) {
@@ -335,12 +475,42 @@
         li.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
       });
     }
-    root.querySelectorAll('.fs-markers').forEach(function (wrap, i) {
+    root.querySelectorAll('.fs-markers').forEach(function (wrap) {
       if (wrap.classList.contains('fs-sim-markers')) return;
-      wireMarkers(wrap, i === 0 ? PANEL_MARKERS : LOOP_MARKERS);
+      var isPanel = wrap.parentElement === panelImageWrap;
+      wireMarkers(wrap, isPanel ? panelImageWrap : loopImageWrap, isPanel ? PANEL_MARKERS : LOOP_MARKERS);
     });
     wireList(PANEL_MARKERS);
     wireList(LOOP_MARKERS);
+
+    editBtn.addEventListener('click', function () {
+      if (editUnlocked) {
+        editUnlocked = false;
+        editBtn.textContent = '✎ Edit';
+        editBtn.classList.remove('active');
+        editPanel.hidden = true;
+        root.classList.remove('fs-edit');
+        return;
+      }
+      var pw = window.prompt('Enter the edit password:');
+      if (pw === null) return;
+      if (pw === EDIT_PASSWORD) {
+        editUnlocked = true;
+        editBtn.textContent = '✓ Editing (click to stop)';
+        editBtn.classList.add('active');
+        editPanel.hidden = false;
+        root.classList.add('fs-edit');
+        updateEditPanel();
+      } else {
+        window.alert('Incorrect password.');
+      }
+    });
+
+    editCopyBtn.addEventListener('click', function () {
+      editPanelText.focus();
+      editPanelText.select();
+      try { document.execCommand('copy'); } catch (e) { /* text stays selected for manual copy */ }
+    });
 
     // --- interactive fire-panel buttons ---
     var state = {
