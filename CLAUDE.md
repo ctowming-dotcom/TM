@@ -61,74 +61,78 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   portal's Bright Lab palette) since their colors are semantic — e.g. green
   = open/flowing, red = closed or a return line, amber = active selection.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
-  reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`
-  — a user-supplied centrifugal-compressor turbojet diagram, cropped to
-  drop its baked-in T1–T5 label strip, then further cleaned to remove
-  the original's own 5 leader lines and yellow sensor dots. A manual
-  erase-and-flat-recolor pass kept leaving visible patches wherever a
-  line crossed real artwork (edges, the duct's dot pattern, highlight
-  curves), so the final cleanup used OpenCV inpainting instead
-  (`cv2.inpaint`, `INPAINT_TELEA`): a mask of just the line paths and dot
-  circles (coordinates found by pixel column/row scans, not eyeballed)
-  lets the algorithm reconstruct the engine art underneath rather than
-  trying to hand-pick replacement colors per spot. `engine-diagram.png`
-  is the finished asset — there's no separate script checked in to
-  regenerate it) with a throttle slider driving RPM, and animation
+  reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`,
+  1229×684 — a second user-supplied centrifugal-compressor turbojet
+  diagram, replacing an earlier one; its 4 station labels, "Inlet"/
+  "P1/T1"/"P2/T2"/"P3/T3"/"P4/T4", are baked into the art and kept as-is,
+  unlike the first image's leader-lines-and-dots strip, which needed
+  OpenCV-inpainting cleanup — see git history for that approach if a
+  future replacement image needs it again) with a throttle slider driving
+  RPM, and animation
   overlaid on top of the picture rather than drawn into it: an SVG layer
-  (`viewBox` matched to the image's pixel size) holds airflow arrows that
-  travel two mirrored routes (upper traced over the picture's own gas
-  path — straight through the intake, up through the centrifugal
-  compressor to its diffuser exit, down the short elbow into the turbine
-  inlet, then rearward through the annular passage around the nozzle
-  centerbody, converging back to the shaft centerline at the
+  (`viewBox="0 0 1229 684"`, i.e. `IMG_W`×`IMG_H`, matched to the image's
+  actual pixel size — update these constants together with all waypoint/
+  marker/glow coordinates if the reference image is ever swapped again,
+  since every position in this tool is pixel- or percentage-anchored to
+  this specific picture) holds airflow arrows that travel two mirrored
+  routes (upper traced over the picture's own gas path — straight
+  through the intake, up through the centrifugal compressor to its
+  diffuser exit, down the short elbow into the turbine inlet, then
+  rearward through the annular passage around the nozzle centerbody,
+  converging back to the shaft centerline (`CENTER_Y`) at the
   centerbody's tip; lower is the same route mirrored about the
-  centerline). The route is stored as a handful of waypoints
-  (`UPPER_WAYPOINTS`) rather than a fixed path string, smoothed into a
-  curve with a Catmull-Rom-to-Bezier conversion (`pathFromPoints`) so it
-  can be reshaped in edit mode (see below) without separate bezier-handle
-  bookkeeping. Each arrow is an SVG `<path>` positioned and rotated every
-  frame via `getPointAtLength`/tangent-angle sampling on a corresponding
-  invisible guide `<path>` (one upper, one mirrored lower,
-  `fill/stroke: none`, queried only for its geometry, rebuilt whenever a
-  waypoint moves); speed scales with RPM and color shifts cool→hot→
-  exhaust by fraction of path length travelled. Two independent pulsing
-  combustor glows (`GLOWS`, one per duct, both scale with fuel flow) sit
-  over the top and bottom red ducts; an exhaust jet gradient scales with
-  thrust. The image can't show literal blade rotation (no shapes to
-  animate in a raster picture), so that part of the previous animated-
-  SVG version was dropped — rotation reads only through the flow/glow/
-  jet. 5 percentage-positioned hover markers (`PARTS`, holding position
-  plus the tooltip name/desc together) sit exactly on the image's own
-  yellow dots (inlet / compressor exit / combustor / turbine / exhaust)
-  for tooltips, the same marker-overlay pattern as the Air System tool.
+  centerline). The route is stored as waypoints (`UPPER_WAYPOINTS`, 11 of
+  them — more than the minimum needed, by request, for finer drag
+  control over the route's shape) rather than a fixed path string,
+  smoothed into a curve with a Catmull-Rom-to-Bezier conversion
+  (`pathFromPoints`) so it can be reshaped in edit mode (see below)
+  without separate bezier-handle bookkeeping. Each arrow is an SVG
+  `<path>` positioned and rotated every frame via `getPointAtLength`/
+  tangent-angle sampling on a corresponding invisible guide `<path>` (one
+  upper, one mirrored lower, `fill/stroke: none`, queried only for its
+  geometry, rebuilt whenever a waypoint moves); speed scales with RPM and
+  color shifts cool→hot→exhaust by fraction of path length travelled.
+  Two independent pulsing combustor glows (`GLOWS`, one per duct, both
+  scale with fuel flow) sit over the top and bottom red ducts; an exhaust
+  jet gradient scales with thrust. The image can't show literal blade
+  rotation (no shapes to animate in a raster picture), so that part of
+  the original animated-SVG version (before either reference image) was
+  dropped — rotation reads only through the flow/glow/jet. 5 percentage-
+  positioned hover markers (`PARTS`, holding position plus the tooltip
+  name/desc together) sit over the image at the inlet / compressor exit
+  / combustor / turbine / exhaust stations for tooltips, the same
+  marker-overlay pattern as the Air System tool; a list below the
+  diagram shows the same 5 parts' name/description permanently (not
+  edit-gated — added by request so the explanations are visible without
+  unlocking edit mode), each entry also hoverable for the same tooltip.
 
   Has the same password-gated "✎ Edit" button as Air System (password
   `APP`, casual click-guard only). Unlocked, it adds: the 5 part markers
-  become draggable and their name/description become retypable
-  (`contenteditable`, in a list shown below the diagram only while
-  editing); the flow route's waypoints become draggable diamond handles
-  (dragging one rebuilds both the upper path and its auto-mirrored lower
-  counterpart); the 2 combustor glow centers become draggable dashed-
-  circle handles. Waypoint/glow handles are plain SVG shapes positioned
-  by converting pointer coordinates through the overlay `<svg>`'s own
-  `getScreenCTM()` rather than by percentage math, since they live in the
-  SVG's pixel space, not the HTML marker layer. Because a waypoint or
-  glow handle can land exactly on top of a part marker (the compressor
-  exit waypoint does, by design), the overlay `<svg>` is pointer-events:
-  none by default with only `.vlab-waypoint-handle`/`.vlab-glow-handle`
-  opted back in, and edit mode raises the whole overlay's z-index above
-  the marker layer — otherwise the marker (on top in DOM order) always
-  wins the drag and the handle underneath becomes unreachable. A
-  floating panel (like Air System's) shows the live, paste-ready
-  `PARTS`/`UPPER_WAYPOINTS`/`GLOWS` source to copy back into the file.
+  become draggable and their name/description (in that same always-shown
+  list) become retypable (`contenteditable`); the flow route's waypoints
+  become draggable diamond handles (dragging one rebuilds both the upper
+  path and its auto-mirrored lower counterpart); the 2 combustor glow
+  centers become draggable dashed-circle handles. Waypoint/glow handles
+  are plain SVG shapes positioned by converting pointer coordinates
+  through the overlay `<svg>`'s own `getScreenCTM()` rather than by
+  percentage math, since they live in the SVG's pixel space, not the
+  HTML marker layer. Because a waypoint or glow handle can land exactly
+  on top of a part marker (the compressor exit waypoint does, by
+  design), the overlay `<svg>` is pointer-events: none by default with
+  only `.vlab-waypoint-handle`/`.vlab-glow-handle` opted back in, and
+  edit mode raises the whole overlay's z-index above the marker layer —
+  otherwise the marker (on top in DOM order) always wins the drag and
+  the handle underneath becomes unreachable. A floating panel (like Air
+  System's) shows the live, paste-ready `PARTS`/`UPPER_WAYPOINTS`/
+  `GLOWS` source to copy back into the file.
   Panel widened to `max-width: 1500px` and all text sized up (headings,
   tile labels/values, tooltip, controls) for legibility at that width.
   Live readouts for RPM, thrust, T1–T4/P1–P4 per stage, fuel flow, and
   Compressor Pressure Ratio (CPR = P2/P1, unchanged by unit mode since
-  it's a ratio) — only 4 of the image's 5 dots carry live data (the 5th,
-  "turbine", is tooltip-only) since the underlying real dataset has only
-  4 measured stations; a 5th number was never fabricated to fill it. A
-  Mode 1/Mode 2 toggle switches every readout's units: Mode 1 is as-logged
+  it's a ratio) — only 4 of the 5 PARTS carry a live tile (the 5th,
+  "turbine", is tooltip/list-only) since the underlying real dataset has
+  only 4 measured stations; a 5th number was never fabricated to fill it.
+  A Mode 1/Mode 2 toggle switches every readout's units: Mode 1 is as-logged
   (PSIG, °C, Gal/hr, lbf — the default), Mode 2 is SI (Pa, K, L/hr, thrust
   shown as both N and kgf). Hover a stage or the CPR tile for its
   purpose/explanation (text sourced from the supplied lab answer key,

@@ -60,12 +60,14 @@
   // Engine parts: position (percentage over the image) plus the name/desc
   // shown in the hover tooltip. Both position and wording are editable in
   // edit mode (see EDIT_PASSWORD below).
+  var IMG_W = 1229, IMG_H = 684, CENTER_Y = 303;
+
   var PARTS = [
-    { comp: 'inlet', xPct: 21.9, yPct: 41.4, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
-    { comp: 'compressor', xPct: 42.4, yPct: 18.0, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
-    { comp: 'combustor', xPct: 53.8, yPct: 23.2, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
-    { comp: 'turbine', xPct: 52.5, yPct: 35.4, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
-    { comp: 'exhaust', xPct: 71.7, yPct: 50.0, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+    { comp: 'inlet', xPct: 23.6, yPct: 44.3, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 43.0, yPct: 7.3, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 48.8, yPct: 21.9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 58.6, yPct: 32.2, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
+    { comp: 'exhaust', xPct: 77.3, yPct: 44.3, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
   ];
   var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
@@ -78,23 +80,24 @@
   // handful of waypoints (not a fixed path string) so the route can be
   // reshaped in edit mode; a smooth curve is rebuilt through them each
   // time one moves. The lower route mirrors the upper one about the
-  // centerline (y=192), matching the engine's own top/bottom symmetry.
+  // centerline (y=303), matching the engine's own top/bottom symmetry.
   var UPPER_WAYPOINTS = [
-    { x: 15, y: 192 }, { x: 174, y: 159 }, { x: 337, y: 69 },
-    { x: 400, y: 95 }, { x: 430, y: 145 }, { x: 569, y: 192 }, { x: 780, y: 192 },
+    { x: 20, y: 303 }, { x: 155, y: 303 }, { x: 290, y: 303 }, { x: 410, y: 180 },
+    { x: 528, y: 50 }, { x: 650, y: 140 }, { x: 720, y: 220 }, { x: 835, y: 265 },
+    { x: 950, y: 303 }, { x: 1080, y: 303 }, { x: 1210, y: 303 },
   ];
 
-  // Two independent combustor glows (pixel coordinates over the 794x384
-  // image), one per duct — draggable in edit mode.
+  // Two independent combustor glows (pixel coordinates over the
+  // 1229x684 image), one per duct — draggable in edit mode.
   var GLOWS = [
-    { x: 420, y: 90 },
-    { x: 420, y: 294 },
+    { x: 650, y: 120 },
+    { x: 650, y: 486 },
   ];
 
   var EDIT_PASSWORD = 'APP';
 
   function mirrorPoints(points) {
-    return points.map(function (p) { return { x: p.x, y: p.y !== 192 ? 384 - p.y : p.y }; });
+    return points.map(function (p) { return { x: p.x, y: p.y !== CENTER_Y ? 2 * CENTER_Y - p.y : p.y }; });
   }
 
   // Smooth curve through an arbitrary list of waypoints (uniform
@@ -135,9 +138,9 @@
   function glowMarkup(idx) {
     return '<g class="vlab-combustor-intensity" data-glow="' + idx + '">' +
       '<g class="vlab-combustor-flicker">' +
-      '<ellipse class="vlab-flame" cx="-16" cy="0" rx="70" ry="60"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="14" cy="-10" rx="52" ry="40"></ellipse>' +
-      '<ellipse class="vlab-flame" cx="18" cy="14" rx="46" ry="36"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="-24" cy="0" rx="105" ry="90"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="21" cy="-15" rx="78" ry="60"></ellipse>' +
+      '<ellipse class="vlab-flame" cx="27" cy="21" rx="69" ry="54"></ellipse>' +
       '</g>' +
       '</g>';
   }
@@ -156,9 +159,9 @@
 
       '<div class="vlab-stage">' +
       '<div class="vlab-image-wrap">' +
-      '<img class="vlab-image" src="tools/virtual-physical-lab/engine-diagram.png" alt="Cutaway diagram of a single-spool turbojet: intake, centrifugal compressor, combustor, turbine and exhaust, with five sensor points marked.">' +
+      '<img class="vlab-image" src="tools/virtual-physical-lab/engine-diagram.png" alt="Cutaway diagram of a single-spool turbojet: intake, centrifugal compressor, combustor, turbine and exhaust, with P1/T1-P4/T4 sensor points marked.">' +
 
-      '<svg class="vlab-overlay" viewBox="0 0 794 384" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<svg class="vlab-overlay" viewBox="0 0 ' + IMG_W + ' ' + IMG_H + '" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">' +
       '<defs>' +
       '<linearGradient id="vlab-jet-grad" x1="0" y1="0" x2="1" y2="0">' +
       '<stop offset="0%" stop-color="#ff7a3d" stop-opacity="0.95"></stop>' +
@@ -177,7 +180,7 @@
       '<path class="vlab-flow-path-lower" fill="none" stroke="none"></path>' +
       '<g class="vlab-flow"></g>' +
 
-      '<path class="vlab-jet" d="M770,165 L770,220 L870,192 Z"></path>' +
+      '<path class="vlab-jet" d="M1190,254 L1190,352 L1290,303 Z"></path>' +
 
       '<g class="vlab-glow-handles"></g>' +
       '<g class="vlab-waypoint-handles"></g>' +
@@ -187,8 +190,8 @@
       '</div>' +
       '</div>' +
 
-      '<div class="vlab-edit-parts" hidden>' +
-      '<p class="vlab-edit-parts-hint">Drag the circular part markers, the diamond flow waypoints, or the square glow handles on the diagram above. Click a name/description below to retype it.</p>' +
+      '<div class="vlab-edit-parts">' +
+      '<p class="vlab-edit-parts-hint">Hover a marker on the diagram, or a name below, for what each part does.</p>' +
       '<ul class="vlab-edit-parts-list"></ul>' +
       '</div>' +
 
@@ -339,6 +342,9 @@
       }).join('');
       editPartsList.querySelectorAll('.vlab-edit-parts-item').forEach(function (li, i) {
         var part = PARTS[i];
+        li.addEventListener('mouseenter', function (e) { if (!editUnlocked) showTip(e, part); });
+        li.addEventListener('mousemove', positionTip);
+        li.addEventListener('mouseleave', hideTip);
         ['name', 'desc'].forEach(function (field) {
           var el = li.querySelector('[data-field="' + field + '"]');
           el.addEventListener('input', function () { part[field] = el.textContent; updateEditPanel(); });
@@ -362,7 +368,7 @@
 
     function renderWaypointHandles() {
       waypointHandleLayer.innerHTML = UPPER_WAYPOINTS.map(function (p, i) {
-        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 6) + '" y="' + (p.y - 6) + '" width="12" height="12" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>';
+        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 9) + '" y="' + (p.y - 9) + '" width="18" height="18" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>';
       }).join('');
       waypointHandleLayer.querySelectorAll('.vlab-waypoint-handle').forEach(function (el) {
         var i = Number(el.getAttribute('data-i'));
@@ -390,7 +396,7 @@
 
     function renderGlowHandles() {
       glowHandleLayer.innerHTML = GLOWS.map(function (g, i) {
-        return '<circle class="vlab-glow-handle" data-i="' + i + '" cx="' + g.x + '" cy="' + g.y + '" r="9"></circle>';
+        return '<circle class="vlab-glow-handle" data-i="' + i + '" cx="' + g.x + '" cy="' + g.y + '" r="14"></circle>';
       }).join('');
       glowHandleLayer.querySelectorAll('.vlab-glow-handle').forEach(function (el) {
         var i = Number(el.getAttribute('data-i'));
@@ -419,8 +425,10 @@
     function setEditMode(on) {
       editUnlocked = on;
       root.classList.toggle('vlab-edit', on);
-      editPartsBox.hidden = !on;
       editPanel.hidden = !on;
+      editPartsBox.querySelector('.vlab-edit-parts-hint').textContent = on ?
+        'Drag the circular part markers, the diamond flow waypoints, or the square glow handles on the diagram above. Click a name/description below to retype it.' :
+        'Hover a marker on the diagram, or a name below, for what each part does.';
       editPartsList.querySelectorAll('[data-field]').forEach(function (el) {
         el.contentEditable = on ? 'true' : 'false';
       });
@@ -485,7 +493,7 @@
     for (var i = 0; i < PARTICLE_COUNT; i++) {
       var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       el.setAttribute('class', 'vlab-particle');
-      el.setAttribute('d', 'M -7,-4.5 L 6,0 L -7,4.5 L -3,0 Z');
+      el.setAttribute('d', 'M -10.5,-6.75 L 9,0 L -10.5,6.75 L -4.5,0 Z');
       flowGroup.appendChild(el);
       var onUpper = i % 2 === 0;
       particles.push({
