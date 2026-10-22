@@ -103,19 +103,22 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   to `tm.quizAttempts` via `storage.js` (also removed). Flashcard Trainer:
   BYOK Anthropic key, called directly from client JS with the
   `anthropic-dangerous-direct-browser-access: true` header, no backend.
-- **Air System** (`air-system`): static engine cutaway (same metallic-
-  gradient casing style as the Virtual Lab, no animation/throttle) with an
-  Internal/External toggle. Each mode shows its own set of colored markers
-  (blue=internal, red=external) positioned on the engine at the relevant
-  component, plus a synced list of the same items beside the diagram —
-  hovering either a marker or its list entry highlights both. 6 internal
-  functions (turbine blade/disc/NGV/combustor-liner cooling, labyrinth
-  seal, thrust bearing load relief) and 7 external (customer bleed,
-  nacelle ventilation, generator/EEC/igniter cooling, turbine case
-  cooling/ACC, anti-icing). Content sourced from the supplied deck
-  `Chapter_11_Air_System_v1_2hr.pptx`. Uses the portal's Bright Lab chrome
-  like the Virtual Lab (not a reference-sheet style) since there's no
-  single supplied diagram to adapt verbatim — just slide text and photos.
+- **Air System** (`air-system`): static engine cutaway diagram
+  (`tools/air-system/engine-diagram.png`, a real turbojet cutaway image
+  supplied by the user, who confirmed ownership/rights to use it) shared
+  by both modes, with an Internal/External toggle. Each mode overlays its
+  own set of colored markers (blue=internal, red=external) at
+  percentage-based positions on the image, plus a synced list of the same
+  items beside the diagram — hovering either a marker or its list entry
+  highlights both; marker positions scale with the image responsively
+  since they're plain `%`-positioned `<span>`s over a `position: relative`
+  wrapper, not SVG coordinates. 6 internal functions (turbine blade/disc/
+  NGV/combustor-liner cooling, labyrinth seal, thrust bearing load relief)
+  and 7 external (customer bleed, nacelle ventilation, generator/EEC/
+  igniter cooling, turbine case cooling/ACC, anti-icing). List/description
+  content sourced from the supplied deck `Chapter_11_Air_System_v1_2hr.pptx`.
+  Uses the portal's Bright Lab chrome like the Virtual Lab (not a
+  reference-sheet style).
 
 ### Phase 2 — Scaffolded topics, content pending
 

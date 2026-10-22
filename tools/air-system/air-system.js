@@ -1,24 +1,26 @@
 (function () {
-  // Content sourced from the supplied deck: Chapter_11_Air_System_v1_2hr.pptx
-  var FUNCTIONS = {
-    internal: [
-      { id: 'thrust-bearing', x: 280, y: 230, name: 'Thrust Bearing Load Relief', desc: 'Air pressure is used to offset part of the axial load on the main thrust bearing, reducing the load it must carry.' },
-      { id: 'labyrinth-seal', x: 430, y: 230, name: 'Sealing of Main Bearing Compartments (Labyrinth Seal)', desc: 'Labyrinth seals use a pressurized air barrier to keep oil inside the bearing compartments and hot gas or debris out.' },
-      { id: 'combustor-liner', x: 540, y: 130, name: 'Cooling of Combustion Chamber (Combustion Liner)', desc: 'Air passes through and around the combustor liner to keep its walls within temperature limits while the fuel-air mixture burns inside.' },
-      { id: 'ngv-cooling', x: 680, y: 150, name: 'Cooling of Nozzle Guide Vanes', desc: 'NGVs direct combustion gas onto the turbine rotor and sit directly in the hottest gas path, so they are cooled with air bled from the compressor.' },
-      { id: 'turbine-blade', x: 740, y: 150, name: 'Cooling of Turbine Blades', desc: 'Cooling air is fed through the turbine blades to keep metal temperatures within limits despite the extremely hot combustion gases flowing over them.' },
-      { id: 'turbine-disc', x: 800, y: 210, name: 'Cooling of Turbine Discs', desc: 'Cooling air is directed onto the turbine disc faces to limit disc temperature and the thermal stresses that would otherwise shorten its fatigue life.' },
-    ],
-    external: [
-      { id: 'anti-icing', x: 70, y: 160, name: 'Engine Anti-Icing System (Hot Air)', desc: 'Hot air from the compressor is delivered to the inlet guide vanes and intake strut to prevent ice forming and disrupting airflow into the intake.' },
-      { id: 'eec-cooling', x: 150, y: 105, name: 'EEC Cooling', desc: 'The Electronic Engine Control is mounted in the fan case; on some engines it is cooled by ram air.' },
-      { id: 'customer-bleed', x: 350, y: 105, name: 'Customer Bleed', desc: 'Pressurized air taken from the compressor for airframe use — air-conditioning and cabin/reservoir pressurization. It is bled as early as possible in the compressor to minimize the effect on engine performance; during descent, with the engine at idle, HP bleed is needed to meet pressurization demand. A precooler regulates its temperature before it reaches the aircraft systems.' },
-      { id: 'generator-cooling', x: 280, y: 305, name: 'Electrical Generator Cooling', desc: 'The integrated drive generators, driven by the external gearbox off the HP shaft, are cooled with fan air.' },
-      { id: 'igniter-cooling', x: 560, y: 300, name: 'Igniter Lead & Igniter Box Cooling', desc: 'The exciter (igniter) box steps low voltage up to around 22 kV; fan air cools both the box and the high-tension leads carrying that voltage.' },
-      { id: 'tcc-acc', x: 790, y: 105, name: 'Turbine Case Cooling / Active Clearance Control', desc: 'A dual-channel, EEC-controlled system plays fan air onto the HP and LP turbine cases to shrink them, tightening blade-tip clearance for better efficiency and longer service life. The EEC positions the actuator (using fuel muscle pressure) as a function of altitude and N2 speed.' },
-      { id: 'nacelle-vent', x: 980, y: 300, name: 'Nacelle Ventilation and Cooling', desc: 'The space between the engine cowling and casing (the nacelle) is ventilated with fan air to prevent fluid vapor from accumulating and self-igniting.' },
-    ],
-  };
+  // Content sourced from the supplied deck: Chapter_11_Air_System_v1_2hr.pptx.
+  // Both modes share one engine diagram (supplied by the user); marker
+  // positions are percentages of that image's width/height so they scale
+  // with it responsively regardless of displayed size.
+  var INTERNAL_ITEMS = [
+    { id: 'thrust-bearing', xPct: 48, yPct: 50, name: 'Thrust Bearing Load Relief', desc: 'Air pressure is used to offset part of the axial load on the main thrust bearing, reducing the load it must carry.' },
+    { id: 'labyrinth-seal', xPct: 52, yPct: 44, name: 'Sealing of Main Bearing Compartments (Labyrinth Seal)', desc: 'Labyrinth seals use a pressurized air barrier to keep oil inside the bearing compartments and hot gas or debris out.' },
+    { id: 'combustor-liner', xPct: 58, yPct: 22, name: 'Cooling of Combustion Chamber (Combustion Liner)', desc: 'Air passes through and around the combustor liner to keep its walls within temperature limits while the fuel-air mixture burns inside.' },
+    { id: 'ngv-cooling', xPct: 64, yPct: 20, name: 'Cooling of Nozzle Guide Vanes', desc: 'NGVs direct combustion gas onto the turbine rotor and sit directly in the hottest gas path, so they are cooled with air bled from the compressor.' },
+    { id: 'turbine-blade', xPct: 68, yPct: 22, name: 'Cooling of Turbine Blades', desc: 'Cooling air is fed through the turbine blades to keep metal temperatures within limits despite the extremely hot combustion gases flowing over them.' },
+    { id: 'turbine-disc', xPct: 70, yPct: 50, name: 'Cooling of Turbine Discs', desc: 'Cooling air is directed onto the turbine disc faces to limit disc temperature and the thermal stresses that would otherwise shorten its fatigue life.' },
+  ];
+
+  var EXTERNAL_ITEMS = [
+    { id: 'anti-icing', xPct: 10, yPct: 44, name: 'Engine Anti-Icing System (Hot Air)', desc: 'Hot air from the compressor is delivered to the inlet guide vanes and intake strut to prevent ice forming and disrupting airflow into the intake.' },
+    { id: 'eec-cooling', xPct: 20, yPct: 12, name: 'EEC Cooling', desc: 'The Electronic Engine Control is mounted in the fan case; on some engines it is cooled by ram air.' },
+    { id: 'customer-bleed', xPct: 38, yPct: 12, name: 'Customer Bleed', desc: 'Pressurized air taken from the compressor for airframe use — air-conditioning and cabin/reservoir pressurization. It is bled as early as possible in the compressor to minimize the effect on engine performance; during descent, with the engine at idle, HP bleed is needed to meet pressurization demand. A precooler regulates its temperature before it reaches the aircraft systems.' },
+    { id: 'generator-cooling', xPct: 22, yPct: 88, name: 'Electrical Generator Cooling', desc: 'The integrated drive generators, driven by the external gearbox off the HP shaft, are cooled with fan air.' },
+    { id: 'igniter-cooling', xPct: 58, yPct: 88, name: 'Igniter Lead & Igniter Box Cooling', desc: 'The exciter (igniter) box steps low voltage up to around 22 kV; fan air cools both the box and the high-tension leads carrying that voltage.' },
+    { id: 'tcc-acc', xPct: 68, yPct: 12, name: 'Turbine Case Cooling / Active Clearance Control', desc: 'A dual-channel, EEC-controlled system plays fan air onto the HP and LP turbine cases to shrink them, tightening blade-tip clearance for better efficiency and longer service life. The EEC positions the actuator (using fuel muscle pressure) as a function of altitude and N2 speed.' },
+    { id: 'nacelle-vent', xPct: 85, yPct: 88, name: 'Nacelle Ventilation and Cooling', desc: 'The space between the engine cowling and casing (the nacelle) is ventilated with fan air to prevent fluid vapor from accumulating and self-igniting.' },
+  ];
 
   function mount(container) {
     container.innerHTML =
@@ -35,41 +37,11 @@
 
       '<div class="air-sys-body">' +
       '<div class="air-sys-stage">' +
-      '<svg class="air-sys-engine" viewBox="0 0 1260 420" xmlns="http://www.w3.org/2000/svg">' +
-      '<defs>' +
-      '<linearGradient id="air-metal-grad" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" class="air-metal-1"></stop>' +
-      '<stop offset="18%" class="air-metal-2"></stop>' +
-      '<stop offset="50%" class="air-metal-3"></stop>' +
-      '<stop offset="82%" class="air-metal-2"></stop>' +
-      '<stop offset="100%" class="air-metal-1"></stop>' +
-      '</linearGradient>' +
-      '<linearGradient id="air-can-grad" x1="0" y1="0" x2="0" y2="1">' +
-      '<stop offset="0%" class="air-can-1"></stop>' +
-      '<stop offset="50%" class="air-can-2"></stop>' +
-      '<stop offset="100%" class="air-can-1"></stop>' +
-      '</linearGradient>' +
-      '</defs>' +
-
-      '<path class="air-sys-casing" d="M20,130 L60,120 L220,120 Q430,120 430,155 Q460,155 460,112 L650,112 Q685,112 685,158 L860,158 Q1000,158 1000,175 Q1150,175 1150,185 L1150,235 Q1000,235 1000,245 Q860,245 860,262 L685,262 Q650,262 650,308 L460,308 Q430,308 430,265 Q220,265 220,300 L60,300 L20,290 Z"></path>' +
-      '<line class="air-sys-divider" x1="220" y1="95" x2="220" y2="325"></line>' +
-      '<line class="air-sys-divider" x1="430" y1="95" x2="430" y2="325"></line>' +
-      '<line class="air-sys-divider" x1="650" y1="95" x2="650" y2="325"></line>' +
-      '<line class="air-sys-divider" x1="860" y1="95" x2="860" y2="325"></line>' +
-
-      '<rect class="air-sys-shaft" x="235" y="196" width="615" height="28"></rect>' +
-      '<rect class="air-sys-combustor" x="445" y="128" width="190" height="164" rx="24"></rect>' +
-
-      '<text class="air-sys-zone-label" x="120" y="350">Inlet</text>' +
-      '<text class="air-sys-zone-label" x="325" y="350">Compressor</text>' +
-      '<text class="air-sys-zone-label" x="540" y="350">Combustor</text>' +
-      '<text class="air-sys-zone-label" x="755" y="350">Turbine</text>' +
-      '<text class="air-sys-zone-label" x="1010" y="350">Exhaust</text>' +
-
-      '<g class="air-sys-markers"></g>' +
-      '</svg>' +
+      '<div class="air-sys-image-wrap">' +
+      '<img class="air-sys-image" src="tools/air-system/engine-diagram.png" alt="Generic turbojet cutaway diagram: intake, compression, combustion and exhaust sections, cold section and hot section labeled.">' +
+      '<div class="air-sys-image-markers"></div>' +
       '</div>' +
-
+      '</div>' +
       '<ul class="air-sys-list"></ul>' +
       '</div>' +
 
@@ -77,7 +49,7 @@
       '</div>';
 
     var root = container.querySelector('.air-sys');
-    var markerGroup = root.querySelector('.air-sys-markers');
+    var markerLayer = root.querySelector('.air-sys-image-markers');
     var listEl = root.querySelector('.air-sys-list');
     var modeButtons = root.querySelectorAll('.air-sys-mode-btn');
 
@@ -114,16 +86,14 @@
     }
 
     function render(mode) {
-      var items = FUNCTIONS[mode];
+      root.className = 'air-sys air-sys-mode-' + mode;
+      var items = mode === 'internal' ? INTERNAL_ITEMS : EXTERNAL_ITEMS;
 
-      markerGroup.innerHTML = items.map(function (item) {
-        return '<g class="air-sys-marker" data-marker="' + item.id + '">' +
-          '<circle class="air-sys-marker-ring" cx="' + item.x + '" cy="' + item.y + '" r="13"></circle>' +
-          '<circle class="air-sys-marker-dot" cx="' + item.x + '" cy="' + item.y + '" r="6"></circle>' +
-          '</g>';
+      markerLayer.innerHTML = items.map(function (item) {
+        return '<span class="air-sys-img-marker" data-marker="' + item.id + '" style="left:' + item.xPct + '%; top:' + item.yPct + '%;"></span>';
       }).join('');
 
-      markerGroup.querySelectorAll('.air-sys-marker').forEach(function (el, i) {
+      markerLayer.querySelectorAll('.air-sys-img-marker').forEach(function (el, i) {
         var item = items[i];
         el.addEventListener('mouseenter', function (e) { showTip(e, item); setActive(item.id, true); });
         el.addEventListener('mousemove', positionTip);
@@ -142,8 +112,6 @@
         li.addEventListener('mouseenter', function () { setActive(item.id, true); });
         li.addEventListener('mouseleave', function () { setActive(item.id, false); });
       });
-
-      root.className = 'air-sys air-sys-mode-' + mode;
     }
 
     modeButtons.forEach(function (btn) {
