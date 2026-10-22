@@ -54,6 +54,46 @@
     },
   ];
 
+  // Per-mode content for the "shaft arrangement" panel — a reference
+  // cutaway matched to the mode's own shaft count (not a single
+  // triple-spool image reused for every mode), since the nesting it
+  // shows is different each time: 3 shafts, 2 shafts, or none at all.
+  var SHAFT_INFO = {
+    triple: {
+      image: 'tools/turbofan-engine/spool-cutaway.png',
+      alt: 'Cutaway of a triple-spool turbofan showing the HP, IP, and LP shafts nested inside one another',
+      title: 'Concentric shaft arrangement',
+      intro: 'The spools aren’t side by side — they’re nested, one shaft inside another, all turning independently on their own bearings:',
+      items: [
+        '<b>HP spool (N3):</b> the innermost shaft — short, solid, and the fastest-spinning, since it only has to connect the HP compressor to the HP turbine right next to the combustor.',
+        '<b>IP spool (N2):</b> a hollow shaft that passes over the HP shaft, connecting the IP compressor further forward to the IP turbine further aft.',
+        '<b>LP spool (N1):</b> the outermost hollow shaft, passing over both the IP and HP shafts, connecting the fan at the very front to the LP turbine at the very back — the longest shaft and the slowest-spinning.',
+      ],
+      closing: 'A twin-spool engine is the same idea with the IP shaft removed — just an inner HP shaft inside an outer LP shaft. A single-spool engine has no nesting at all: one shaft, one speed.',
+    },
+    twin: {
+      image: 'tools/turbofan-engine/twin-spool-cutaway.png',
+      alt: 'Cutaway of a twin-spool turbofan showing the HP shaft nested inside the LP shaft',
+      title: 'Concentric shaft arrangement',
+      intro: 'Two shafts here, one inside the other:',
+      items: [
+        '<b>HP spool (N2):</b> the inner shaft — shorter, and the faster-spinning of the two, connecting the HP compressor to the HP turbine right next to the combustor.',
+        '<b>LP spool (N1):</b> the outer hollow shaft, surrounding the HP shaft, connecting the LP fan/compressor at the front to the LP turbine at the back — the longer shaft and the slower-spinning of the two.',
+      ],
+      closing: 'Add a third, independent IP shaft between these two — its own compressor, its own turbine, its own speed — and you get a triple-spool engine.',
+    },
+    single: {
+      image: 'tools/turbofan-engine/single-spool-cutaway.png',
+      alt: 'Cutaway of a single-spool turbofan showing one shaft driving the fan, compressor, and turbine',
+      title: 'Shaft arrangement',
+      intro: 'No nesting here — just one shaft:',
+      items: [
+        '<b>Single spool (N1):</b> the only shaft in the engine, directly connecting the fan/compressor at the front to the turbine at the back. Every rotating stage turns at exactly the same speed.',
+      ],
+      closing: 'Add a second, independent HP shaft inside this one and you get a twin-spool engine; a third gets you triple-spool.',
+    },
+  };
+
   var MODES = {
     triple: {
       title: 'Triple-Spool Turbofan Engine',
@@ -167,17 +207,13 @@
       '</div>' +
 
       '<div class="tf-panel tf-cutaway-panel">' +
-      '<div class="tf-section-title">Concentric shaft arrangement</div>' +
+      '<div class="tf-section-title tf-cutaway-title"></div>' +
       '<div class="tf-cutaway-wrap">' +
-      '<img src="tools/turbofan-engine/spool-cutaway.png" alt="Cutaway of a triple-spool turbofan showing the HP, IP, and LP shafts nested inside one another" loading="lazy">' +
+      '<img class="tf-cutaway-img" src="" alt="" loading="lazy">' +
       '<div class="tf-cutaway-text">' +
-      '<p class="tf-note">The spools aren’t side by side — they’re nested, one shaft inside another, all turning independently on their own bearings:</p>' +
-      '<ul>' +
-      '<li><b>HP spool (N3):</b> the innermost shaft — short, solid, and the fastest-spinning, since it only has to connect the HP compressor to the HP turbine right next to the combustor.</li>' +
-      '<li><b>IP spool (N2):</b> a hollow shaft that passes over the HP shaft, connecting the IP compressor further forward to the IP turbine further aft.</li>' +
-      '<li><b>LP spool (N1):</b> the outermost hollow shaft, passing over both the IP and HP shafts, connecting the fan at the very front to the LP turbine at the very back — the longest shaft and the slowest-spinning.</li>' +
-      '</ul>' +
-      '<p class="tf-note" style="margin-top:10px">A twin-spool engine is the same idea with the IP shaft removed — just an inner HP shaft inside an outer LP shaft. A single-spool engine has no nesting at all: one shaft, one speed.</p>' +
+      '<p class="tf-note tf-cutaway-intro"></p>' +
+      '<ul class="tf-cutaway-list"></ul>' +
+      '<p class="tf-note tf-cutaway-closing" style="margin-top:10px"></p>' +
       '</div>' +
       '</div>' +
       '</div>' +
@@ -345,6 +381,17 @@
       }
     }
 
+    function renderShaftPanel() {
+      var info = SHAFT_INFO[currentMode];
+      wrap.querySelector('.tf-cutaway-title').textContent = info.title;
+      var img = wrap.querySelector('.tf-cutaway-img');
+      img.src = info.image;
+      img.alt = info.alt;
+      wrap.querySelector('.tf-cutaway-intro').textContent = info.intro;
+      wrap.querySelector('.tf-cutaway-list').innerHTML = info.items.map(function (html) { return '<li>' + html + '</li>'; }).join('');
+      wrap.querySelector('.tf-cutaway-closing').textContent = info.closing;
+    }
+
     function applyMode() {
       var conf = MODES[currentMode];
       wrap.querySelector('.tf-title').textContent = conf.title;
@@ -364,11 +411,7 @@
       renderRotorViews();
       renderControls();
       renderNaming();
-      // The nested-shaft cross-section only makes sense to show when all
-      // three shafts are actually present — in twin/single-spool mode
-      // there's nothing extra for it to explain beyond what the "Naming
-      // convention" panel's cards already cover for the visible spools.
-      wrap.querySelector('.tf-cutaway-panel').style.display = currentMode === 'triple' ? '' : 'none';
+      renderShaftPanel();
       isolateIndex = 0;
       wrap.querySelector('.tf-isolate').textContent = 'Show one rotating spool at a time: Off';
       updateStatus();

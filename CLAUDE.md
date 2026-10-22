@@ -279,23 +279,26 @@ Google Fonts. Full dark-mode token set in `styles.css`.
     relabel automatically when the mode changes — e.g. HP reads "N3" in
     triple-spool mode and "N2" in twin-spool mode with no special-casing
     beyond that one function.
-  - **Concentric shaft arrangement**: a static supporting image
-    (`tools/turbofan-engine/spool-cutaway.png`, 1448×1086, converted
-    from a user-supplied triple-spool cutaway reference via `ffmpeg`
-    since the local Pillow install was broken) alongside prose
-    explaining the HP/IP/LP shafts nest inside one another (HP
-    innermost/shortest/fastest, LP outermost/longest/slowest) — this
+  - **Shaft arrangement**: a static supporting image alongside prose
+    explaining how the mode's shafts nest inside one another — this
     physical nesting isn't visible in the flat schematic above (its
     shafts are drawn as parallel bars, not a true cross-section), so a
-    real reference image carries this specific point instead. The panel
-    itself is mode-gated — shown only in triple-spool mode (hidden via
-    `.tf-cutaway-panel` in `applyMode()`), since the nesting it explains
-    only has three shafts to show there; twin/single-spool modes already
-    cover their (simpler) shaft arrangement in the "Naming convention"
-    panel's own cards. Otherwise not edit-gated — unlike Air System/
-    Virtual Lab, this tool has no password-gated edit mode at all, since
-    nothing in it is user-editable content (no marker positions, no
-    retypable descriptions).
+    real reference image carries this specific point instead. One image
+    per mode, not one triple-spool image reused throughout:
+    `spool-cutaway.png` (triple, HP/IP/LP nested, 1448×1086),
+    `twin-spool-cutaway.png` (twin, HP inside LP), and
+    `single-spool-cutaway.png` (single, one shaft, no nesting) — all
+    converted from user-supplied cutaway references via `ffmpeg` since
+    the local Pillow install was broken. `SHAFT_INFO[currentMode]` holds
+    each mode's image/alt/title/intro/bullet-list/closing-note together,
+    and `renderShaftPanel()` (called from `applyMode()` like the other
+    per-mode renders) swaps all of it in one pass — e.g. twin-spool's
+    panel title drops back to "Concentric shaft arrangement" (two nested
+    shafts) while single-spool's reads "Shaft arrangement" (no nesting to
+    be "concentric" about). Not edit-gated — unlike Air System/Virtual
+    Lab, this tool has no password-gated edit mode at all, since nothing
+    in it is user-editable content (no marker positions, no retypable
+    descriptions).
   - **High bypass vs. low bypass**: a separate static two-card
     comparison (not tied to the spool-count toggle, since bypass ratio
     and spool count are independent design choices) — each card a small
