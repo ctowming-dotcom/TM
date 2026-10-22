@@ -118,6 +118,33 @@ automatically or by hand:
   component" prompt shown via a `:not(.has-value)` dimmed state, and the
   same mouseenter/mouseleave swap the old tooltip code used — only the
   display target changed, not the hover-detection logic.
+
+  Both also show every component's name/description at once, in a
+  permanent reference list below that hover panel (by follow-up request
+  — "I want to see all the explanation below the diagram") — the single
+  `.explain`/hover panel stayed (still useful as a quick "what am I
+  pointing at" readout), the list is additive.
+  - **Fuel System Overview**: `.fd-list`, one `<li data-comp="key">` per
+    entry in the `titles`/`descriptions` objects, in their insertion
+    order (already matches the diagram's logical flow, so no separate
+    ordering was needed) — a fixed list, since Fuel's component set
+    never changes.
+  - **Oil System Overview**: `.comp-list`, rebuilt by `renderCompList()`
+    inside `render()` every time the spool config changes, since the
+    diagram's own component set isn't fixed here — a triple-spool build
+    has bearing columns (IPC/IPT) a single-spool one doesn't. Built by
+    walking the just-rendered `.comp` elements themselves (their
+    `data-title`/`data-desc`, already present for the hover panel) rather
+    than a separate hardcoded list, deduped by title so a part that
+    repeats once per bearing column (Last-Chance Filter, MCD) shows once,
+    not N times.
+  - Both lists share one hover-highlight mechanism, `setActive(key,
+    active)`, that toggles `.is-hovered` on every element carrying a
+    matching key (`data-comp` for Fuel, `data-title` for Oil, since Oil's
+    dedup means several `.comp` elements can share one list entry) —
+    hovering either a diagram box/`.comp` or its list entry highlights
+    both directions, and for Oil also drives the existing `.explain`
+    panel the same way a direct diagram hover does.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
   reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`,
   1229×684 — a second user-supplied centrifugal-compressor turbojet

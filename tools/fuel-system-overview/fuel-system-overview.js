@@ -117,7 +117,10 @@
       '</svg>' +
 
       '<p class="caption fd-caption"></p>' +
-      '<div class="explain fd-explain"><span class="e-title">Hover a component</span><span class="e-desc">Hover any box in the diagram above to see what it does, here.</span></div>' +
+      '<div class="fd-ref">' +
+      '<h3 class="fd-ref-title">Component reference</h3>' +
+      '<ul class="fd-list"></ul>' +
+      '</div>' +
       '</div>';
 
     var root = container.querySelector('.fuel-diagram');
@@ -125,9 +128,14 @@
     var btnShutdown = root.querySelector('.fd-btn-shutdown');
     var processTitle = root.querySelector('.fd-process-title');
     var captionText = root.querySelector('.fd-caption');
-    var explain = root.querySelector('.fd-explain');
-    var eTitle = explain.querySelector('.e-title');
-    var eDesc = explain.querySelector('.e-desc');
+    var listEl = root.querySelector('.fd-list');
+
+    listEl.innerHTML = Object.keys(titles).map(function (key) {
+      return '<li class="fd-list-item" data-comp="' + key + '">' +
+        '<span class="fd-list-name">' + TM.escapeHtml(titles[key]) + '</span>' +
+        '<span class="fd-list-desc">' + TM.escapeHtml(descriptions[key]) + '</span>' +
+        '</li>';
+    }).join('');
 
     var lpsov = root.querySelector('#lpsov');
     var hpsov = root.querySelector('#hpsov');
@@ -139,21 +147,22 @@
     var mainPipeIds = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'];
     var drainPipeIds = ['d1', 'd2', 'd3'];
 
-    function showExplain(key) {
-      eTitle.textContent = titles[key];
-      eDesc.textContent = descriptions[key];
-      explain.classList.add('has-value');
-    }
-    function hideExplain() {
-      eTitle.textContent = 'Hover a component';
-      eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
-      explain.classList.remove('has-value');
+    function setActive(key, active) {
+      root.querySelectorAll('[data-comp="' + key + '"]').forEach(function (el) {
+        el.classList.toggle('is-hovered', active);
+      });
     }
 
     root.querySelectorAll('.box').forEach(function (box) {
       var key = box.getAttribute('data-comp');
-      box.addEventListener('mouseenter', function () { showExplain(key); });
-      box.addEventListener('mouseleave', hideExplain);
+      box.addEventListener('mouseenter', function () { setActive(key, true); });
+      box.addEventListener('mouseleave', function () { setActive(key, false); });
+    });
+
+    root.querySelectorAll('.fd-list-item').forEach(function (li) {
+      var key = li.getAttribute('data-comp');
+      li.addEventListener('mouseenter', function () { setActive(key, true); });
+      li.addEventListener('mouseleave', function () { setActive(key, false); });
     });
 
     function setBoxColor(el, color) {

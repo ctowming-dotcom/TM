@@ -211,6 +211,10 @@
       '</svg>' +
       '</div>' +
       '<div class="explain"><span class="e-title">Hover a component</span><span class="e-desc">Hover any box in the diagram above to see what it does, here.</span></div>' +
+      '<div class="comp-ref">' +
+      '<h3 class="comp-ref-title">Component reference — current configuration</h3>' +
+      '<ul class="comp-list"></ul>' +
+      '</div>' +
       '<footer>Diagram generated from lubrication system training notes. Educational schematic, not to scale.</footer>' +
       '</div>';
 
@@ -220,13 +224,47 @@
     var explain = wrap.querySelector('.explain');
     var eTitle = explain.querySelector('.e-title');
     var eDesc = explain.querySelector('.e-desc');
+    var compListEl = wrap.querySelector('.comp-list');
 
     var currentSpool = 'single';
     var lineState = { supply: true, scavenge: true, return: true };
 
+    // The diagram's own set of components changes with spool config (a
+    // triple-spool build has bearing columns a single-spool one doesn't),
+    // so the reference list below is rebuilt from whatever `.comp` groups
+    // actually exist after each render — not a fixed list — deduping by
+    // title since the same generic part (e.g. "Last Chance Filter", "MCD")
+    // repeats once per bearing column with identical title/desc.
+    function renderCompList() {
+      var seen = {};
+      var items = [];
+      wrap.querySelectorAll('.comp').forEach(function (g) {
+        var title = g.dataset.title;
+        if (seen[title]) return;
+        seen[title] = true;
+        items.push({ title: title, desc: g.dataset.desc });
+      });
+      compListEl.innerHTML = items.map(function (item) {
+        return '<li class="comp-list-item" data-title="' + TM.escapeHtml(item.title) + '">' +
+          '<span class="comp-list-name">' + TM.escapeHtml(item.title) + '</span>' +
+          '<span class="comp-list-desc">' + TM.escapeHtml(item.desc) + '</span>' +
+          '</li>';
+      }).join('');
+    }
+
+    function setActive(title, active) {
+      wrap.querySelectorAll('.comp').forEach(function (el) {
+        if (el.dataset.title === title) el.classList.toggle('is-hovered', active);
+      });
+      wrap.querySelectorAll('.comp-list-item').forEach(function (el) {
+        if (el.dataset.title === title) el.classList.toggle('is-hovered', active);
+      });
+    }
+
     function render() {
       diagramRoot.innerHTML = buildDiagram(currentSpool);
       applyLineVisibility();
+      renderCompList();
     }
     function applyLineVisibility() {
       Object.keys(lineState).forEach(function (k) {
@@ -261,6 +299,7 @@
       eTitle.textContent = g.dataset.title;
       eDesc.textContent = g.dataset.desc;
       explain.classList.add('has-value');
+      setActive(g.dataset.title, true);
     });
     svgEl.addEventListener('mouseout', function (e) {
       var g = e.target.closest('.comp');
@@ -268,6 +307,25 @@
       eTitle.textContent = 'Hover a component';
       eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
       explain.classList.remove('has-value');
+      setActive(g.dataset.title, false);
+    });
+
+    compListEl.addEventListener('mouseover', function (e) {
+      var li = e.target.closest('.comp-list-item');
+      if (!li) return;
+      var title = li.dataset.title;
+      eTitle.textContent = title;
+      eDesc.textContent = li.querySelector('.comp-list-desc').textContent;
+      explain.classList.add('has-value');
+      setActive(title, true);
+    });
+    compListEl.addEventListener('mouseout', function (e) {
+      var li = e.target.closest('.comp-list-item');
+      if (!li) return;
+      eTitle.textContent = 'Hover a component';
+      eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
+      explain.classList.remove('has-value');
+      setActive(li.dataset.title, false);
     });
 
     render();
