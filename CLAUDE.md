@@ -63,8 +63,17 @@ Google Fonts. Full dark-mode token set in `styles.css`.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
   reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`
   — a user-supplied centrifugal-compressor turbojet diagram, cropped to
-  drop its baked-in T1–T5 label strip, keeping just the engine art and its
-  5 yellow sensor dots) with a throttle slider driving RPM, and animation
+  drop its baked-in T1–T5 label strip, then further cleaned to remove
+  the original's own 5 leader lines and yellow sensor dots. A manual
+  erase-and-flat-recolor pass kept leaving visible patches wherever a
+  line crossed real artwork (edges, the duct's dot pattern, highlight
+  curves), so the final cleanup used OpenCV inpainting instead
+  (`cv2.inpaint`, `INPAINT_TELEA`): a mask of just the line paths and dot
+  circles (coordinates found by pixel column/row scans, not eyeballed)
+  lets the algorithm reconstruct the engine art underneath rather than
+  trying to hand-pick replacement colors per spot. `engine-diagram.png`
+  is the finished asset — there's no separate script checked in to
+  regenerate it) with a throttle slider driving RPM, and animation
   overlaid on top of the picture rather than drawn into it: an SVG layer
   (`viewBox` matched to the image's pixel size) holds airflow arrows that
   travel two mirrored bezier paths (`FLOW_PATH_UPPER`/`_LOWER`) traced by
