@@ -166,7 +166,7 @@
       '<div class="tf-naming-grid"></div>' +
       '</div>' +
 
-      '<div class="tf-panel">' +
+      '<div class="tf-panel tf-cutaway-panel">' +
       '<div class="tf-section-title">Concentric shaft arrangement</div>' +
       '<div class="tf-cutaway-wrap">' +
       '<img src="tools/turbofan-engine/spool-cutaway.png" alt="Cutaway of a triple-spool turbofan showing the HP, IP, and LP shafts nested inside one another" loading="lazy">' +
@@ -364,6 +364,11 @@
       renderRotorViews();
       renderControls();
       renderNaming();
+      // The nested-shaft cross-section only makes sense to show when all
+      // three shafts are actually present — in twin/single-spool mode
+      // there's nothing extra for it to explain beyond what the "Naming
+      // convention" panel's cards already cover for the visible spools.
+      wrap.querySelector('.tf-cutaway-panel').style.display = currentMode === 'triple' ? '' : 'none';
       isolateIndex = 0;
       wrap.querySelector('.tf-isolate').textContent = 'Show one rotating spool at a time: Off';
       updateStatus();

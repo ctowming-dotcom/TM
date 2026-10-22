@@ -287,11 +287,15 @@ Google Fonts. Full dark-mode token set in `styles.css`.
     innermost/shortest/fastest, LP outermost/longest/slowest) — this
     physical nesting isn't visible in the flat schematic above (its
     shafts are drawn as parallel bars, not a true cross-section), so a
-    real reference image carries this specific point instead. Static,
-    not mode-switched or edit-gated — unlike Air System/Virtual Lab,
-    this tool has no password-gated edit mode at all, since nothing in
-    it is user-editable content (no marker positions, no retypable
-    descriptions).
+    real reference image carries this specific point instead. The panel
+    itself is mode-gated — shown only in triple-spool mode (hidden via
+    `.tf-cutaway-panel` in `applyMode()`), since the nesting it explains
+    only has three shafts to show there; twin/single-spool modes already
+    cover their (simpler) shaft arrangement in the "Naming convention"
+    panel's own cards. Otherwise not edit-gated — unlike Air System/
+    Virtual Lab, this tool has no password-gated edit mode at all, since
+    nothing in it is user-editable content (no marker positions, no
+    retypable descriptions).
   - **High bypass vs. low bypass**: a separate static two-card
     comparison (not tied to the spool-count toggle, since bypass ratio
     and spool count are independent design choices) — each card a small
