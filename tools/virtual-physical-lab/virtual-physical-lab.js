@@ -403,10 +403,12 @@
 
     function renderWaypointHandles() {
       waypointHandleLayer.innerHTML = UPPER_WAYPOINTS.map(function (p, i) {
-        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 9) + '" y="' + (p.y - 9) + '" width="18" height="18" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>';
+        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 9) + '" y="' + (p.y - 9) + '" width="18" height="18" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>' +
+          '<text class="vlab-waypoint-label" data-i="' + i + '" x="' + p.x + '" y="' + p.y + '">' + (i + 1) + '</text>';
       }).join('');
       waypointHandleLayer.querySelectorAll('.vlab-waypoint-handle').forEach(function (el) {
         var i = Number(el.getAttribute('data-i'));
+        var label = waypointHandleLayer.querySelector('.vlab-waypoint-label[data-i="' + i + '"]');
         el.addEventListener('pointerdown', function (evt) {
           if (!editUnlocked) return;
           evt.preventDefault();
@@ -416,6 +418,8 @@
             var p = svgPoint(moveEvt);
             var x = Math.round(p.x), y = Math.round(p.y);
             UPPER_WAYPOINTS[i] = { x: x, y: y };
+            label.setAttribute('x', x);
+            label.setAttribute('y', y);
             // Update this handle's own attributes in place — calling
             // renderWaypointHandles() here would replace the <rect> the
             // pointer is captured on mid-drag, silently ending the drag

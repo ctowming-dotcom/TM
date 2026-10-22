@@ -124,8 +124,13 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   (`evt.target === resizeHandle`) so the two drags never fight each
   other; their name/description (in that same always-shown list) become
   retypable (`contenteditable`); the flow route's waypoints become
-  draggable diamond handles (dragging one rebuilds both the upper
-  path and its auto-mirrored lower counterpart); the 2 combustor glow
+  draggable diamond handles, each numbered 1-11 in flow order (a
+  same-indexed `<text class="vlab-waypoint-label">` sibling per handle,
+  `pointer-events: none` so it never steals the drag, repositioned
+  alongside its handle on every move rather than via a full
+  `renderWaypointHandles()` re-render, for the same reason as below) —
+  dragging one rebuilds both the upper path and its auto-mirrored lower
+  counterpart; the 2 combustor glow
   centers become draggable dashed-circle handles. Waypoint/glow handles
   are plain SVG shapes positioned by converting pointer coordinates
   through the overlay `<svg>`'s own `getScreenCTM()` rather than by

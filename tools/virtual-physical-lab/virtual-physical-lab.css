@@ -158,6 +158,18 @@
   stroke-width: 2.5;
 }
 
+.vlab-waypoint-label {
+  display: none;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  fill: #5a3800;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+  user-select: none;
+}
+
 .vlab-glow-handle {
   fill: rgba(255, 120, 60, 0.85);
   stroke: #ffffff;
@@ -175,7 +187,8 @@
 }
 
 .vlab-edit .vlab-waypoint-handle,
-.vlab-edit .vlab-glow-handle {
+.vlab-edit .vlab-glow-handle,
+.vlab-edit .vlab-waypoint-label {
   display: inline;
 }
 
