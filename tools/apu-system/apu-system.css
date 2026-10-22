@@ -125,13 +125,51 @@
   left: 0;
   width: 27%;
   background: rgba(56, 189, 248, 0.14);
-  border-right: 2px dashed rgba(56, 189, 248, 0.5);
 }
 
 .apu-sys .apu-sys-region.power {
   left: 27%;
   right: 0;
   background: rgba(251, 146, 60, 0.1);
+}
+
+.apu-sys .apu-sys-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 27%;
+  width: 0;
+  border-right: 2px dashed rgba(56, 189, 248, 0.6);
+  transform: translateX(-1px);
+}
+
+.apu-sys.apu-sys-edit .apu-sys-divider {
+  cursor: ew-resize;
+  pointer-events: auto;
+  border-right-style: solid;
+  border-right-width: 3px;
+  border-right-color: var(--yellow);
+}
+
+.apu-sys .apu-sys-divider.dragging {
+  border-right-color: #ff8a00;
+}
+
+.apu-sys .apu-sys-divider-grip {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 46px;
+  transform: translate(-50%, -50%);
+  background: var(--yellow);
+  border: 2px solid #3a2a00;
+  border-radius: 6px;
+}
+
+.apu-sys.apu-sys-edit .apu-sys-divider-grip {
+  display: block;
 }
 
 .apu-sys .apu-sys-flow-svg {
@@ -142,27 +180,27 @@
   pointer-events: none;
 }
 
-.apu-sys .apu-sys-flow-path {
+.apu-sys .apu-sys-flow-seg {
   fill: none;
-  stroke-width: 0.9;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 2.2 1.6;
+  stroke-dasharray: 4 3;
   animation: apu-sys-flowmove 0.6s linear infinite;
-  vector-effect: non-scaling-stroke;
+  opacity: 0.95;
 }
 
-.apu-sys .apu-sys-flow-path.power { stroke: var(--power); }
-.apu-sys .apu-sys-flow-path.load { stroke: var(--load); }
+.apu-sys .apu-sys-flow-seg.power { stroke: var(--power); }
+.apu-sys .apu-sys-flow-seg.load { stroke: var(--load); }
 .apu-sys .apu-sys-arrowhead.power { fill: var(--power); }
 .apu-sys .apu-sys-arrowhead.load { fill: var(--load); }
 
 @keyframes apu-sys-flowmove {
-  to { stroke-dashoffset: -7.6; }
+  to { stroke-dashoffset: -14; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .apu-sys .apu-sys-flow-path {
+  .apu-sys .apu-sys-flow-seg {
     animation: none;
   }
 }
@@ -175,29 +213,22 @@
 
 .apu-sys .apu-sys-marker {
   position: absolute;
-  width: 26px;
-  height: 26px;
-  margin-left: -13px;
-  margin-top: -13px;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
   border: 3px solid #3d7fd1;
   background: rgba(61, 127, 209, 0.12);
   cursor: pointer;
   pointer-events: auto;
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: background 0.15s ease;
 }
 
 .apu-sys .apu-sys-marker:hover,
 .apu-sys .apu-sys-marker.is-hovered {
-  transform: scale(1.25);
   background: rgba(61, 127, 209, 0.3);
 }
 
 .apu-sys .apu-sys-marker.key {
-  width: 42px;
-  height: 42px;
-  margin-left: -21px;
-  margin-top: -21px;
   border: 3px solid var(--key);
   background: rgba(239, 68, 68, 0.1);
 }
@@ -207,13 +238,45 @@
   background: rgba(239, 68, 68, 0.25);
 }
 
+.apu-sys .apu-sys-marker-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  transform: translate(45%, 45%);
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #3d7fd1;
+  cursor: nwse-resize;
+  touch-action: none;
+  display: none;
+}
+
+.apu-sys .apu-sys-marker.key .apu-sys-marker-resize {
+  border-color: var(--key);
+}
+
+.apu-sys.apu-sys-edit .apu-sys-marker-resize {
+  display: block;
+}
+
+.apu-sys .apu-sys-marker-resize.dragging {
+  background: var(--yellow);
+}
+
 .apu-sys .apu-sys-flow-boxes {
   position: absolute;
   inset: 0;
+  /* Click-through except where a box itself opts back in — otherwise
+     this layer (later in DOM, painted on top) would swallow pointer
+     events meant for the divider/markers underneath it. */
+  pointer-events: none;
 }
 
 .apu-sys .apu-sys-flow-box {
   position: absolute;
+  pointer-events: auto;
   display: none;
   width: 20px;
   height: 20px;
@@ -240,6 +303,14 @@
 .apu-sys .apu-sys-flow-box.dragging {
   cursor: grabbing;
   opacity: 0.85;
+}
+
+.apu-sys .apu-sys-flow-box.power {
+  box-shadow: 0 0 0 2px var(--power);
+}
+
+.apu-sys .apu-sys-flow-box.load {
+  box-shadow: 0 0 0 2px var(--load);
 }
 
 .apu-sys .apu-sys-tooltip {

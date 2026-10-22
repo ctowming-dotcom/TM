@@ -517,46 +517,85 @@ automatically or by hand:
   "key component" rings.
   - **Power Section / Load Section regions**: two absolutely-positioned
     `%`-width overlay `<div>`s (`.apu-sys-region.load` at `left: 0;
-    width: 27%`, `.apu-sys-region.power` filling the rest), `pointer-
-    events: none` so they never block marker hover — the 27% split
-    lines up with the reference image's own internal dashed divider
-    between the Load Section's components (Bleed Valve/GEN/Accessory
-    Gearbox/Load Compressor/Flow Sensor/IGV/IGVA/ECB) and the Power
-    Section's (Surge Control Valve/Compressor/Combustor/Turbine/
-    Metering). A `SECTIONS` object (`power`/`load`, name/desc from
-    slide 11, "Load Section vs Power Section") renders as two colored
-    cards below the diagram explaining what each section is for.
-  - **Airflow overlay**: `POWER_FLOW` (5 points: inlet → compressor →
-    combustor → turbine → exhaust) and `LOAD_FLOW` (4 points: inlet →
-    load compressor → accessory gearbox), percentage-coordinate
-    waypoints drawn from a shared inlet point so the split reads
-    visually — same `viewBox="0 0 100 100"`/`preserveAspectRatio="none"`
-    SVG-overlay-on-a-percentage-positioned-image technique Air System's
-    flow routes use, right down to the `pathFromPoints()`/
-    `makeDraggable()`/`renderFlowBoxes()` naming and the same
-    rebuild-the-line-not-the-handle-layer fix for the pointer-capture
-    bug. The one deliberate difference from Air System: the numbered
-    yellow handles (`.apu-sys-flow-box`) are `display: none` by default
-    and only shown via `.apu-sys-edit .apu-sys-flow-box` (explicit
-    request: "under edit mode, I want to see the yellow boxes"),
-    borrowing the Virtual Lab's hidden-until-edit convention instead of
-    Air System's always-visible one. Password-gated "✎ Edit" (password
-    `APP`), a Copy-changes panel with paste-ready `POWER_FLOW`/
-    `LOAD_FLOW` source, and `localStorage` persistence
-    (`tm.apuSystem.powerFlow`/`loadFlow`) otherwise match Air System
-    exactly.
+    width: REGION_SPLIT%`, `.apu-sys-region.power` filling the rest),
+    `pointer-events: none` so they never block marker hover — the
+    default 27% split lines up with the reference image's own internal
+    dashed divider between the Load Section's components (Bleed Valve/
+    GEN/Accessory Gearbox/Load Compressor/Flow Sensor/IGV/IGVA/ECB) and
+    the Power Section's (Surge Control Valve/Compressor/Combustor/
+    Turbine/Metering). `REGION_SPLIT` is draggable in edit mode via
+    `.apu-sys-divider`, a thin full-height handle with a visible grip
+    in the middle (`display: none` outside edit mode, like the flow
+    boxes) — dragging it updates both region `<div>`s' width/left and
+    persists to `localStorage` (`tm.apuSystem.regionSplit`), by request
+    ("let me edit the dividing line of the box to differentiate load
+    and power section"). A `SECTIONS` object (`power`/`load`, name/desc
+    from slide 11) renders as two colored cards below the diagram
+    explaining what each section is for.
+  - **Airflow overlay**: `POWER_FLOW` (now 6 points: inlet →
+    compressor → combustor → turbine → exhaust) and `LOAD_FLOW` (now 5
+    points: inlet → load compressor → accessory gearbox) — each gained
+    one more waypoint at the very start, by request ("add one more
+    point zero for air flow"), so numbering is 0-based throughout
+    (point 0 is the inlet, upstream of where the two routes visually
+    diverge) rather than starting at 1. Rendered as separate per-
+    segment `<path>` elements (`renderFlowSegs()`, one per waypoint
+    pair, each with its own `marker-end` arrowhead) rather than one
+    continuous path — by request ("the line need to be much thicker...
+    do add arrow to the airflow too"), since a single long path only
+    gets one arrowhead at its very end; per-segment paths put a visible
+    arrow on every leg of the route. Segment stroke-width went from 0.9
+    to 2.2 for the same reason. The arrowhead markers needed
+    `markerUnits="userSpaceOnUse"` added once the stroke got thicker —
+    the default `markerUnits="strokeWidth"` scales the marker by the
+    path's own stroke-width, so thickening the line without this
+    suddenly made the arrowheads enormous (a multiple of the marker's
+    own size times the new stroke-width); `userSpaceOnUse` keeps
+    arrowhead size independent of stroke thickness. Numbered yellow
+    handles (`.apu-sys-flow-box`) are `display: none` by default and
+    only shown via `.apu-sys-edit .apu-sys-flow-box` (explicit request:
+    "under edit mode, I want to see the yellow boxes"), borrowing the
+    Virtual Lab's hidden-until-edit convention instead of Air System's
+    always-visible one; each also gets a thin colored ring
+    (`.apu-sys-flow-box.power`/`.load`) so the two 0-indexed routes'
+    handles stay visually distinguishable now that both start
+    numbering from 0. Password-gated "✎ Edit" (password `APP`), a
+    Copy-changes panel with paste-ready `POWER_FLOW`/`LOAD_FLOW`/
+    `REGION_SPLIT` source, and `localStorage` persistence
+    (`tm.apuSystem.powerFlow`/`loadFlow`) otherwise match Air System's
+    flow-box pattern.
   - **Key components, circled in red**: `COMPONENTS[id].key` flags the
     3 components the reference image itself circles in red — Bleed
     Valve, Surge Control Valve, and the Inlet Guide Vane (the small
     oval next to the IGVA box, physically distinct from IGVA, which
-    actuates it) — each gets a larger marker (42px vs the other
-    components' 26px) with a red border instead of the default blue, a
-    dedicated "Key components" sub-list above the full "every other
-    component" reference list below the diagram (both lists share the
-    same hover-highlight/tooltip wiring Air System's marker-plus-list
-    pattern uses). Descriptions for all three, and for IGVA, are drawn
-    close to verbatim from the deck's own per-component slides (14–17),
-    since the user asked specifically for these three to be explained.
+    actuates it) — each gets a larger marker (3.3% of image width vs
+    the other components' 2%) with a red border instead of the default
+    blue, a dedicated "Key components" sub-list above the full "every
+    other component" reference list below the diagram (both lists
+    share the same hover-highlight/tooltip wiring Air System's marker-
+    plus-list pattern uses). Descriptions for all three, and for IGVA,
+    are drawn close to verbatim from the deck's own per-component
+    slides (14–17), since the user asked specifically for these three
+    to be explained. Every marker's size (`rPct`, a % of image width,
+    same `aspect-ratio: 1/1` convention as the Virtual Lab's `PARTS` so
+    it stays a true circle) is resizable in edit mode via a small
+    white-on-blue (or white-on-red for key markers) corner handle —
+    `.apu-sys-marker-resize`, same drag-to-resize mechanics as the
+    Virtual Lab's marker handles (radius computed from the handle's
+    distance from the marker's own center, converted back to a % of
+    image width; `evt.stopPropagation()` on the handle's own
+    `pointerdown` so it doesn't also trigger the marker's hover/tooltip
+    logic) — by request ("allow me to change the size of the red and
+    blue circle"). Sizes persist to `localStorage`
+    (`tm.apuSystem.components`, one `{rPct}` per component id) and are
+    included in the Copy-changes panel.
+  - Had to add `pointer-events: none` to `.apu-sys-flow-boxes` (with
+    `pointer-events: auto` restored on the individual `.apu-sys-flow-
+    box` spans) once the divider handle was added underneath it in DOM
+    order — the exact same bug Air System's marker layer had: an
+    unstyled-for-pointer-events absolutely-positioned div (`inset: 0`)
+    silently swallows clicks over its whole empty area for whatever
+    sits beneath it, here the divider drag handle.
   - All marker/region/waypoint positions are pixel-anchored to this one
     specific image the same way Air System's and Virtual Lab's are —
     swapping the reference image means re-deriving every `xPct`/`yPct`

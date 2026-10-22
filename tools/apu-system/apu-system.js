@@ -5,57 +5,62 @@
   // apu-diagram.png, 1286x744 — with markers/regions/flow routes
   // overlaid at percentage positions, the same pattern Air System uses
   // for its engine-diagram.png.
+  //
+  // rPct is each marker's diameter as a % of the image's displayed
+  // width (kept a true circle regardless of the image's own aspect
+  // ratio via CSS aspect-ratio: 1/1, not a height percentage) — same
+  // convention as the Virtual Lab's PARTS markers.
   var COMPONENTS = {
     bleedvalve: {
-      name: 'Non-modulating Bleed (Load) Valve', key: true, xPct: 16.9, yPct: 17.5,
+      name: 'Non-modulating Bleed (Load) Valve', key: true, xPct: 16.9, yPct: 17.5, rPct: 3.3,
       desc: 'Allows the pneumatic bleed from the APU to be interconnected or isolated from the aircraft pneumatic system (the air supply for ECS, Main Engine Start, and ATM). Usually a butterfly-type, spring-loaded, fail-safe-open valve, controlled by the ECB.',
     },
     surgevalve: {
-      name: 'Surge Control Valve', key: true, xPct: 40.8, yPct: 16.1,
+      name: 'Surge Control Valve', key: true, xPct: 40.8, yPct: 16.1, rPct: 3.3,
       desc: 'A modulating valve on the compressor supply duct. If the load compressor delivers more airflow through the IGV than the aircraft pneumatic systems need, compressor stall/surge can result — this valve spills the excess air into the exhaust to protect both the load compressor and the engine from over-pressure. Controlled by the FCU, which supplies servo fuel to open or close it.',
     },
     igv: {
-      name: 'Inlet Guide Vane (IGV)', key: true, xPct: 24.3, yPct: 44,
+      name: 'Inlet Guide Vane (IGV)', key: true, xPct: 24.3, yPct: 44, rPct: 3.3,
       desc: 'A ring of vanes at the load compressor inlet (the small vertical oval next to the IGVA box). Positioning them controls how much air reaches the compressor, letting the APU satisfy varying aircraft pneumatic load demands without changing shaft RPM.',
     },
     igva: {
-      name: 'IGV Actuator (IGVA)', key: false, xPct: 19.6, yPct: 52.4,
+      name: 'IGV Actuator (IGVA)', key: false, xPct: 19.6, yPct: 52.4, rPct: 2,
       desc: 'Regulates the IGV opening to vary the pneumatic load supply entering the load compressor to suit demand. Controlled by the Electronic Control Box (ECB) and operated by servo fuel from the Fuel Control Unit (FCU) — this is how the IGV can vary the load without changing shaft RPM.',
     },
     flowsensor: {
-      name: 'Flow Sensor', key: false, xPct: 27.6, yPct: 26.9,
+      name: 'Flow Sensor', key: false, xPct: 27.6, yPct: 26.9, rPct: 2,
       desc: 'Measures airflow into the load compressor, feeding the control system that positions the IGV to match aircraft demand.',
     },
     loadcompressor: {
-      name: 'Load Compressor', key: false, xPct: 9.2, yPct: 53.7,
+      name: 'Load Compressor', key: false, xPct: 9.2, yPct: 53.7, rPct: 2,
       desc: 'Compresses air drawn through the inlet for the aircraft’s pneumatic systems. Mounted on the same shaft as the gas generator, so it spins whenever the APU runs — part of the Load Section.',
     },
     accygearbox: {
-      name: 'Accessory / Reduction Gearbox', key: false, xPct: 15.5, yPct: 33.6,
+      name: 'Accessory / Reduction Gearbox', key: false, xPct: 15.5, yPct: 33.6, rPct: 2,
       desc: 'Reduction gears drive the components needed to operate and control the gas turbine engine, and supply the mechanical power needed to drive the electrical generator.',
     },
     gen: {
-      name: 'Generator (GEN)', key: false, xPct: 8.4, yPct: 31.6,
+      name: 'Generator (GEN)', key: false, xPct: 8.4, yPct: 31.6, rPct: 2,
       desc: 'Driven mechanically off the accessory gearbox, supplying electrical power to the aircraft — one of the two things (electrical and pneumatic) the APU exists to provide.',
     },
     ecb: {
-      name: 'Electronic Control Box (ECB)', key: false, xPct: 21, yPct: 80,
+      name: 'Electronic Control Box (ECB)', key: false, xPct: 21, yPct: 80, rPct: 2,
       desc: 'Receives the aircraft’s pneumatic/electrical demand signal and commands the IGV actuator and fuel metering accordingly, coordinating how much air and fuel the APU supplies.',
     },
     compressor: {
-      name: 'Compressor', key: false, xPct: 42.4, yPct: 40.3,
+      name: 'Compressor', key: false, xPct: 42.4, yPct: 40.3, rPct: 2,
       desc: 'Part of the gas-generator (Power Section): raises incoming air to high pressure before it enters the combustor, same shaft as the turbine.',
     },
     combustor: {
-      name: 'Combustor', key: false, xPct: 56.8, yPct: 64.5,
+      name: 'Combustor', key: false, xPct: 56.8, yPct: 64.5, rPct: 2,
       desc: 'Burns metered fuel in the compressed air to produce the high-energy gas that drives the turbine.',
     },
     turbine: {
-      name: 'Turbine (3 Wheels)', key: false, xPct: 81.3, yPct: 39,
+      name: 'Turbine (3 Wheels)', key: false, xPct: 81.3, yPct: 39, rPct: 2,
       desc: 'Extracts energy from the combustor’s hot gas to drive the compressor, the load compressor, the accessory gearbox, and the generator — the Power Section’s whole reason for existing: providing torque to drive the Load Section.',
     },
     metering: {
-      name: 'Fuel Metering Valve', key: false, xPct: 54.4, yPct: 82,
+      name: 'Fuel Metering Valve', key: false, xPct: 54.4, yPct: 82, rPct: 2,
       desc: 'Meters fuel into the combustor in the quantity commanded by the ECB/FCU for the current demand.',
     },
   };
@@ -71,13 +76,20 @@
     },
   };
 
+  // Where the Power/Load section tint divides, as a % of image width —
+  // draggable in edit mode via a vertical handle.
+  var REGION_SPLIT = 27;
+
   // Simplified airflow routes from a shared inlet, split into the Power
   // Section (compressor → combustor → turbine → exhaust) and Load
   // Section (load compressor → accessory gearbox) paths named in the
   // request. Percentage coordinates over the image, like Air System's
-  // flow routes. Edit-mode-only numbered yellow handles; the flow line
-  // itself is always visible.
+  // flow routes. Point 0 is the inlet itself (upstream of where the two
+  // routes visually diverge); the rest are numbered 1..N after it, so
+  // numbering is 0-based throughout. Edit-mode-only numbered yellow
+  // handles; the flow line itself is always visible.
   var POWER_FLOW = [
+    { xPct: 22, yPct: 55 },
     { xPct: 31, yPct: 47 },
     { xPct: 42, yPct: 40 },
     { xPct: 57, yPct: 55 },
@@ -85,6 +97,7 @@
     { xPct: 93, yPct: 31 },
   ];
   var LOAD_FLOW = [
+    { xPct: 20, yPct: 57 },
     { xPct: 29, yPct: 47 },
     { xPct: 23, yPct: 45 },
     { xPct: 18, yPct: 40 },
@@ -94,6 +107,8 @@
   var EDIT_PASSWORD = 'APP';
   var STORAGE_KEY_POWER_FLOW = 'tm.apuSystem.powerFlow';
   var STORAGE_KEY_LOAD_FLOW = 'tm.apuSystem.loadFlow';
+  var STORAGE_KEY_REGION_SPLIT = 'tm.apuSystem.regionSplit';
+  var STORAGE_KEY_COMPONENTS = 'tm.apuSystem.components';
 
   function restoreArray(key, items) {
     try {
@@ -110,15 +125,38 @@
   function persistArray(key, items) {
     try { window.localStorage.setItem(key, JSON.stringify(items)); } catch (e) { /* storage full/blocked */ }
   }
+  function restoreNumber(key, fallback) {
+    try {
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return fallback;
+      var n = Number(raw);
+      return isFinite(n) ? n : fallback;
+    } catch (e) { return fallback; }
+  }
+  function persistNumber(key, n) {
+    try { window.localStorage.setItem(key, String(n)); } catch (e) { /* storage full/blocked */ }
+  }
+  function restoreComponentSizes() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY_COMPONENTS);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!saved || typeof saved !== 'object') return;
+      Object.keys(COMPONENTS).forEach(function (id) {
+        var s = saved[id];
+        if (s && typeof s.rPct === 'number') COMPONENTS[id].rPct = s.rPct;
+      });
+    } catch (e) { /* corrupt/blocked storage — keep defaults */ }
+  }
+  function persistComponentSizes() {
+    var out = {};
+    Object.keys(COMPONENTS).forEach(function (id) { out[id] = { rPct: COMPONENTS[id].rPct }; });
+    try { window.localStorage.setItem(STORAGE_KEY_COMPONENTS, JSON.stringify(out)); } catch (e) { /* storage full/blocked */ }
+  }
   restoreArray(STORAGE_KEY_POWER_FLOW, POWER_FLOW);
   restoreArray(STORAGE_KEY_LOAD_FLOW, LOAD_FLOW);
-
-  function pathFromPoints(points) {
-    if (points.length < 2) return '';
-    var d = 'M' + points[0].xPct + ',' + points[0].yPct;
-    for (var i = 1; i < points.length; i++) d += ' L' + points[i].xPct + ',' + points[i].yPct;
-    return d;
-  }
+  REGION_SPLIT = restoreNumber(STORAGE_KEY_REGION_SPLIT, REGION_SPLIT);
+  restoreComponentSizes();
 
   function mount(container) {
     container.innerHTML =
@@ -127,9 +165,9 @@
       '<div>' +
       '<p class="kicker">Official (Open)</p>' +
       '<h1>Auxiliary Power Unit (APU)</h1>' +
-      '<p class="apu-sys-sub">Hover any component for its function. In edit mode, drag the numbered yellow boxes to reshape the airflow routes.</p>' +
+      '<p class="apu-sys-sub">Hover any component for its function. In edit mode: drag the yellow boxes to reshape the airflow, drag the divider to resize the two sections, and drag a marker’s corner handle to resize it.</p>' +
       '</div>' +
-      '<button type="button" class="apu-sys-edit-btn" title="Edit airflow routes">✎ Edit</button>' +
+      '<button type="button" class="apu-sys-edit-btn" title="Edit diagram">✎ Edit</button>' +
       '</div>' +
 
       '<div class="apu-sys-legend">' +
@@ -143,14 +181,15 @@
 
       '<div class="apu-sys-region power"></div>' +
       '<div class="apu-sys-region load"></div>' +
+      '<div class="apu-sys-divider"><span class="apu-sys-divider-grip"></span></div>' +
 
       '<svg class="apu-sys-flow-svg" viewBox="0 0 100 100" preserveAspectRatio="none">' +
       '<defs>' +
-      '<marker id="apu-sys-arrow-power" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" class="apu-sys-arrowhead power"></path></marker>' +
-      '<marker id="apu-sys-arrow-load" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" class="apu-sys-arrowhead load"></path></marker>' +
+      '<marker id="apu-sys-arrow-power" markerUnits="userSpaceOnUse" markerWidth="3.2" markerHeight="3.2" refX="2.4" refY="1.6" orient="auto"><path d="M0,0 L3.2,1.6 L0,3.2 Z" class="apu-sys-arrowhead power"></path></marker>' +
+      '<marker id="apu-sys-arrow-load" markerUnits="userSpaceOnUse" markerWidth="3.2" markerHeight="3.2" refX="2.4" refY="1.6" orient="auto"><path d="M0,0 L3.2,1.6 L0,3.2 Z" class="apu-sys-arrowhead load"></path></marker>' +
       '</defs>' +
-      '<path class="apu-sys-flow-path power" d="' + pathFromPoints(POWER_FLOW) + '" marker-end="url(#apu-sys-arrow-power)"></path>' +
-      '<path class="apu-sys-flow-path load" d="' + pathFromPoints(LOAD_FLOW) + '" marker-end="url(#apu-sys-arrow-load)"></path>' +
+      '<g class="apu-sys-flow-segs power"></g>' +
+      '<g class="apu-sys-flow-segs load"></g>' +
       '</svg>' +
 
       '<div class="apu-sys-flow-boxes"></div>' +
@@ -172,7 +211,7 @@
       '</div>' +
 
       '<div class="apu-sys-edit-panel" hidden>' +
-      '<p>Drag the numbered yellow boxes to reshape the Power/Load airflow routes. When done:</p>' +
+      '<p>Drag the numbered yellow boxes, the section divider, or a marker’s resize handle. When done:</p>' +
       '<button type="button" class="apu-sys-edit-copy">Copy changes</button>' +
       '<textarea readonly></textarea>' +
       '</div>' +
@@ -182,10 +221,12 @@
     var root = container.querySelector('.apu-sys');
     var imageWrap = root.querySelector('.apu-sys-image-wrap');
     var markerLayer = root.querySelector('.apu-sys-markers');
-    var flowSegRoot = root.querySelector('.apu-sys-flow-svg');
     var flowBoxLayer = root.querySelector('.apu-sys-flow-boxes');
-    var powerFlowPath = root.querySelector('.apu-sys-flow-path.power');
-    var loadFlowPath = root.querySelector('.apu-sys-flow-path.load');
+    var powerSegsRoot = root.querySelector('.apu-sys-flow-segs.power');
+    var loadSegsRoot = root.querySelector('.apu-sys-flow-segs.load');
+    var regionPower = root.querySelector('.apu-sys-region.power');
+    var regionLoad = root.querySelector('.apu-sys-region.load');
+    var divider = root.querySelector('.apu-sys-divider');
     var tooltip = root.querySelector('.apu-sys-tooltip');
     var tTitle = tooltip.querySelector('.t-title');
     var tDesc = tooltip.querySelector('.t-desc');
@@ -234,17 +275,58 @@
       });
     }
 
-    markerLayer.innerHTML = Object.keys(COMPONENTS).map(function (id) {
-      var c = COMPONENTS[id];
-      return '<span class="apu-sys-marker' + (c.key ? ' key' : '') + '" data-comp="' + id + '" style="left:' + c.xPct + '%; top:' + c.yPct + '%;"></span>';
-    }).join('');
-    markerLayer.querySelectorAll('.apu-sys-marker').forEach(function (el) {
-      var id = el.getAttribute('data-comp');
-      var c = COMPONENTS[id];
-      el.addEventListener('mouseenter', function (e) { showTip(e, c); setActive(id, true); });
-      el.addEventListener('mousemove', positionTip);
-      el.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
-    });
+    function renderRegions() {
+      regionLoad.style.width = REGION_SPLIT + '%';
+      regionPower.style.left = REGION_SPLIT + '%';
+      divider.style.left = REGION_SPLIT + '%';
+    }
+    renderRegions();
+
+    function renderMarkers() {
+      markerLayer.innerHTML = Object.keys(COMPONENTS).map(function (id) {
+        var c = COMPONENTS[id];
+        return '<span class="apu-sys-marker' + (c.key ? ' key' : '') + '" data-comp="' + id + '" style="left:' + c.xPct + '%; top:' + c.yPct + '%; width:' + c.rPct + '%;">' +
+          '<span class="apu-sys-marker-resize"></span>' +
+          '</span>';
+      }).join('');
+      markerLayer.querySelectorAll('.apu-sys-marker').forEach(function (el) {
+        var id = el.getAttribute('data-comp');
+        var c = COMPONENTS[id];
+        var resizeHandle = el.querySelector('.apu-sys-marker-resize');
+        el.addEventListener('mouseenter', function (e) { if (!editUnlocked) showTip(e, c); setActive(id, true); });
+        el.addEventListener('mousemove', positionTip);
+        el.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
+
+        resizeHandle.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          evt.stopPropagation();
+          resizeHandle.setPointerCapture(evt.pointerId);
+          resizeHandle.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var cx = rect.left + (c.xPct / 100) * rect.width;
+            var cy = rect.top + (c.yPct / 100) * rect.height;
+            var dx = moveEvt.clientX - cx, dy = moveEvt.clientY - cy;
+            var distPx = Math.sqrt(dx * dx + dy * dy);
+            var rPct = Math.max(1, Math.min(10, (distPx / rect.width) * 100));
+            c.rPct = rPct;
+            el.style.width = rPct + '%';
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            resizeHandle.classList.remove('dragging');
+            resizeHandle.releasePointerCapture(upEvt.pointerId);
+            resizeHandle.removeEventListener('pointermove', onMove);
+            resizeHandle.removeEventListener('pointerup', onUp);
+          }
+          resizeHandle.addEventListener('pointermove', onMove);
+          resizeHandle.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+    renderMarkers();
+
     root.querySelectorAll('.apu-sys-list-item').forEach(function (li) {
       var id = li.getAttribute('data-comp');
       var c = COMPONENTS[id];
@@ -253,10 +335,43 @@
       li.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
     });
 
-    function rebuildFlowPaths() {
-      powerFlowPath.setAttribute('d', pathFromPoints(POWER_FLOW));
-      loadFlowPath.setAttribute('d', pathFromPoints(LOAD_FLOW));
+    // --- divider drag (Power/Load section split) ---
+    divider.addEventListener('pointerdown', function (evt) {
+      if (!editUnlocked) return;
+      evt.preventDefault();
+      divider.setPointerCapture(evt.pointerId);
+      divider.classList.add('dragging');
+      function onMove(moveEvt) {
+        var rect = imageWrap.getBoundingClientRect();
+        var x = ((moveEvt.clientX - rect.left) / rect.width) * 100;
+        REGION_SPLIT = Math.max(5, Math.min(95, x));
+        renderRegions();
+        updateEditPanel();
+      }
+      function onUp(upEvt) {
+        divider.classList.remove('dragging');
+        divider.releasePointerCapture(upEvt.pointerId);
+        divider.removeEventListener('pointermove', onMove);
+        divider.removeEventListener('pointerup', onUp);
+      }
+      divider.addEventListener('pointermove', onMove);
+      divider.addEventListener('pointerup', onUp);
+    });
+
+    // --- airflow routes: per-segment paths (thicker, with an arrowhead
+    // on every segment, not just the end) rather than one long path, so
+    // direction reads clearly along the whole route. ---
+    function renderFlowSegs(segRoot, points, circuit) {
+      segRoot.innerHTML = points.slice(0, -1).map(function (p, i) {
+        var next = points[i + 1];
+        return '<path class="apu-sys-flow-seg ' + circuit + '" d="M' + p.xPct + ',' + p.yPct + ' L' + next.xPct + ',' + next.yPct + '" marker-end="url(#apu-sys-arrow-' + circuit + ')"></path>';
+      }).join('');
     }
+    function renderAllFlowSegs() {
+      renderFlowSegs(powerSegsRoot, POWER_FLOW, 'power');
+      renderFlowSegs(loadSegsRoot, LOAD_FLOW, 'load');
+    }
+    renderAllFlowSegs();
 
     function formatFlow(varName, points) {
       var lines = points.map(function (p) {
@@ -266,12 +381,17 @@
     }
     function updateEditPanel() {
       if (!editUnlocked) return;
-      editPanelText.value = formatFlow('POWER_FLOW', POWER_FLOW) + '\n\n' + formatFlow('LOAD_FLOW', LOAD_FLOW);
+      editPanelText.value =
+        formatFlow('POWER_FLOW', POWER_FLOW) + '\n\n' +
+        formatFlow('LOAD_FLOW', LOAD_FLOW) + '\n\n' +
+        '  var REGION_SPLIT = ' + (Math.round(REGION_SPLIT * 10) / 10) + ';';
       persistArray(STORAGE_KEY_POWER_FLOW, POWER_FLOW);
       persistArray(STORAGE_KEY_LOAD_FLOW, LOAD_FLOW);
+      persistNumber(STORAGE_KEY_REGION_SPLIT, REGION_SPLIT);
+      persistComponentSizes();
     }
 
-    function makeDraggable(el, item) {
+    function makeDraggable(el, item, onMoveExtra) {
       el.addEventListener('pointerdown', function (evt) {
         if (!editUnlocked) return;
         evt.preventDefault();
@@ -287,7 +407,7 @@
           item.yPct = y;
           el.style.left = x + '%';
           el.style.top = y + '%';
-          rebuildFlowPaths();
+          if (onMoveExtra) onMoveExtra();
           updateEditPanel();
         }
         function onUp(upEvt) {
@@ -301,16 +421,22 @@
       });
     }
 
+    // Numbering starts at 0 (point 0 is the inlet, upstream of where
+    // the two routes diverge) — rebuilding only the segment lines (not
+    // the box layer) on every move, for the same pointer-capture reason
+    // Air System's/Virtual Lab's flow handles do this.
     function renderFlowBoxes() {
-      var all = POWER_FLOW.map(function (p, i) { return { p: p, n: i + 1 }; })
-        .concat(LOAD_FLOW.map(function (p, i) { return { p: p, n: i + 1 }; }));
+      var all = POWER_FLOW.map(function (p, i) { return { p: p, n: i, circuit: 'power' }; })
+        .concat(LOAD_FLOW.map(function (p, i) { return { p: p, n: i, circuit: 'load' }; }));
       flowBoxLayer.innerHTML = all.map(function (item) {
-        return '<span class="apu-sys-flow-box" style="left:' + item.p.xPct + '%; top:' + item.p.yPct + '%;">' + item.n + '</span>';
+        return '<span class="apu-sys-flow-box ' + item.circuit + '" style="left:' + item.p.xPct + '%; top:' + item.p.yPct + '%;">' + item.n + '</span>';
       }).join('');
       flowBoxLayer.querySelectorAll('.apu-sys-flow-box').forEach(function (el, idx) {
         var points = idx < POWER_FLOW.length ? POWER_FLOW : LOAD_FLOW;
         var i = idx < POWER_FLOW.length ? idx : idx - POWER_FLOW.length;
-        makeDraggable(el, points[i]);
+        makeDraggable(el, points[i], function () {
+          renderFlowSegs(idx < POWER_FLOW.length ? powerSegsRoot : loadSegsRoot, points, idx < POWER_FLOW.length ? 'power' : 'load');
+        });
       });
     }
     renderFlowBoxes();
