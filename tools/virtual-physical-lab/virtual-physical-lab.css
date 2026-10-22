@@ -94,19 +94,20 @@
 
 .vlab-marker {
   position: absolute;
-  width: 26px;
-  height: 26px;
-  margin-left: -13px;
-  margin-top: -13px;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 2px solid transparent;
+  border: 4px solid #e8392b;
+  background: rgba(232, 57, 43, 0.12);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .vlab-marker:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(255, 92, 108, 0.25);
+  background: rgba(255, 92, 108, 0.18);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.8), 0 0 0 5px rgba(255, 92, 108, 0.25);
 }
 
 .vlab-edit .vlab-marker {
@@ -117,6 +118,29 @@
 .vlab-edit .vlab-marker.dragging {
   cursor: grabbing;
   opacity: 0.85;
+}
+
+.vlab-marker-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  transform: translate(45%, 45%);
+  border-radius: 50%;
+  background: #fff;
+  border: 2.5px solid #e8392b;
+  cursor: nwse-resize;
+  touch-action: none;
+  display: none;
+}
+
+.vlab-edit .vlab-marker-resize {
+  display: block;
+}
+
+.vlab-marker-resize.dragging {
+  background: #e8392b;
 }
 
 .vlab-waypoint-handle {
@@ -229,6 +253,10 @@
   .vlab-combustor-flicker {
     animation: none;
   }
+}
+
+.vlab-edit .vlab-combustor-flicker {
+  animation: none;
 }
 
 .vlab-jet {

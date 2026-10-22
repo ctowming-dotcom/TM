@@ -97,20 +97,34 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   jet gradient scales with thrust. The image can't show literal blade
   rotation (no shapes to animate in a raster picture), so that part of
   the original animated-SVG version (before either reference image) was
-  dropped — rotation reads only through the flow/glow/jet. 5 percentage-
-  positioned hover markers (`PARTS`, holding position plus the tooltip
-  name/desc together) sit over the image at the inlet / compressor exit
-  / combustor / turbine / exhaust stations for tooltips, the same
-  marker-overlay pattern as the Air System tool; a list below the
-  diagram shows the same 5 parts' name/description permanently (not
+  dropped — rotation reads only through the flow/glow/jet. 5 big, always-
+  visible red circles (`PARTS`, holding position + size + the tooltip
+  name/desc together — `rPct` is the circle's diameter as a % of the
+  image's displayed width, kept a true circle regardless of the image's
+  own aspect ratio via CSS `aspect-ratio: 1/1` rather than a height
+  percentage) pinpoint the inlet / compressor exit / combustor / turbine
+  / exhaust stations for tooltips, the same marker-overlay pattern as the
+  Air System tool; a list below the diagram shows the same 5 parts'
+  name/description permanently (not
   edit-gated — added by request so the explanations are visible without
   unlocking edit mode), each entry also hoverable for the same tooltip.
 
   Has the same password-gated "✎ Edit" button as Air System (password
-  `APP`, casual click-guard only). Unlocked, it adds: the 5 part markers
-  become draggable and their name/description (in that same always-shown
-  list) become retypable (`contenteditable`); the flow route's waypoints
-  become draggable diamond handles (dragging one rebuilds both the upper
+  `APP`, casual click-guard only). Unlocked, it also freezes the whole
+  simulation (RPM ramp, airflow arrows, combustor flicker) so a moving
+  picture doesn't fight you while dragging small handles — `frame()`
+  short-circuits to a no-op (just keeps the rAF loop alive) while
+  `editUnlocked` is true, and `.vlab-edit .vlab-combustor-flicker`
+  cancels the separate CSS flicker animation. It also adds: the 5 red
+  circle markers become draggable from anywhere inside them, and get a
+  small white-on-red resize handle at their edge (drag it to change
+  `rPct`, computed from the handle's distance from the circle's own
+  center, converted back to a % of image width) — the marker's own
+  pointerdown handler ignores clicks that land on the resize handle
+  (`evt.target === resizeHandle`) so the two drags never fight each
+  other; their name/description (in that same always-shown list) become
+  retypable (`contenteditable`); the flow route's waypoints become
+  draggable diamond handles (dragging one rebuilds both the upper
   path and its auto-mirrored lower counterpart); the 2 combustor glow
   centers become draggable dashed-circle handles. Waypoint/glow handles
   are plain SVG shapes positioned by converting pointer coordinates

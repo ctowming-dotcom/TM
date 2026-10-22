@@ -62,12 +62,15 @@
   // edit mode (see EDIT_PASSWORD below).
   var IMG_W = 1229, IMG_H = 684, CENTER_Y = 303;
 
+  // rPct is the marker's diameter as a percentage of the image's
+  // displayed width (kept circular regardless of the image's own aspect
+  // ratio via `aspect-ratio: 1/1` in CSS, not a height percentage).
   var PARTS = [
-    { comp: 'inlet', xPct: 23.6, yPct: 44.3, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
-    { comp: 'compressor', xPct: 43.0, yPct: 7.3, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
-    { comp: 'combustor', xPct: 48.8, yPct: 21.9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
-    { comp: 'turbine', xPct: 58.6, yPct: 32.2, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
-    { comp: 'exhaust', xPct: 77.3, yPct: 44.3, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+    { comp: 'inlet', xPct: 23.6, yPct: 44.3, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 43.0, yPct: 7.3, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 48.8, yPct: 21.9, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 58.6, yPct: 32.2, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
+    { comp: 'exhaust', xPct: 77.3, yPct: 44.3, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
   ];
   var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
@@ -297,18 +300,24 @@
       el.addEventListener('mouseleave', hideTip);
     });
 
-    // --- Part markers (HTML overlay, percentage-positioned like Air System) ---
+    // --- Part markers (HTML overlay, percentage-positioned like Air System).
+    // Each is a big red circle (position + size both editable): position
+    // is dragged from anywhere in the circle, size from its resize handle
+    // (the small white-on-red dot at its edge, edit-mode only).
     function renderMarkers() {
       markerLayer.innerHTML = PARTS.map(function (p) {
-        return '<span class="vlab-marker" data-comp="' + p.comp + '" style="left:' + p.xPct + '%; top:' + p.yPct + '%;"></span>';
+        return '<span class="vlab-marker" data-comp="' + p.comp + '" style="left:' + p.xPct + '%; top:' + p.yPct + '%; width:' + p.rPct + '%;">' +
+          '<span class="vlab-marker-resize"></span>' +
+          '</span>';
       }).join('');
       markerLayer.querySelectorAll('.vlab-marker').forEach(function (el, i) {
         var part = PARTS[i];
+        var resizeHandle = el.querySelector('.vlab-marker-resize');
         el.addEventListener('mouseenter', function (e) { if (!editUnlocked) showTip(e, part); });
         el.addEventListener('mousemove', positionTip);
         el.addEventListener('mouseleave', hideTip);
         el.addEventListener('pointerdown', function (evt) {
-          if (!editUnlocked) return;
+          if (!editUnlocked || evt.target === resizeHandle) return;
           evt.preventDefault();
           hideTip();
           el.setPointerCapture(evt.pointerId);
@@ -329,6 +338,32 @@
           }
           el.addEventListener('pointermove', onMove);
           el.addEventListener('pointerup', onUp);
+        });
+        resizeHandle.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          evt.stopPropagation();
+          hideTip();
+          resizeHandle.setPointerCapture(evt.pointerId);
+          resizeHandle.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var cx = rect.left + (part.xPct / 100) * rect.width;
+            var cy = rect.top + (part.yPct / 100) * rect.height;
+            var dx = moveEvt.clientX - cx, dy = moveEvt.clientY - cy;
+            var distPct = (Math.sqrt(dx * dx + dy * dy) / rect.width) * 100;
+            part.rPct = Math.max(2, Math.min(30, distPct * 2));
+            el.style.width = part.rPct + '%';
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            resizeHandle.classList.remove('dragging');
+            resizeHandle.releasePointerCapture(upEvt.pointerId);
+            resizeHandle.removeEventListener('pointermove', onMove);
+            resizeHandle.removeEventListener('pointerup', onUp);
+          }
+          resizeHandle.addEventListener('pointermove', onMove);
+          resizeHandle.addEventListener('pointerup', onUp);
         });
       });
     }
@@ -461,7 +496,8 @@
       if (!editUnlocked) return;
       var partsCode = '  var PARTS = [\n' + PARTS.map(function (p) {
         return '    { comp: ' + JSON.stringify(p.comp) + ', xPct: ' + (Math.round(p.xPct * 10) / 10) +
-          ', yPct: ' + (Math.round(p.yPct * 10) / 10) + ', name: ' + JSON.stringify(p.name) + ', desc: ' + JSON.stringify(p.desc) + ' },';
+          ', yPct: ' + (Math.round(p.yPct * 10) / 10) + ', rPct: ' + (Math.round(p.rPct * 10) / 10) +
+          ', name: ' + JSON.stringify(p.name) + ', desc: ' + JSON.stringify(p.desc) + ' },';
       }).join('\n') + '\n  ];';
       var waypointsCode = '  var UPPER_WAYPOINTS = [\n    ' +
         UPPER_WAYPOINTS.map(function (p) { return '{ x: ' + p.x + ', y: ' + p.y + ' }'; }).join(', ') +
@@ -537,6 +573,15 @@
     });
 
     function frame(now) {
+      // Freeze the whole simulation (RPM ramp, airflow arrows, combustor
+      // glow) while editing — a moving diagram makes it harder to grab
+      // and drop the small waypoint/glow handles precisely.
+      if (editUnlocked) {
+        lastTime = now;
+        rafId = requestAnimationFrame(frame);
+        return;
+      }
+
       if (lastTime == null) lastTime = now;
       var dt = Math.min(64, now - lastTime) / 16.67; // normalized to ~60fps steps
       lastTime = now;
