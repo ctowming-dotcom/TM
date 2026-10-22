@@ -9,6 +9,12 @@
       icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"></path><path d="M10 3v5.5L5.5 17a2 2 0 0 0 1.8 2.9h9.4a2 2 0 0 0 1.8-2.9L14 8.5V3"></path><path d="M7.5 14.5h9"></path></svg>',
     },
     {
+      id: 'turbofan-engine',
+      name: 'Turbofan Engine',
+      description: 'Interactive overview of a turbofan engine’s layout and operation.',
+      icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.5"></circle><path d="M12 9.5c0-3 1-5.5 3.5-6.5"></path><path d="M14.3 10.3c2.4-1.7 5-2.2 7-1.2"></path><path d="M14.3 13.7c2.4 1.7 3.7 4 3.7 6.2"></path><path d="M9.7 13.7c-2.4 1.7-5 2.2-7 1.2"></path><path d="M9.7 10.3C7.3 8.6 6 6.3 6 4.1"></path></svg>',
+    },
+    {
       id: 'oil-system-overview',
       name: 'Oil System Overview',
       description: 'Interactive turbofan oil system diagram — switch spool configuration, toggle oil circuits, and hover a component for details.',

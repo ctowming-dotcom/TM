@@ -211,24 +211,29 @@ Google Fonts. Full dark-mode token set in `styles.css`.
 
 ### Phase 2 — Scaffolded topics, content pending
 
-Three tools registered as placeholders ("Coming soon" card using shared
+Four tools registered as placeholders ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
 Lab look). Each is just a `mount()` stub in its own folder, ready to be
 replaced with real content without touching any other tool:
 
+- `turbofan-engine` — Turbofan Engine (parked right after Virtual Lab on
+  Engine Practical in the catalog, by request; no reference material
+  supplied yet, unlike the other three below which at least have a
+  defined scope/name from earlier planning)
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
 - `apu-system` — APU System
 - `starting-system` — Starting System
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
-Engine Practical, Oil System Overview, Fuel System Overview, Air System,
-Starting System, APU System, Fire Protection System.
+Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
+Overview, Air System, Starting System, APU System, Fire Protection
+System.
 
 ### Future phases
 
-- Fill in real content for the three remaining Phase 2 placeholders above
-  (likely following the Fuel/Oil diagram pattern, or the Virtual Lab's
+- Fill in real content for the four Phase 2 placeholders above (likely
+  following the Fuel/Oil diagram pattern, or the Virtual Lab's
   data-driven-simulation pattern, depending on what's supplied for each).
 - Add further tools via the registry pattern above; scope and specifics TBD
   per tool when planned.
