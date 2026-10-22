@@ -3,7 +3,7 @@
   // ignition / starter-air block diagram) and the "Start Sequence for a
   // Twin Spool Engine (Part 1)" slide — both from the user-supplied deck.
   var COMPONENTS = {
-    eivmu: ['Electrical Supply (EIVMU)', '115 VAC electrical power supplied from the EIVMU to the Engine Electronic Controller, powering it up to run the start sequence.'],
+    eivmu: ['Electrical Supply', '115 VAC electrical power supplied to the Engine Electronic Controller, powering it up to run the start sequence.'],
     eec: ['Engine Electronic Controller (EEC)', 'The engine’s electronic controller — manages the ignition system and feeds live engine parameters to the cockpit ECAM page throughout the start.'],
     ignitionunit: ['Ignition Unit', 'A dual-channel ignition exciter that turns EEC-commanded power into the high-voltage pulses sent on to the igniter plug.'],
     igniterplug: ['Igniter Plug', 'Sparks inside the combustion chamber to ignite the fuel-air mixture once fuel is introduced, starting combustion.'],
@@ -121,7 +121,7 @@
       arrow('a7', 'pneu', 'M540,485 L630,485') +
       arrow('a8', 'mech', 'M800,485 L900,485 L900,400') +
 
-      box('eivmu', 30, 60, 170, 70, 'EIVMU\n115 VAC SUPPLY') +
+      box('eivmu', 30, 60, 170, 70, 'ELECTRICAL\n115 VAC SUPPLY') +
       box('eec', 260, 50, 190, 90, 'EEC\n(Engine Electronic\nController)') +
       box('ignitionunit', 510, 50, 190, 90, 'IGNITION UNIT\n(Dual Channel)') +
       box('igniterplug', 760, 60, 150, 70, 'IGNITER PLUG') +

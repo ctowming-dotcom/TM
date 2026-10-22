@@ -465,7 +465,8 @@ automatically or by hand:
     reference list) connected by 8 fixed-path arrows (`a1`–`a8`,
     hand-plotted elbow paths, not computed layout, since the diagram
     never changes shape) split into four "circuits" by color — electrical
-    (`elec`, amber: EIVMU → EEC → Ignition Unit → Igniter Plug, and
+    (`elec`, amber: Electrical Supply → EEC → Ignition Unit → Igniter
+    Plug, and
     EEC → ECAM page), spark (`spark`, orange: Igniter Plug → Engine),
     pneumatic (`pneu`, blue: Starter Air Supply → Starter Control Valve →
     Starter Motor), and mechanical (`mech`, light gray: Starter Motor →
@@ -501,16 +502,78 @@ automatically or by hand:
     doesn't change with the step (unlike Oil System's list, Starting
     System's component set is fixed, so no per-step rebuild is needed).
 
+- **APU System** (`apu-system`): explains Auxiliary Power Unit operation
+  from the supplied deck (`Chapter_14_Auxiliary_Power_Units_APU_v1.pptx`)
+  and its reference block diagram — redrawn in SVG (`viewBox="0 0 1200
+  640"`), same hand-plotted-box-and-arrow approach as Starting System,
+  rather than embedding the (hand-drawn, photocopy-style) reference
+  image. Distinct from every other tool here in combining three things
+  at once: two labeled background regions, a two-route editable
+  airflow-waypoint overlay, and permanent red "key component" rings —
+  each solving a different piece of the request.
+  - **Power Section / Load Section regions**: two large dashed,
+    tinted background rects (`.apu-region.power`/`.load`, amber/blue)
+    drawn first so every component paints on top of the correct one —
+    Bleed Valve/GEN/Accessory Gearbox/Load Compressor/Flow Sensor/IGV/
+    IGVA/ECB sit inside the Load Section rect, Surge Control Valve/
+    Compressor/Combustor/Turbine/Metering sit inside the Power Section
+    one — plus a `SECTIONS` object (`power`/`load`, each a name/desc
+    pair sourced from slide 11, "Load Section vs Power Section") that
+    renders as two colored cards below the diagram explaining what each
+    section is for. The region labels sit just above the dashed
+    boundary (`y="12"`, the rect itself starts at `y="15"`) rather than
+    inside it at the very top — placing them inside collided with the
+    red key-rings around Bleed Valve and Surge Control Valve, which sit
+    right at each region's top-left/top-right corner.
+  - **Airflow waypoint overlay**: `POWER_FLOW` (5 points: inlet →
+    compressor → combustor → turbine → exhaust) and `LOAD_FLOW` (4
+    points: inlet → load compressor → accessory gearbox), two
+    independent animated flowing lines (orange/blue, same marching-
+    dashes technique as every other diagram tool) drawn from a shared
+    inlet point so the split reads visually, each with numbered yellow
+    `<rect>` handles (`.apu-flow-handle`) — but unlike Air System's
+    always-visible numbered flow boxes, these are `display: none` by
+    default and only revealed via `.apu-edit .apu-flow-handle` (by
+    explicit request: "under edit mode, I want to see the yellow
+    boxes"), matching the Virtual Lab's waypoint-handle convention
+    instead. Dragging converts pointer coordinates through the single
+    `<svg>`'s own `getScreenCTM()` (everything here lives in one SVG,
+    no separate HTML marker layer the way Air System needs for its
+    image overlay) and updates the dragged handle's own attributes in
+    place rather than re-rendering the handle layer mid-drag, same
+    pointer-capture reasoning as Virtual Lab/Air System. Password-gated
+    "✎ Edit" (password `APP`), a Copy-changes panel with paste-ready
+    `POWER_FLOW`/`LOAD_FLOW` source, and `localStorage` persistence
+    (`tm.apuSystem.powerFlow`/`loadFlow`) all follow the same pattern as
+    Air System's flow boxes — only the default-hidden-until-edit part
+    differs. These two routes are a separate, simplified teaching
+    overlay on top of the diagram's own static labeled pipes (the
+    bypass/surge duct, the load-compressor-to-bleed-valve line, etc.,
+    which stay always visible and non-draggable) — not a replacement
+    for them.
+  - **Key components, circled in red**: `COMPONENTS[id].key` flags the
+    3 components the reference image circles in red — Bleed Valve,
+    Surge Control Valve, and the Inlet Guide Vane (the small oval
+    between the Flow Sensor and IGVA, physically distinct from the IGVA
+    box beside it, which actuates it) — each gets a permanent red
+    `<rect>`/`<ellipse>` ring (`.apu-key-ring`, 8–9px outside the
+    component's own shape) drawn regardless of hover state, plus its
+    own "Key components" sub-list above the full "every other
+    component" reference list below the diagram (both lists share the
+    same hover-highlight/explain-panel wiring the other tools use).
+    Descriptions for all three, and for IGVA, are drawn close to
+    verbatim from the deck's own per-component slides (14–17), since
+    the user asked specifically for these three to be explained.
+
 ### Phase 2 — Scaffolded topics, content pending
 
-Two tools registered as placeholders ("Coming soon" card using shared
+One tool registered as a placeholder ("Coming soon" card using shared
 `.placeholder-tool` styling from `styles.css`, in the portal's own Bright
-Lab look). Each is just a `mount()` stub in its own folder, ready to be
-replaced with real content without touching any other tool:
+Lab look) — a `mount()` stub in its own folder, ready to be replaced with
+real content without touching any other tool:
 
 - `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
   display name renamed by request)
-- `apu-system` — APU System
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
 Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
@@ -519,9 +582,10 @@ System.
 
 ### Future phases
 
-- Fill in real content for the two Phase 2 placeholders above (likely
-  following the Fuel/Oil diagram pattern, the Starting System's step-
-  through pattern, or the Virtual Lab's data-driven-simulation pattern,
-  depending on what's supplied for each).
+- Fill in real content for the Fire Protection System placeholder above
+  (likely following the Fuel/Oil diagram pattern, the Starting System's
+  step-through pattern, the APU System's region/waypoint-overlay
+  pattern, or the Virtual Lab's data-driven-simulation pattern,
+  depending on what's supplied).
 - Add further tools via the registry pattern above; scope and specifics TBD
   per tool when planned.
