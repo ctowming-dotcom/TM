@@ -22,7 +22,7 @@
     { id: 'nacelle-vent', xPct: 85, yPct: 88, name: 'Nacelle Ventilation and Cooling', desc: 'The space between the engine cowling and casing (the nacelle) is ventilated with fan air to prevent fluid vapor from accumulating and self-igniting.' },
   ];
 
-  var EDIT_MODE = /[?&]editmarkers\b/.test(location.search);
+  var EDIT_PASSWORD = 'APP';
 
   function mount(container) {
     container.innerHTML =
@@ -35,6 +35,7 @@
       '<div class="air-sys-toggle">' +
       '<button type="button" class="air-sys-mode-btn active" data-mode="internal">Internal Air System</button>' +
       '<button type="button" class="air-sys-mode-btn" data-mode="external">External Air System</button>' +
+      '<button type="button" class="air-sys-edit-btn" title="Edit wording and marker positions">✎ Edit</button>' +
       '</div>' +
 
       '<div class="air-sys-body">' +
@@ -49,14 +50,14 @@
 
       '<div class="air-sys-tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
 
-      // Drag-to-reposition mode for fine-tuning marker placement by eye.
-      // Opt-in only (append ?editmarkers to the page URL) — invisible to
-      // ordinary visitors, no effect on the normal tool.
-      (EDIT_MODE ?
-        '<div class="air-sys-edit-panel">' +
-        '<p>Drag the dots, then copy this and send it back.</p>' +
-        '<textarea readonly></textarea>' +
-        '</div>' : '') +
+      // Password-gated edit mode: drag dots and retype names/descriptions
+      // directly on the page; "Copy changes" exports both items arrays as
+      // ready-to-paste source so the result can be saved back into the file.
+      '<div class="air-sys-edit-panel" hidden>' +
+      '<p>Drag dots, or click a name/description to retype it. When done:</p>' +
+      '<button type="button" class="air-sys-edit-copy">Copy changes</button>' +
+      '<textarea readonly></textarea>' +
+      '</div>' +
 
       '</div>';
 
@@ -65,11 +66,17 @@
     var imageWrap = root.querySelector('.air-sys-image-wrap');
     var listEl = root.querySelector('.air-sys-list');
     var modeButtons = root.querySelectorAll('.air-sys-mode-btn');
-    var editPanelText = EDIT_MODE ? root.querySelector('.air-sys-edit-panel textarea') : null;
+    var editBtn = root.querySelector('.air-sys-edit-btn');
+    var editPanel = root.querySelector('.air-sys-edit-panel');
+    var editPanelText = editPanel.querySelector('textarea');
+    var editCopyBtn = editPanel.querySelector('.air-sys-edit-copy');
 
     var tooltip = root.querySelector('.air-sys-tooltip');
     var tTitle = tooltip.querySelector('.t-title');
     var tDesc = tooltip.querySelector('.t-desc');
+
+    var editUnlocked = false;
+    var currentMode = 'internal';
 
     function showTip(evt, item) {
       tTitle.textContent = item.name;
@@ -99,15 +106,27 @@
       if (li) li.classList.toggle('is-hovered', active);
     }
 
-    function updateEditPanel(items) {
-      if (!editPanelText) return;
-      editPanelText.value = items.map(function (item) {
-        return item.id + ': xPct ' + (Math.round(item.xPct * 10) / 10) + ', yPct ' + (Math.round(item.yPct * 10) / 10);
-      }).join('\n');
+    function formatItems(varName, items) {
+      var lines = items.map(function (item) {
+        return '    { id: ' + JSON.stringify(item.id) +
+          ', xPct: ' + (Math.round(item.xPct * 10) / 10) +
+          ', yPct: ' + (Math.round(item.yPct * 10) / 10) +
+          ', name: ' + JSON.stringify(item.name) +
+          ', desc: ' + JSON.stringify(item.desc) + ' },';
+      });
+      return '  var ' + varName + ' = [\n' + lines.join('\n') + '\n  ];';
     }
 
-    function makeDraggable(el, item, items) {
+    function updateEditPanel() {
+      if (!editUnlocked) return;
+      editPanelText.value =
+        formatItems('INTERNAL_ITEMS', INTERNAL_ITEMS) + '\n\n' +
+        formatItems('EXTERNAL_ITEMS', EXTERNAL_ITEMS);
+    }
+
+    function makeDraggable(el, item) {
       el.addEventListener('pointerdown', function (evt) {
+        if (!editUnlocked) return;
         evt.preventDefault();
         hideTip();
         el.setPointerCapture(evt.pointerId);
@@ -123,7 +142,7 @@
           item.yPct = y;
           el.style.left = x + '%';
           el.style.top = y + '%';
-          updateEditPanel(items);
+          updateEditPanel();
         }
         function onUp(upEvt) {
           el.classList.remove('dragging');
@@ -136,8 +155,16 @@
       });
     }
 
+    function makeEditableText(el, item, field) {
+      el.addEventListener('input', function () {
+        item[field] = el.textContent;
+        updateEditPanel();
+      });
+    }
+
     function render(mode) {
-      root.className = 'air-sys air-sys-mode-' + mode + (EDIT_MODE ? ' air-sys-edit' : '');
+      currentMode = mode;
+      root.className = 'air-sys air-sys-mode-' + mode + (editUnlocked ? ' air-sys-edit' : '');
       var items = mode === 'internal' ? INTERNAL_ITEMS : EXTERNAL_ITEMS;
 
       markerLayer.innerHTML = items.map(function (item) {
@@ -146,18 +173,16 @@
 
       markerLayer.querySelectorAll('.air-sys-img-marker').forEach(function (el, i) {
         var item = items[i];
-        el.addEventListener('mouseenter', function (e) { showTip(e, item); setActive(item.id, true); });
+        el.addEventListener('mouseenter', function (e) { if (!editUnlocked) { showTip(e, item); } setActive(item.id, true); });
         el.addEventListener('mousemove', positionTip);
         el.addEventListener('mouseleave', function () { hideTip(); setActive(item.id, false); });
-        if (EDIT_MODE) makeDraggable(el, item, items);
+        makeDraggable(el, item);
       });
-
-      updateEditPanel(items);
 
       listEl.innerHTML = items.map(function (item) {
         return '<li class="air-sys-list-item" data-list="' + item.id + '">' +
-          '<span class="air-sys-list-name">' + item.name + '</span>' +
-          '<span class="air-sys-list-desc">' + item.desc + '</span>' +
+          '<span class="air-sys-list-name" data-field="name">' + TM.escapeHtml(item.name) + '</span>' +
+          '<span class="air-sys-list-desc" data-field="desc">' + TM.escapeHtml(item.desc) + '</span>' +
           '</li>';
       }).join('');
 
@@ -165,7 +190,15 @@
         var item = items[i];
         li.addEventListener('mouseenter', function () { setActive(item.id, true); });
         li.addEventListener('mouseleave', function () { setActive(item.id, false); });
+        makeEditableText(li.querySelector('[data-field="name"]'), item, 'name');
+        makeEditableText(li.querySelector('[data-field="desc"]'), item, 'desc');
       });
+
+      listEl.querySelectorAll('[data-field]').forEach(function (el) {
+        el.contentEditable = editUnlocked ? 'true' : 'false';
+      });
+
+      updateEditPanel();
     }
 
     modeButtons.forEach(function (btn) {
@@ -173,6 +206,39 @@
         modeButtons.forEach(function (b) { b.classList.toggle('active', b === btn); });
         render(btn.getAttribute('data-mode'));
       });
+    });
+
+    editBtn.addEventListener('click', function () {
+      if (editUnlocked) {
+        editUnlocked = false;
+        editBtn.textContent = '✎ Edit';
+        editBtn.classList.remove('active');
+        editPanel.hidden = true;
+        render(currentMode);
+        return;
+      }
+      var pw = window.prompt('Enter the edit password:');
+      if (pw === null) return;
+      if (pw === EDIT_PASSWORD) {
+        editUnlocked = true;
+        editBtn.textContent = '✓ Editing (click to stop)';
+        editBtn.classList.add('active');
+        editPanel.hidden = false;
+        render(currentMode);
+      } else {
+        window.alert('Incorrect password.');
+      }
+    });
+
+    editCopyBtn.addEventListener('click', function () {
+      editPanelText.focus();
+      editPanelText.select();
+      try {
+        document.execCommand('copy');
+      } catch (e) {
+        // Clipboard access can fail silently in some browsers; the text
+        // stays selected so it can still be copied manually with Ctrl/Cmd+C.
+      }
     });
 
     render('internal');

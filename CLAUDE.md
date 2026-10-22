@@ -118,7 +118,16 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   igniter cooling, turbine case cooling/ACC, anti-icing). List/description
   content sourced from the supplied deck `Chapter_11_Air_System_v1_2hr.pptx`.
   Uses the portal's Bright Lab chrome like the Virtual Lab (not a
-  reference-sheet style).
+  reference-sheet style). Has a password-gated "✎ Edit" button (password
+  `APP`, hardcoded client-side — a casual gate against accidental edits,
+  not real auth) that, once unlocked, makes every marker draggable and
+  every list name/description directly retypable (`contenteditable`) for
+  both modes; a floating panel shows the live, ready-to-paste
+  `INTERNAL_ITEMS`/`EXTERNAL_ITEMS` source so changes made by dragging/
+  retyping in the browser can be copied back into `air-system.js` (no
+  backend — this is how content gets edited without writing code by
+  hand, but someone still has to paste the result into the file and
+  redeploy).
 
 ### Phase 2 — Scaffolded topics, content pending
 

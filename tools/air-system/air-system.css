@@ -41,6 +41,25 @@
   border-color: var(--accent);
 }
 
+.air-sys-edit-btn {
+  margin-left: auto;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.air-sys-edit-btn.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
 .air-sys-body {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);
@@ -205,4 +224,30 @@
   font-family: monospace;
   font-size: 0.78rem;
   resize: vertical;
+}
+
+.air-sys-edit-copy {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-family: var(--font-display);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.air-sys-edit [contenteditable="true"] {
+  outline: 1px dashed var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+  cursor: text;
+}
+
+.air-sys-edit [contenteditable="true"]:focus {
+  outline-style: solid;
+  background: rgba(255, 92, 108, 0.08);
 }
