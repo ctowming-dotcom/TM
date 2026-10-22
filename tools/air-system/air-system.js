@@ -4,12 +4,12 @@
   // positions are percentages of that image's width/height so they scale
   // with it responsively regardless of displayed size.
   var INTERNAL_ITEMS = [
-    { id: 'thrust-bearing', xPct: 48, yPct: 50, name: 'Thrust Bearing Load Relief', desc: 'Air pressure is used to offset part of the axial load on the main thrust bearing, reducing the load it must carry.' },
-    { id: 'labyrinth-seal', xPct: 52, yPct: 44, name: 'Sealing of Main Bearing Compartments (Labyrinth Seal)', desc: 'Labyrinth seals use a pressurized air barrier to keep oil inside the bearing compartments and hot gas or debris out.' },
-    { id: 'combustor-liner', xPct: 58, yPct: 22, name: 'Cooling of Combustion Chamber (Combustion Liner)', desc: 'Air passes through and around the combustor liner to keep its walls within temperature limits while the fuel-air mixture burns inside.' },
-    { id: 'ngv-cooling', xPct: 64, yPct: 20, name: 'Cooling of Nozzle Guide Vanes', desc: 'NGVs direct combustion gas onto the turbine rotor and sit directly in the hottest gas path, so they are cooled with air bled from the compressor.' },
-    { id: 'turbine-blade', xPct: 68, yPct: 22, name: 'Cooling of Turbine Blades', desc: 'Cooling air is fed through the turbine blades to keep metal temperatures within limits despite the extremely hot combustion gases flowing over them.' },
-    { id: 'turbine-disc', xPct: 70, yPct: 50, name: 'Cooling of Turbine Discs', desc: 'Cooling air is directed onto the turbine disc faces to limit disc temperature and the thermal stresses that would otherwise shorten its fatigue life.' },
+    { id: 'thrust-bearing', xPct: 49, yPct: 44, name: 'Thrust Bearing Load Relief', desc: 'Air pressure is used to offset part of the axial load on the main thrust bearing, reducing the load it must carry.' },
+    { id: 'labyrinth-seal', xPct: 46, yPct: 51, name: 'Sealing of Main Bearing Compartments (Labyrinth Seal)', desc: 'Labyrinth seals use a pressurized air barrier to keep oil inside the bearing compartments and hot gas or debris out.' },
+    { id: 'combustor-liner', xPct: 62, yPct: 24, name: 'Cooling of Combustion Chamber (Combustion Liner)', desc: 'Air passes through and around the combustor liner to keep its walls within temperature limits while the fuel-air mixture burns inside.' },
+    { id: 'ngv-cooling', xPct: 72, yPct: 25, name: 'Cooling of Nozzle Guide Vanes', desc: 'NGVs direct combustion gas onto the turbine rotor and sit directly in the hottest gas path, so they are cooled with air bled from the compressor.' },
+    { id: 'turbine-blade', xPct: 77, yPct: 26, name: 'Cooling of Turbine Blades', desc: 'Cooling air is fed through the turbine blades to keep metal temperatures within limits despite the extremely hot combustion gases flowing over them.' },
+    { id: 'turbine-disc', xPct: 71, yPct: 46, name: 'Cooling of Turbine Discs', desc: 'Cooling air is directed onto the turbine disc faces to limit disc temperature and the thermal stresses that would otherwise shorten its fatigue life.' },
   ];
 
   var EXTERNAL_ITEMS = [
