@@ -504,66 +504,64 @@ automatically or by hand:
 
 - **APU System** (`apu-system`): explains Auxiliary Power Unit operation
   from the supplied deck (`Chapter_14_Auxiliary_Power_Units_APU_v1.pptx`)
-  and its reference block diagram — redrawn in SVG (`viewBox="0 0 1200
-  640"`), same hand-plotted-box-and-arrow approach as Starting System,
-  rather than embedding the (hand-drawn, photocopy-style) reference
-  image. Distinct from every other tool here in combining three things
-  at once: two labeled background regions, a two-route editable
-  airflow-waypoint overlay, and permanent red "key component" rings —
-  each solving a different piece of the request.
-  - **Power Section / Load Section regions**: two large dashed,
-    tinted background rects (`.apu-region.power`/`.load`, amber/blue)
-    drawn first so every component paints on top of the correct one —
-    Bleed Valve/GEN/Accessory Gearbox/Load Compressor/Flow Sensor/IGV/
-    IGVA/ECB sit inside the Load Section rect, Surge Control Valve/
-    Compressor/Combustor/Turbine/Metering sit inside the Power Section
-    one — plus a `SECTIONS` object (`power`/`load`, each a name/desc
-    pair sourced from slide 11, "Load Section vs Power Section") that
-    renders as two colored cards below the diagram explaining what each
-    section is for. The region labels sit just above the dashed
-    boundary (`y="12"`, the rect itself starts at `y="15"`) rather than
-    inside it at the very top — placing them inside collided with the
-    red key-rings around Bleed Valve and Surge Control Valve, which sit
-    right at each region's top-left/top-right corner.
-  - **Airflow waypoint overlay**: `POWER_FLOW` (5 points: inlet →
-    compressor → combustor → turbine → exhaust) and `LOAD_FLOW` (4
-    points: inlet → load compressor → accessory gearbox), two
-    independent animated flowing lines (orange/blue, same marching-
-    dashes technique as every other diagram tool) drawn from a shared
-    inlet point so the split reads visually, each with numbered yellow
-    `<rect>` handles (`.apu-flow-handle`) — but unlike Air System's
-    always-visible numbered flow boxes, these are `display: none` by
-    default and only revealed via `.apu-edit .apu-flow-handle` (by
-    explicit request: "under edit mode, I want to see the yellow
-    boxes"), matching the Virtual Lab's waypoint-handle convention
-    instead. Dragging converts pointer coordinates through the single
-    `<svg>`'s own `getScreenCTM()` (everything here lives in one SVG,
-    no separate HTML marker layer the way Air System needs for its
-    image overlay) and updates the dragged handle's own attributes in
-    place rather than re-rendering the handle layer mid-drag, same
-    pointer-capture reasoning as Virtual Lab/Air System. Password-gated
-    "✎ Edit" (password `APP`), a Copy-changes panel with paste-ready
-    `POWER_FLOW`/`LOAD_FLOW` source, and `localStorage` persistence
-    (`tm.apuSystem.powerFlow`/`loadFlow`) all follow the same pattern as
-    Air System's flow boxes — only the default-hidden-until-edit part
-    differs. These two routes are a separate, simplified teaching
-    overlay on top of the diagram's own static labeled pipes (the
-    bypass/surge duct, the load-compressor-to-bleed-valve line, etc.,
-    which stay always visible and non-draggable) — not a replacement
-    for them.
+  and its reference block diagram. First built as a from-scratch SVG
+  redraw of the diagram (box-and-arrow, like Starting System), then
+  rebuilt by explicit request ("I want you to use this exact
+  diagram!!!") to use the user's own reference image verbatim —
+  `tools/apu-system/apu-diagram.png` (1286×744) — with everything
+  overlaid at percentage positions, the same image-plus-overlay pattern
+  Air System uses, not the from-scratch SVG approach the other
+  diagram tools (Fuel/Oil/Starting System/Turbofan) use. Combines three
+  things on top of that one shared image: two tinted background
+  regions, a two-route editable airflow overlay, and permanent red
+  "key component" rings.
+  - **Power Section / Load Section regions**: two absolutely-positioned
+    `%`-width overlay `<div>`s (`.apu-sys-region.load` at `left: 0;
+    width: 27%`, `.apu-sys-region.power` filling the rest), `pointer-
+    events: none` so they never block marker hover — the 27% split
+    lines up with the reference image's own internal dashed divider
+    between the Load Section's components (Bleed Valve/GEN/Accessory
+    Gearbox/Load Compressor/Flow Sensor/IGV/IGVA/ECB) and the Power
+    Section's (Surge Control Valve/Compressor/Combustor/Turbine/
+    Metering). A `SECTIONS` object (`power`/`load`, name/desc from
+    slide 11, "Load Section vs Power Section") renders as two colored
+    cards below the diagram explaining what each section is for.
+  - **Airflow overlay**: `POWER_FLOW` (5 points: inlet → compressor →
+    combustor → turbine → exhaust) and `LOAD_FLOW` (4 points: inlet →
+    load compressor → accessory gearbox), percentage-coordinate
+    waypoints drawn from a shared inlet point so the split reads
+    visually — same `viewBox="0 0 100 100"`/`preserveAspectRatio="none"`
+    SVG-overlay-on-a-percentage-positioned-image technique Air System's
+    flow routes use, right down to the `pathFromPoints()`/
+    `makeDraggable()`/`renderFlowBoxes()` naming and the same
+    rebuild-the-line-not-the-handle-layer fix for the pointer-capture
+    bug. The one deliberate difference from Air System: the numbered
+    yellow handles (`.apu-sys-flow-box`) are `display: none` by default
+    and only shown via `.apu-sys-edit .apu-sys-flow-box` (explicit
+    request: "under edit mode, I want to see the yellow boxes"),
+    borrowing the Virtual Lab's hidden-until-edit convention instead of
+    Air System's always-visible one. Password-gated "✎ Edit" (password
+    `APP`), a Copy-changes panel with paste-ready `POWER_FLOW`/
+    `LOAD_FLOW` source, and `localStorage` persistence
+    (`tm.apuSystem.powerFlow`/`loadFlow`) otherwise match Air System
+    exactly.
   - **Key components, circled in red**: `COMPONENTS[id].key` flags the
-    3 components the reference image circles in red — Bleed Valve,
-    Surge Control Valve, and the Inlet Guide Vane (the small oval
-    between the Flow Sensor and IGVA, physically distinct from the IGVA
-    box beside it, which actuates it) — each gets a permanent red
-    `<rect>`/`<ellipse>` ring (`.apu-key-ring`, 8–9px outside the
-    component's own shape) drawn regardless of hover state, plus its
-    own "Key components" sub-list above the full "every other
+    3 components the reference image itself circles in red — Bleed
+    Valve, Surge Control Valve, and the Inlet Guide Vane (the small
+    oval next to the IGVA box, physically distinct from IGVA, which
+    actuates it) — each gets a larger marker (42px vs the other
+    components' 26px) with a red border instead of the default blue, a
+    dedicated "Key components" sub-list above the full "every other
     component" reference list below the diagram (both lists share the
-    same hover-highlight/explain-panel wiring the other tools use).
-    Descriptions for all three, and for IGVA, are drawn close to
-    verbatim from the deck's own per-component slides (14–17), since
-    the user asked specifically for these three to be explained.
+    same hover-highlight/tooltip wiring Air System's marker-plus-list
+    pattern uses). Descriptions for all three, and for IGVA, are drawn
+    close to verbatim from the deck's own per-component slides (14–17),
+    since the user asked specifically for these three to be explained.
+  - All marker/region/waypoint positions are pixel-anchored to this one
+    specific image the same way Air System's and Virtual Lab's are —
+    swapping the reference image means re-deriving every `xPct`/`yPct`
+    in `COMPONENTS`, `POWER_FLOW`, and `LOAD_FLOW` against the new
+    picture.
 
 ### Phase 2 — Scaffolded topics, content pending
 

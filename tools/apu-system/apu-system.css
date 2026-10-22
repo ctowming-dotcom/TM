@@ -1,17 +1,13 @@
-.apu-diagram {
+.apu-sys {
   --ink: #eaf3fb;
   --muted: #9db6cc;
   --line: #2f5a7d;
   --card: #0f2033;
   --page: #173350;
-  --box: #5aa9d6;
   --power: #fb923c;
   --load: #38bdf8;
-  --ctrl: #7e93a8;
-  --fuel: #f87171;
   --key: #ef4444;
   --yellow: #f2b134;
-  position: relative;
   max-width: 1200px;
   margin: 0 auto;
   background: var(--card);
@@ -22,11 +18,11 @@
   color: var(--ink);
 }
 
-.apu-diagram * {
+.apu-sys * {
   box-sizing: border-box;
 }
 
-.apu-diagram .apu-toolbar {
+.apu-sys .apu-sys-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -34,14 +30,14 @@
   flex-wrap: wrap;
 }
 
-.apu-diagram .kicker {
+.apu-sys .kicker {
   font-size: 13px;
   letter-spacing: 0.04em;
   color: var(--yellow);
   margin: 0 0 4px;
 }
 
-.apu-diagram h1 {
+.apu-sys h1 {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 400;
   font-size: 34px;
@@ -49,14 +45,14 @@
   color: var(--ink);
 }
 
-.apu-diagram .apu-sub {
+.apu-sys .apu-sys-sub {
   color: var(--muted);
   font-size: 15px;
   margin: 0;
   max-width: 640px;
 }
 
-.apu-diagram .apu-edit-btn {
+.apu-sys .apu-sys-edit-btn {
   border: 1px solid var(--line);
   background: var(--page);
   color: var(--ink);
@@ -68,17 +64,17 @@
   white-space: nowrap;
 }
 
-.apu-diagram .apu-edit-btn:hover {
+.apu-sys .apu-sys-edit-btn:hover {
   background: #1d3e61;
 }
 
-.apu-diagram .apu-edit-btn.active {
+.apu-sys .apu-sys-edit-btn.active {
   background: var(--yellow);
   color: #3a2a00;
   border-color: var(--yellow);
 }
 
-.apu-diagram .apu-legend {
+.apu-sys .apu-sys-legend {
   display: flex;
   gap: 18px;
   flex-wrap: wrap;
@@ -87,263 +83,233 @@
   color: var(--muted);
 }
 
-.apu-diagram .apu-legend-item {
+.apu-sys .apu-sys-legend-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.apu-diagram .apu-legend-item i {
+.apu-sys .apu-sys-legend-item i {
   width: 14px;
   height: 14px;
   border-radius: 4px;
   display: inline-block;
 }
 
-.apu-diagram .apu-legend-item.power i { background: rgba(251, 146, 60, 0.25); border: 1px solid var(--power); }
-.apu-diagram .apu-legend-item.load i { background: rgba(56, 189, 248, 0.25); border: 1px solid var(--load); }
-.apu-diagram .apu-legend-item.key i { background: none; border: 2px solid var(--key); border-radius: 50%; }
+.apu-sys .apu-sys-legend-item.power i { background: rgba(251, 146, 60, 0.3); border: 1px solid var(--power); }
+.apu-sys .apu-sys-legend-item.load i { background: rgba(56, 189, 248, 0.3); border: 1px solid var(--load); }
+.apu-sys .apu-sys-legend-item.key i { background: none; border: 2px solid var(--key); border-radius: 50%; }
 
-.apu-diagram svg {
+.apu-sys .apu-sys-image-wrap {
+  position: relative;
+  line-height: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.apu-sys .apu-sys-image {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.apu-diagram .apu-region.power {
-  fill: rgba(251, 146, 60, 0.06);
-  stroke: rgba(251, 146, 60, 0.35);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 5;
+.apu-sys .apu-sys-region {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
 }
 
-.apu-diagram .apu-region.load {
-  fill: rgba(56, 189, 248, 0.06);
-  stroke: rgba(56, 189, 248, 0.35);
-  stroke-width: 1.5;
-  stroke-dasharray: 6 5;
+.apu-sys .apu-sys-region.load {
+  left: 0;
+  width: 27%;
+  background: rgba(56, 189, 248, 0.14);
+  border-right: 2px dashed rgba(56, 189, 248, 0.5);
 }
 
-.apu-diagram .apu-region-label {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+.apu-sys .apu-sys-region.power {
+  left: 27%;
+  right: 0;
+  background: rgba(251, 146, 60, 0.1);
 }
 
-.apu-diagram .apu-region-label.power { fill: var(--power); }
-.apu-diagram .apu-region-label.load { fill: var(--load); }
+.apu-sys .apu-sys-flow-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 
-.apu-diagram .apu-shaft {
+.apu-sys .apu-sys-flow-path {
   fill: none;
-  stroke: var(--ink);
-  stroke-width: 5;
-  opacity: 0.5;
-  stroke-linecap: round;
-}
-
-.apu-diagram .apu-ctrl {
-  fill: none;
-  stroke: var(--ctrl);
-  stroke-width: 1.6;
-  stroke-dasharray: 4 4;
-}
-
-.apu-diagram .apu-arrowhead.ctrl { fill: var(--ctrl); }
-.apu-diagram .apu-arrowhead.power { fill: var(--power); }
-.apu-diagram .apu-arrowhead.load { fill: var(--load); }
-.apu-diagram .apu-arrowhead.fuel { fill: var(--fuel); }
-
-.apu-diagram .apu-pipe {
-  fill: none;
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  stroke-dasharray: 10 7;
-  animation: apu-flowmove 0.6s linear infinite;
-  opacity: 0.85;
-}
-
-.apu-diagram .apu-pipe.power { stroke: var(--power); }
-.apu-diagram .apu-pipe.load { stroke: var(--load); }
-.apu-diagram .apu-pipe.fuel { stroke: var(--fuel); animation: none; opacity: 1; stroke-dasharray: none; }
-
-.apu-diagram .apu-flow-path {
-  fill: none;
-  stroke-width: 5;
+  stroke-width: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 12 8;
-  animation: apu-flowmove 0.6s linear infinite;
+  stroke-dasharray: 2.2 1.6;
+  animation: apu-sys-flowmove 0.6s linear infinite;
+  vector-effect: non-scaling-stroke;
 }
 
-.apu-diagram .apu-flow-path.power { stroke: var(--power); }
-.apu-diagram .apu-flow-path.load { stroke: var(--load); }
+.apu-sys .apu-sys-flow-path.power { stroke: var(--power); }
+.apu-sys .apu-sys-flow-path.load { stroke: var(--load); }
+.apu-sys .apu-sys-arrowhead.power { fill: var(--power); }
+.apu-sys .apu-sys-arrowhead.load { fill: var(--load); }
 
-@keyframes apu-flowmove {
-  to { stroke-dashoffset: -17; }
+@keyframes apu-sys-flowmove {
+  to { stroke-dashoffset: -7.6; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .apu-diagram .apu-pipe,
-  .apu-diagram .apu-flow-path {
+  .apu-sys .apu-sys-flow-path {
     animation: none;
   }
 }
 
-.apu-diagram .apu-small-label {
-  font-size: 11.5px;
-  fill: var(--muted);
-  font-family: "Consolas", monospace;
+.apu-sys .apu-sys-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.apu-diagram .apu-box-rect {
-  fill: var(--page);
-  stroke: var(--box);
-  stroke-width: 1.3;
-  transition: fill 0.15s ease, stroke-width 0.15s ease;
-}
-
-.apu-diagram .apu-box {
+.apu-sys .apu-sys-marker {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+  border-radius: 50%;
+  border: 3px solid #3d7fd1;
+  background: rgba(61, 127, 209, 0.12);
   cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.apu-diagram .apu-box:hover .apu-box-rect,
-.apu-diagram .apu-box.is-hovered .apu-box-rect {
-  fill: #1d3e61;
-  stroke-width: 2.2;
-  stroke: var(--yellow);
+.apu-sys .apu-sys-marker:hover,
+.apu-sys .apu-sys-marker.is-hovered {
+  transform: scale(1.25);
+  background: rgba(61, 127, 209, 0.3);
 }
 
-.apu-diagram .apu-box-label {
-  font-size: 13.5px;
-  font-weight: 700;
-  fill: var(--ink);
-  text-anchor: middle;
-  pointer-events: none;
+.apu-sys .apu-sys-marker.key {
+  width: 42px;
+  height: 42px;
+  margin-left: -21px;
+  margin-top: -21px;
+  border: 3px solid var(--key);
+  background: rgba(239, 68, 68, 0.1);
 }
 
-.apu-diagram .apu-box-sub {
-  font-size: 11px;
-  fill: var(--muted);
-  text-anchor: middle;
-  pointer-events: none;
+.apu-sys .apu-sys-marker.key:hover,
+.apu-sys .apu-sys-marker.key.is-hovered {
+  background: rgba(239, 68, 68, 0.25);
 }
 
-.apu-diagram .apu-key-ring {
-  fill: none;
-  stroke: var(--key);
-  stroke-width: 2.5;
-  pointer-events: none;
+.apu-sys .apu-sys-flow-boxes {
+  position: absolute;
+  inset: 0;
 }
 
-.apu-diagram .apu-flow-handle {
+.apu-sys .apu-sys-flow-box {
+  position: absolute;
   display: none;
-  fill: var(--yellow);
-  stroke: #3a2a00;
-  stroke-width: 1.5;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  align-items: center;
+  justify-content: center;
+  background: var(--yellow);
+  border: 2px solid #3a2a00;
+  border-radius: 4px;
+  color: #3a2a00;
+  font-family: var(--font-display, inherit);
+  font-weight: 700;
+  font-size: 11px;
   cursor: grab;
   touch-action: none;
-}
-
-.apu-diagram .apu-flow-handle.dragging {
-  cursor: grabbing;
-  fill: #ff8a00;
-}
-
-.apu-diagram .apu-flow-handle-label {
-  display: none;
-  font-size: 11px;
-  font-weight: 700;
-  fill: #3a2a00;
-  text-anchor: middle;
-  dominant-baseline: central;
-  pointer-events: none;
   user-select: none;
 }
 
-.apu-diagram.apu-edit .apu-flow-handle,
-.apu-diagram.apu-edit .apu-flow-handle-label {
-  display: inline;
-}
-
-.apu-diagram .apu-explain {
-  margin-top: 14px;
-  background: var(--page);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px 16px;
+.apu-sys.apu-sys-edit .apu-sys-flow-box {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 58px;
-  transition: border-color 0.15s ease;
 }
 
-.apu-diagram .apu-explain.has-value {
-  border-color: var(--yellow);
+.apu-sys .apu-sys-flow-box.dragging {
+  cursor: grabbing;
+  opacity: 0.85;
 }
 
-.apu-diagram .apu-explain .e-title {
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--yellow);
-}
-
-.apu-diagram .apu-explain .e-desc {
+.apu-sys .apu-sys-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 300px;
+  background: var(--page);
+  border: 1px solid var(--yellow);
+  color: var(--ink);
   font-size: 14px;
   line-height: 1.5;
-  color: var(--ink);
+  padding: 10px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
 }
 
-.apu-diagram .apu-explain:not(.has-value) .e-title,
-.apu-diagram .apu-explain:not(.has-value) .e-desc {
-  color: var(--muted);
+.apu-sys .apu-sys-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  color: var(--yellow);
+  margin-bottom: 4px;
 }
 
-.apu-diagram .apu-sections {
+.apu-sys .apu-sys-sections {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 14px;
   margin-top: 18px;
 }
 
-.apu-diagram .apu-section-card {
+.apu-sys .apu-sys-section-card {
   border-radius: 8px;
   padding: 14px 18px;
   border: 1px solid var(--line);
 }
 
-.apu-diagram .apu-section-card.power {
+.apu-sys .apu-sys-section-card.power {
   background: rgba(251, 146, 60, 0.08);
   border-color: rgba(251, 146, 60, 0.4);
 }
 
-.apu-diagram .apu-section-card.load {
+.apu-sys .apu-sys-section-card.load {
   background: rgba(56, 189, 248, 0.08);
   border-color: rgba(56, 189, 248, 0.4);
 }
 
-.apu-diagram .apu-section-card h3 {
+.apu-sys .apu-sys-section-card h3 {
   margin: 0 0 6px;
   font-size: 16px;
 }
 
-.apu-diagram .apu-section-card.power h3 { color: var(--power); }
-.apu-diagram .apu-section-card.load h3 { color: var(--load); }
+.apu-sys .apu-sys-section-card.power h3 { color: var(--power); }
+.apu-sys .apu-sys-section-card.load h3 { color: var(--load); }
 
-.apu-diagram .apu-section-card p {
+.apu-sys .apu-sys-section-card p {
   margin: 0;
   font-size: 13.5px;
   line-height: 1.55;
   color: var(--ink);
 }
 
-.apu-diagram .apu-ref {
+.apu-sys .apu-sys-ref {
   margin-top: 22px;
   padding-top: 16px;
   border-top: 1px dashed var(--line);
 }
 
-.apu-diagram .apu-ref-title {
+.apu-sys .apu-sys-ref-title {
   margin: 16px 0 12px;
   font-size: 15px;
   font-weight: 700;
@@ -352,11 +318,11 @@
   letter-spacing: 0.04em;
 }
 
-.apu-diagram .apu-ref-title:first-child {
+.apu-sys .apu-sys-ref-title:first-child {
   margin-top: 0;
 }
 
-.apu-diagram .apu-list {
+.apu-sys .apu-sys-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -365,7 +331,7 @@
   gap: 10px;
 }
 
-.apu-diagram .apu-list-item {
+.apu-sys .apu-sys-list-item {
   background: var(--page);
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -373,35 +339,35 @@
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.apu-diagram .key-list .apu-list-item {
+.apu-sys .key-list .apu-sys-list-item {
   border-color: rgba(239, 68, 68, 0.5);
 }
 
-.apu-diagram .apu-list-item.is-hovered {
+.apu-sys .apu-sys-list-item.is-hovered {
   border-color: var(--yellow);
   background: #1d3e61;
 }
 
-.apu-diagram .apu-list-name {
+.apu-sys .apu-sys-list-name {
   display: block;
   font-weight: 700;
   font-size: 14.5px;
-  color: var(--box);
+  color: #5aa9d6;
   margin-bottom: 4px;
 }
 
-.apu-diagram .key-list .apu-list-name {
+.apu-sys .key-list .apu-sys-list-name {
   color: var(--key);
 }
 
-.apu-diagram .apu-list-desc {
+.apu-sys .apu-sys-list-desc {
   display: block;
   font-size: 13.5px;
   line-height: 1.5;
   color: var(--ink);
 }
 
-.apu-diagram .apu-edit-panel {
+.apu-sys .apu-sys-edit-panel {
   position: fixed;
   right: 20px;
   bottom: 20px;
@@ -414,13 +380,13 @@
   z-index: 100;
 }
 
-.apu-diagram .apu-edit-panel p {
+.apu-sys .apu-sys-edit-panel p {
   margin: 0 0 0.5rem;
   font-size: 0.85rem;
   color: var(--muted);
 }
 
-.apu-diagram .apu-edit-panel textarea {
+.apu-sys .apu-sys-edit-panel textarea {
   width: 100%;
   height: 170px;
   font-family: monospace;
@@ -432,7 +398,7 @@
   border-radius: 6px;
 }
 
-.apu-diagram .apu-edit-copy {
+.apu-sys .apu-sys-edit-copy {
   display: block;
   width: 100%;
   margin-bottom: 0.6rem;
