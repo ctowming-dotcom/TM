@@ -602,15 +602,114 @@ automatically or by hand:
     in `COMPONENTS`, `POWER_FLOW`, and `LOAD_FLOW` against the new
     picture.
 
+- **Fire Protection System** (`fire-system`, display name renamed by
+  request from the earlier placeholder's "Fire Protection System"
+  wording — the folder/id stayed `fire-system`): explains engine/APU
+  fire detection and extinguishing from the supplied lab answer key
+  (`Lab_5_Engine_Fire_Protection_ANS_v7.0.docx`) and its two reference
+  images, used verbatim like Air System/APU System —
+  `fire-panel-overview.jpg` (the 20VU fire panel, its overhead-panel
+  location, and the 115VU engine master/mode panel) and
+  `fdu-dual-loop.jpg` (the APU's Loop A/Loop B dual-loop circuit into
+  its FDU). No edit mode — nothing here is user-editable content, same
+  reasoning as the Turbofan Engine's shaft-arrangement panel and the
+  Starting System.
+  - **Hover markers + reference lists**: both images get the same
+    image-plus-overlay treatment as Air System/APU System —
+    `PANEL_MARKERS` (17 points: each engine's FIRE pushbutton/Agent 1/
+    Agent 2/TEST, the APU's single Agent button, the overhead/pedestal
+    location call-outs, and the 115VU panel's master switches/MODE
+    selector/FIRE-FAULT lights) and `LOOP_MARKERS` (Loop A, Loop B, the
+    sensing element, the FDU box) — each with a permanent reference
+    list below its image, sharing one `setActive()`/tooltip
+    implementation across both images (a single shared `.fs-tooltip`
+    element appended once in `mount()`, not per-image, since only one
+    marker can be hovered at a time).
+  - **Main Engine vs. APU comparison**: a plain `<table>` built from
+    `COMPARISON` (Location of Bottle, Extinguishing Method, Warning
+    Signal, Number of Bottles — each row's answer taken directly from
+    the lab key, e.g. APU extinguishing is automatic on the ground but
+    manual in flight, main engine is always manual), sitting right
+    below the first reference image so the pictorial context and the
+    table read together.
+  - **Dual-loop explanation**: the `fdu-dual-loop.jpg` reference is
+    specific to the APU, but the accompanying text is explicit that
+    every main engine has the identical arrangement (its own FDU wired
+    to its own Loop A/Loop B) — one individual detection system per
+    engine/APU, 2 identical loops wired in parallel (not series), so a
+    single damaged loop degrades to a fault condition rather than
+    silently losing fire detection.
+  - **Fire vs. Fault signal**: a two-card comparison (`SIGNALS.fire`/
+    `fault`, same two-colored-card pattern as the APU tool's Power/Load
+    section cards) — Fire signal means a genuine detected fire
+    (warning lights/alarms); Fault signal means the detection system
+    itself is malfunctioning (alerts maintenance, not the fire drill).
+  - **Try It: Operate the Fire Panel** (interactive, replaced an earlier
+    hover-only Prev/Next step-through by follow-up request — "I want
+    students to press 'button' and see what will happen"): a second copy
+    of the fire-panel-overview image with 11 real `<button>` elements
+    (`BUTTONS`) positioned at the exact same `xPct`/`yPct` as the
+    matching `PANEL_MARKERS` entries ("replicate the same position as
+    the airplane overhead panel for fire switch") — 3 red FIRE switches
+    (ENG 1 / ENG 2 / APU), 3 amber TEST buttons, and 5 grey AGENT/squib
+    buttons (Agent 1 + Agent 2 for each engine, one Agent for the APU).
+    Each button keeps the hover tooltip too (reusing the same
+    `PANEL_MARKERS` description it's positioned over), but clicking now
+    drives a small per-unit state machine (`state.eng1`/`eng2`/`apu`,
+    each `{pushed, agent1, agent2, testing}`):
+    - **FIRE switch** toggles `pushed` — pushing in arms the system and
+      (per the status message) cuts fuel/hydraulic/bleed/electrical
+      supplies to that engine (fuel+electrical only for the APU),
+      visually sinking the button (`.is-pushed`, red fill + inset
+      shadow) and turning on that unit's "ARMED" badge; pushing again
+      resets it back out, which also clears both agent states for that
+      unit (realistic re-arm-from-scratch behavior for a teaching tool).
+    - **AGENT buttons** are inert/dim (`opacity: 0.65`) until that
+      unit's FIRE switch is pushed — clicking one before that gives a
+      "push the FIRE switch first" status message and does nothing
+      else; once armed (`.is-armed`, red outline) a click "discharges"
+      it (`.is-discharged`, turns green), sets that unit's badge on, and
+      is a one-way action until Reset (clicking again just repeats "already
+      discharged"). Clicking Agent 2 before Agent 1 still works (no hard
+      gating — a locked-out action would block exploring "what if") but
+      adds a note in the status message that normal procedure tries
+      Agent 1 first.
+    - **TEST buttons** just toggle `testing` on/off, each time updating
+      the status message ("simulates a fire condition... without an
+      actual fire") — while active, the main engines' (not APU's, since
+      it has no separate FIRE/FAULT light marker) `eng1-fire-fault`/
+      `eng2-fire-fault` markers on the panel also get
+      `.fs-step-active-marker` (the same amber pulsing style the old
+      step-through used for its single active marker) so the light
+      itself visibly "illuminates" during test.
+    - A single `<p class="fs-status-msg" aria-live="polite">` below the
+      image carries all click feedback (replacing per-marker tooltips as
+      the primary feedback channel for this section), plus a row of
+      pill badges (`fs-unit-badge`, one ARMED badge and one-or-two AGENT
+      badges per unit) that light up (`.on`, amber fill) to mirror
+      `state` at a glance. A "⟲ Reset All" button clears every unit back
+      to its initial state and resets the status message.
+    - `refreshButtons()`/`refreshBadges()` are called after every state
+      change and just re-derive every button's/badge's classes from
+      `state` in one pass, rather than patching individual elements per
+      action — simplest to keep correct given how many classes depend on
+      more than one state field (an agent button's look depends on both
+      `pushed` and its own discharged flag).
+  - **Recommended Real-World Order (Main Engine Fire)**: the original
+    7-step walkthrough text (fire warning appears → thrust lever idle →
+    engine master OFF → ENG FIRE pushbutton pushed → Agent 1 if the
+    warning persists → Agent 2 if it still persists → outcome) is kept,
+    but now rendered as a plain static `<ol>` (`STEPS[]`, text only, no
+    Prev/Next/step-dots controls and no per-step marker highlighting)
+    directly below the interactive panel — reference material for the
+    correct real-world sequence, intentionally decoupled from the
+    free-form button interaction above it rather than gating the button
+    clicks to this order.
+
 ### Phase 2 — Scaffolded topics, content pending
 
-One tool registered as a placeholder ("Coming soon" card using shared
-`.placeholder-tool` styling from `styles.css`, in the portal's own Bright
-Lab look) — a `mount()` stub in its own folder, ready to be replaced with
-real content without touching any other tool:
-
-- `fire-system` — Fire Protection System (folder/id kept as `fire-system`;
-  display name renamed by request)
+No tools remain as placeholders — every catalog entry now has real
+content.
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
 Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
@@ -619,10 +718,5 @@ System.
 
 ### Future phases
 
-- Fill in real content for the Fire Protection System placeholder above
-  (likely following the Fuel/Oil diagram pattern, the Starting System's
-  step-through pattern, the APU System's region/waypoint-overlay
-  pattern, or the Virtual Lab's data-driven-simulation pattern,
-  depending on what's supplied).
 - Add further tools via the registry pattern above; scope and specifics TBD
   per tool when planned.

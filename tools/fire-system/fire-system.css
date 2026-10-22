@@ -1,0 +1,418 @@
+.fs-diagram {
+  --ink: #eaf3fb;
+  --muted: #9db6cc;
+  --line: #2f5a7d;
+  --card: #0f2033;
+  --page: #173350;
+  --box: #5aa9d6;
+  --fire: #ef4444;
+  --fault: #f2b134;
+  --loopa: #3b82f6;
+  --loopb: #ef4444;
+  position: relative;
+  max-width: 1150px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 36px 44px 30px;
+  color: var(--ink);
+}
+
+.fs-diagram * {
+  box-sizing: border-box;
+}
+
+.fs-diagram .kicker {
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--fault);
+  margin: 0 0 4px;
+}
+
+.fs-diagram h1 {
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 34px;
+  margin: 0 0 10px;
+  color: var(--ink);
+}
+
+.fs-diagram .fs-sub {
+  text-align: center;
+  color: var(--muted);
+  font-size: 15px;
+  margin: 0 0 24px;
+}
+
+.fs-diagram .fs-panel {
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.fs-diagram .fs-section-title {
+  margin: 0 0 14px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.fs-diagram .fs-note {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 10px 0;
+}
+
+.fs-diagram .fs-note b {
+  color: var(--ink);
+}
+
+.fs-diagram .fs-image-wrap {
+  position: relative;
+  line-height: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.fs-diagram .fs-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.fs-diagram .fs-markers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fs-diagram .fs-marker {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  margin-top: -11px;
+  border-radius: 50%;
+  border: 3px solid #3d7fd1;
+  background: rgba(61, 127, 209, 0.14);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.fs-diagram .fs-marker:hover,
+.fs-diagram .fs-marker.is-hovered {
+  transform: scale(1.3);
+  background: rgba(61, 127, 209, 0.32);
+}
+
+.fs-diagram .fs-step-active-marker {
+  border-color: var(--fault);
+  background: rgba(242, 177, 52, 0.3);
+  animation: fs-pulse 1s ease-in-out infinite;
+}
+
+@keyframes fs-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fs-diagram .fs-step-active-marker {
+    animation: none;
+  }
+}
+
+.fs-diagram .fs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.fs-diagram .fs-list-item {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.fs-diagram .fs-list-item.is-hovered {
+  border-color: var(--fault);
+  background: #1d3e61;
+}
+
+.fs-diagram .fs-list-name {
+  display: block;
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--box);
+  margin-bottom: 4px;
+}
+
+.fs-diagram .fs-list-desc {
+  display: block;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.fs-diagram .fs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13.5px;
+}
+
+.fs-diagram .fs-table th,
+.fs-diagram .fs-table td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.fs-diagram .fs-table th {
+  background: var(--card);
+  color: var(--fault);
+  font-weight: 700;
+}
+
+.fs-diagram .fs-table td:first-child {
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.fs-diagram .fs-table td {
+  color: var(--muted);
+}
+
+.fs-diagram .fs-signal-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.fs-diagram .fs-signal-card {
+  border-radius: 8px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  background: var(--card);
+}
+
+.fs-diagram .fs-signal-card.fire {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.fs-diagram .fs-signal-card.fault {
+  border-color: rgba(242, 177, 52, 0.5);
+}
+
+.fs-diagram .fs-signal-card h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+}
+
+.fs-diagram .fs-signal-card.fire h3 { color: var(--fire); }
+.fs-diagram .fs-signal-card.fault h3 { color: var(--fault); }
+
+.fs-diagram .fs-signal-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.fs-diagram .fs-stepbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.fs-diagram .fs-nav {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fs-diagram .fs-nav:hover:not(:disabled) {
+  background: #1d3e61;
+}
+
+.fs-diagram .fs-nav:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fs-diagram .fs-btn {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  margin-top: -13px;
+  border-radius: 50%;
+  border: 3px solid var(--box);
+  background: rgba(90, 169, 214, 0.18);
+  cursor: pointer;
+  pointer-events: auto;
+  padding: 0;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fs-diagram .fs-btn:hover {
+  transform: scale(1.15);
+}
+
+.fs-diagram .fs-btn:focus-visible {
+  outline: 2px solid var(--fault);
+  outline-offset: 2px;
+}
+
+.fs-diagram .fs-btn-fire {
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  border-color: var(--fire);
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.fs-diagram .fs-btn-fire.is-pushed {
+  background: var(--fire);
+  box-shadow: inset 0 0 10px 2px rgba(0, 0, 0, 0.45), 0 0 10px 2px rgba(239, 68, 68, 0.7);
+  transform: scale(0.85);
+}
+
+.fs-diagram .fs-btn-test {
+  border-color: var(--fault);
+  background: rgba(242, 177, 52, 0.18);
+}
+
+.fs-diagram .fs-btn-test.is-active {
+  background: var(--fault);
+  animation: fs-pulse 0.8s ease-in-out infinite;
+}
+
+.fs-diagram .fs-btn-agent {
+  border-color: #7e93a8;
+  background: rgba(126, 147, 168, 0.2);
+  opacity: 0.65;
+}
+
+.fs-diagram .fs-btn-agent.is-armed {
+  border-color: var(--fire);
+  background: rgba(239, 68, 68, 0.25);
+  opacity: 1;
+}
+
+.fs-diagram .fs-btn-agent.is-discharged {
+  border-color: #4ade80;
+  background: #4ade80;
+  opacity: 1;
+}
+
+.fs-diagram .fs-sim-image-wrap {
+  margin-bottom: 14px;
+}
+
+.fs-diagram .fs-status-panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 18px;
+}
+
+.fs-diagram .fs-status-msg {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.fs-diagram .fs-status-msg b {
+  color: var(--fault);
+}
+
+.fs-diagram .fs-unit-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.fs-diagram .fs-unit-badge-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.fs-diagram .fs-unit-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--page);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.fs-diagram .fs-unit-badge.on {
+  color: #0b1c2c;
+  background: var(--fault);
+  border-color: var(--fault);
+}
+
+.fs-diagram .fs-order-list {
+  margin: 0;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.fs-diagram .fs-order-list b {
+  color: var(--fault);
+}
+
+.fs-diagram .fs-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 300px;
+  background: var(--page);
+  border: 1px solid var(--fault);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.fs-diagram .fs-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  color: var(--fault);
+  margin-bottom: 4px;
+}
