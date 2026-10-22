@@ -124,7 +124,15 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   otherwise the marker (on top in DOM order) always wins the drag and
   the handle underneath becomes unreachable. A floating panel (like Air
   System's) shows the live, paste-ready `PARTS`/`UPPER_WAYPOINTS`/
-  `GLOWS` source to copy back into the file.
+  `GLOWS` source to copy back into the file. A waypoint-drag handler
+  must never re-render the handle layer (`renderWaypointHandles()`) from
+  inside its own `pointermove` callback — that replaces the `<rect>` the
+  pointer is captured on mid-drag, which silently ends the drag after
+  one move since a removed element can't keep pointer capture; update
+  the dragged handle's own attributes in place instead (glow handles
+  already did this correctly — only the waypoint handler had the bug).
+  `.vlab-image-wrap` caps at `max-width: 1100px` (below the image's
+  1229px native width) so it's never upscaled past its own resolution.
   Panel widened to `max-width: 1500px` and all text sized up (headings,
   tile labels/values, tooltip, controls) for legibility at that width.
   Live readouts for RPM, thrust, T1–T4/P1–P4 per stage, fuel flow, and

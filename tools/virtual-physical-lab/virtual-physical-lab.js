@@ -376,14 +376,24 @@
           if (!editUnlocked) return;
           evt.preventDefault();
           el.setPointerCapture(evt.pointerId);
+          el.classList.add('dragging');
           function onMove(moveEvt) {
             var p = svgPoint(moveEvt);
-            UPPER_WAYPOINTS[i] = { x: Math.round(p.x), y: Math.round(p.y) };
+            var x = Math.round(p.x), y = Math.round(p.y);
+            UPPER_WAYPOINTS[i] = { x: x, y: y };
+            // Update this handle's own attributes in place — calling
+            // renderWaypointHandles() here would replace the <rect> the
+            // pointer is captured on mid-drag, silently ending the drag
+            // after the very first move (the classic "it won't budge"
+            // symptom), since a removed element can't keep its capture.
+            el.setAttribute('x', x - 9);
+            el.setAttribute('y', y - 9);
+            el.setAttribute('transform', 'rotate(45 ' + x + ' ' + y + ')');
             rebuildFlowPaths();
-            renderWaypointHandles();
             updateEditPanel();
           }
           function onUp(upEvt) {
+            el.classList.remove('dragging');
             el.releasePointerCapture(upEvt.pointerId);
             el.removeEventListener('pointermove', onMove);
             el.removeEventListener('pointerup', onUp);
@@ -404,6 +414,7 @@
           if (!editUnlocked) return;
           evt.preventDefault();
           el.setPointerCapture(evt.pointerId);
+          el.classList.add('dragging');
           function onMove(moveEvt) {
             var p = svgPoint(moveEvt);
             GLOWS[i] = { x: Math.round(p.x), y: Math.round(p.y) };
@@ -412,6 +423,7 @@
             updateEditPanel();
           }
           function onUp(upEvt) {
+            el.classList.remove('dragging');
             el.releasePointerCapture(upEvt.pointerId);
             el.removeEventListener('pointermove', onMove);
             el.removeEventListener('pointerup', onUp);
