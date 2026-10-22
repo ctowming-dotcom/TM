@@ -24,6 +24,34 @@
 
   var EDIT_PASSWORD = 'APP';
 
+  // Persist edits to this browser's localStorage so they survive a page
+  // reload instead of resetting back to the defaults above — editing no
+  // longer has to be redone every visit. This only affects the editor's
+  // own browser, though: it doesn't change what other visitors to the
+  // deployed site see, since there's no backend here (per CLAUDE.md) —
+  // getting an edit onto the live site for everyone still means sending
+  // the "Copy changes" text so it can be committed to this file.
+  var STORAGE_KEY_INTERNAL = 'tm.airSystem.internalItems';
+  var STORAGE_KEY_EXTERNAL = 'tm.airSystem.externalItems';
+
+  function restoreItems(key, items) {
+    try {
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!Array.isArray(saved) || saved.length !== items.length) return;
+      for (var i = 0; i < saved.length; i++) {
+        if (!saved[i] || typeof saved[i].xPct !== 'number' || typeof saved[i].yPct !== 'number') return;
+      }
+      items.splice.apply(items, [0, items.length].concat(saved));
+    } catch (e) { /* corrupt/blocked storage — keep defaults */ }
+  }
+  function persistItems(key, items) {
+    try { window.localStorage.setItem(key, JSON.stringify(items)); } catch (e) { /* storage full/blocked — edits still work this session */ }
+  }
+  restoreItems(STORAGE_KEY_INTERNAL, INTERNAL_ITEMS);
+  restoreItems(STORAGE_KEY_EXTERNAL, EXTERNAL_ITEMS);
+
   function mount(container) {
     container.innerHTML =
       '<div class="air-sys">' +
@@ -122,6 +150,8 @@
       editPanelText.value =
         formatItems('INTERNAL_ITEMS', INTERNAL_ITEMS) + '\n\n' +
         formatItems('EXTERNAL_ITEMS', EXTERNAL_ITEMS);
+      persistItems(STORAGE_KEY_INTERNAL, INTERNAL_ITEMS);
+      persistItems(STORAGE_KEY_EXTERNAL, EXTERNAL_ITEMS);
     }
 
     function makeDraggable(el, item) {

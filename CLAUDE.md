@@ -150,6 +150,21 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   one move since a removed element can't keep pointer capture; update
   the dragged handle's own attributes in place instead (glow handles
   already did this correctly — only the waypoint handler had the bug).
+  Every PARTS/UPPER_WAYPOINTS/GLOWS edit is also auto-saved to
+  `localStorage` (`tm.vlab.parts`/`waypoints`/`glows`, restored over the
+  hardcoded defaults on mount via `restoreArray`/`persistArray`) so it
+  survives a reload in the editor's own browser without needing to be
+  redone — same reasoning and same one-browser-only caveat as Air
+  System's copy of this (see above); the Copy-changes panel is still how
+  an edit becomes the new default for every visitor, by landing in this
+  file. `PARTICLE_COUNT` is 24 (was 10, raised by request for a denser
+  flow of arrows). 4 of the 11 default `UPPER_WAYPOINTS` were originally
+  pixel-identical to a PARTS marker's center (the route is meant to pass
+  through those stations) and are nudged a few px off-exact so a dead-
+  center click on the marker isn't always shadowed by the waypoint
+  handle drawn on top of it in edit mode — the route's shape is
+  unaffected at that scale; this is a minor robustness nicety; dragging
+  from anywhere else on the marker already worked regardless.
   `.vlab-image-wrap` caps at `max-width: 1100px` (below the image's
   1229px native width) so it's never upscaled past its own resolution.
   Panel widened to `max-width: 1500px` and all text sized up (headings,
@@ -207,7 +222,15 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   retyping in the browser can be copied back into `air-system.js` (no
   backend — this is how content gets edited without writing code by
   hand, but someone still has to paste the result into the file and
-  redeploy).
+  redeploy). Every edit is also auto-saved to `localStorage`
+  (`tm.airSystem.internalItems`/`externalItems`, restored over the
+  hardcoded defaults on mount via `restoreItems`/`persistItems`) so it
+  survives a reload in the editor's own browser without needing to be
+  redone — added by request after resetting-on-reload made editing feel
+  like it kept undoing itself. This only reaches the one browser that
+  made the edit, not other visitors to the deployed site; the Copy-
+  changes panel is still how a change becomes the new default for
+  everyone, by landing in this file.
 
 ### Phase 2 — Scaffolded topics, content pending
 

@@ -84,10 +84,15 @@
   // reshaped in edit mode; a smooth curve is rebuilt through them each
   // time one moves. The lower route mirrors the upper one about the
   // centerline (y=303), matching the engine's own top/bottom symmetry.
+  // A few of these were originally pixel-identical to a PARTS marker's
+  // center (by design — the route passes through those stations); nudged
+  // a few px off-exact so a dead-center click on the marker isn't always
+  // shadowed by the waypoint handle drawn on top of it in edit mode. The
+  // route's shape is unaffected at this scale.
   var UPPER_WAYPOINTS = [
-    { x: 20, y: 303 }, { x: 155, y: 303 }, { x: 290, y: 303 }, { x: 410, y: 180 },
-    { x: 528, y: 50 }, { x: 650, y: 140 }, { x: 720, y: 220 }, { x: 835, y: 265 },
-    { x: 950, y: 303 }, { x: 1080, y: 303 }, { x: 1210, y: 303 },
+    { x: 20, y: 303 }, { x: 155, y: 303 }, { x: 290, y: 296 }, { x: 410, y: 180 },
+    { x: 521, y: 50 }, { x: 650, y: 140 }, { x: 720, y: 213 }, { x: 835, y: 265 },
+    { x: 943, y: 303 }, { x: 1080, y: 303 }, { x: 1210, y: 303 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
@@ -98,6 +103,39 @@
   ];
 
   var EDIT_PASSWORD = 'APP';
+
+  // Persist edits to this browser's localStorage so they survive a page
+  // reload instead of resetting back to the defaults above — editing no
+  // longer has to be redone every visit. This only affects the editor's
+  // own browser: it doesn't change what other visitors to the deployed
+  // site see, since there's no backend here (per CLAUDE.md) — getting an
+  // edit onto the live site for everyone still means sending the "Copy
+  // changes" text so it can be committed to this file.
+  var STORAGE_KEY_PARTS = 'tm.vlab.parts';
+  var STORAGE_KEY_WAYPOINTS = 'tm.vlab.waypoints';
+  var STORAGE_KEY_GLOWS = 'tm.vlab.glows';
+
+  function restoreArray(key, items, requiredFields) {
+    try {
+      var raw = window.localStorage.getItem(key);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!Array.isArray(saved) || saved.length !== items.length) return;
+      for (var i = 0; i < saved.length; i++) {
+        if (!saved[i]) return;
+        for (var j = 0; j < requiredFields.length; j++) {
+          if (typeof saved[i][requiredFields[j]] !== 'number') return;
+        }
+      }
+      items.splice.apply(items, [0, items.length].concat(saved));
+    } catch (e) { /* corrupt/blocked storage — keep defaults */ }
+  }
+  function persistArray(key, items) {
+    try { window.localStorage.setItem(key, JSON.stringify(items)); } catch (e) { /* storage full/blocked — edits still work this session */ }
+  }
+  restoreArray(STORAGE_KEY_PARTS, PARTS, ['xPct', 'yPct', 'rPct']);
+  restoreArray(STORAGE_KEY_WAYPOINTS, UPPER_WAYPOINTS, ['x', 'y']);
+  restoreArray(STORAGE_KEY_GLOWS, GLOWS, ['x', 'y']);
 
   function mirrorPoints(points) {
     return points.map(function (p) { return { x: p.x, y: p.y !== CENTER_Y ? 2 * CENTER_Y - p.y : p.y }; });
@@ -510,6 +548,9 @@
         GLOWS.map(function (g) { return '{ x: ' + g.x + ', y: ' + g.y + ' }'; }).join(',\n    ') +
         '\n  ];';
       editPanelText.value = partsCode + '\n\n' + waypointsCode + '\n\n' + glowsCode;
+      persistArray(STORAGE_KEY_PARTS, PARTS);
+      persistArray(STORAGE_KEY_WAYPOINTS, UPPER_WAYPOINTS);
+      persistArray(STORAGE_KEY_GLOWS, GLOWS);
     }
 
     editCopyBtn.addEventListener('click', function () {
@@ -540,7 +581,7 @@
       return { x: p.x, y: p.y, angle: angle };
     }
 
-    var PARTICLE_COUNT = 10;
+    var PARTICLE_COUNT = 24;
     var particles = [];
     for (var i = 0; i < PARTICLE_COUNT; i++) {
       var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
