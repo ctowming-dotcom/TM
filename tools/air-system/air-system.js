@@ -22,6 +22,8 @@
     { id: 'nacelle-vent', xPct: 85, yPct: 88, name: 'Nacelle Ventilation and Cooling', desc: 'The space between the engine cowling and casing (the nacelle) is ventilated with fan air to prevent fluid vapor from accumulating and self-igniting.' },
   ];
 
+  var EDIT_MODE = /[?&]editmarkers\b/.test(location.search);
+
   function mount(container) {
     container.innerHTML =
       '<div class="air-sys">' +
@@ -46,12 +48,24 @@
       '</div>' +
 
       '<div class="air-sys-tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
+
+      // Drag-to-reposition mode for fine-tuning marker placement by eye.
+      // Opt-in only (append ?editmarkers to the page URL) — invisible to
+      // ordinary visitors, no effect on the normal tool.
+      (EDIT_MODE ?
+        '<div class="air-sys-edit-panel">' +
+        '<p>Drag the dots, then copy this and send it back.</p>' +
+        '<textarea readonly></textarea>' +
+        '</div>' : '') +
+
       '</div>';
 
     var root = container.querySelector('.air-sys');
     var markerLayer = root.querySelector('.air-sys-image-markers');
+    var imageWrap = root.querySelector('.air-sys-image-wrap');
     var listEl = root.querySelector('.air-sys-list');
     var modeButtons = root.querySelectorAll('.air-sys-mode-btn');
+    var editPanelText = EDIT_MODE ? root.querySelector('.air-sys-edit-panel textarea') : null;
 
     var tooltip = root.querySelector('.air-sys-tooltip');
     var tTitle = tooltip.querySelector('.t-title');
@@ -85,8 +99,45 @@
       if (li) li.classList.toggle('is-hovered', active);
     }
 
+    function updateEditPanel(items) {
+      if (!editPanelText) return;
+      editPanelText.value = items.map(function (item) {
+        return item.id + ': xPct ' + (Math.round(item.xPct * 10) / 10) + ', yPct ' + (Math.round(item.yPct * 10) / 10);
+      }).join('\n');
+    }
+
+    function makeDraggable(el, item, items) {
+      el.addEventListener('pointerdown', function (evt) {
+        evt.preventDefault();
+        hideTip();
+        el.setPointerCapture(evt.pointerId);
+        el.classList.add('dragging');
+
+        function onMove(moveEvt) {
+          var rect = imageWrap.getBoundingClientRect();
+          var x = ((moveEvt.clientX - rect.left) / rect.width) * 100;
+          var y = ((moveEvt.clientY - rect.top) / rect.height) * 100;
+          x = Math.max(0, Math.min(100, x));
+          y = Math.max(0, Math.min(100, y));
+          item.xPct = x;
+          item.yPct = y;
+          el.style.left = x + '%';
+          el.style.top = y + '%';
+          updateEditPanel(items);
+        }
+        function onUp(upEvt) {
+          el.classList.remove('dragging');
+          el.releasePointerCapture(upEvt.pointerId);
+          el.removeEventListener('pointermove', onMove);
+          el.removeEventListener('pointerup', onUp);
+        }
+        el.addEventListener('pointermove', onMove);
+        el.addEventListener('pointerup', onUp);
+      });
+    }
+
     function render(mode) {
-      root.className = 'air-sys air-sys-mode-' + mode;
+      root.className = 'air-sys air-sys-mode-' + mode + (EDIT_MODE ? ' air-sys-edit' : '');
       var items = mode === 'internal' ? INTERNAL_ITEMS : EXTERNAL_ITEMS;
 
       markerLayer.innerHTML = items.map(function (item) {
@@ -98,7 +149,10 @@
         el.addEventListener('mouseenter', function (e) { showTip(e, item); setActive(item.id, true); });
         el.addEventListener('mousemove', positionTip);
         el.addEventListener('mouseleave', function () { hideTip(); setActive(item.id, false); });
+        if (EDIT_MODE) makeDraggable(el, item, items);
       });
+
+      updateEditPanel(items);
 
       listEl.innerHTML = items.map(function (item) {
         return '<li class="air-sys-list-item" data-list="' + item.id + '">' +
