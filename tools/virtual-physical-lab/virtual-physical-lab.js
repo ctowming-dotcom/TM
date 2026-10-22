@@ -66,6 +66,17 @@
     cpr: ['Compressor Pressure Ratio (CPR)', 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.'],
   };
 
+  // Airflow path traced over the static image to match the actual gas
+  // route visible in it: straight in through the intake, up through the
+  // centrifugal compressor to its diffuser exit, down through the short
+  // elbow into the turbine inlet, then rearward through the annular
+  // passage around the nozzle centerbody, converging back to the shaft
+  // centerline at the centerbody's tip before the exhaust. The lower path
+  // is the same route mirrored about the centerline (y=192), matching the
+  // engine's own top/bottom symmetry in the cutaway.
+  var FLOW_PATH_UPPER = 'M15,192 Q100,170 174,159 Q260,140 337,69 Q375,40 400,95 Q415,120 430,145 Q500,175 569,192 L780,192';
+  var FLOW_PATH_LOWER = 'M15,192 Q100,214 174,225 Q260,244 337,315 Q375,344 400,289 Q415,264 430,239 Q500,209 569,192 L780,192';
+
   // Marker positions are percentages over the static engine-diagram.png,
   // matched by eye to the 5 yellow sensor dots already drawn on that
   // image (inlet / compressor exit / combustor / turbine / exhaust).
@@ -124,6 +135,8 @@
       '</g>' +
       '</g>' +
 
+      '<path class="vlab-flow-path-upper" d="' + FLOW_PATH_UPPER + '" fill="none" stroke="none"></path>' +
+      '<path class="vlab-flow-path-lower" d="' + FLOW_PATH_LOWER + '" fill="none" stroke="none"></path>' +
       '<g class="vlab-flow"></g>' +
 
       '<path class="vlab-jet" d="M770,165 L770,220 L870,192 Z"></path>' +
@@ -212,19 +225,41 @@
       el.addEventListener('mouseleave', hideTip);
     });
 
-    // Airflow particles, overlaid on the static image along its centerline —
-    // the picture can't show literal rotation, so animation is carried by
-    // flow speed/color and the combustor glow / exhaust jet instead.
+    // Airflow arrows, overlaid on the static image and travelling along the
+    // actual gas route traced over it (FLOW_PATH_UPPER/LOWER above) — the
+    // picture can't show literal blade rotation, so motion is carried by
+    // these arrows plus the combustor glow / exhaust jet instead.
+    var flowPathUpper = root.querySelector('.vlab-flow-path-upper');
+    var flowPathLower = root.querySelector('.vlab-flow-path-lower');
+    var pathLengthUpper = flowPathUpper.getTotalLength();
+    var pathLengthLower = flowPathLower.getTotalLength();
+    var TANGENT_EPS = 1.5;
+
+    function pointAndAngle(pathEl, totalLength, dist) {
+      var d = Math.max(0, Math.min(totalLength, dist));
+      var p = pathEl.getPointAtLength(d);
+      var d2 = Math.min(totalLength, d + TANGENT_EPS);
+      var p2 = pathEl.getPointAtLength(d2);
+      var angle = Math.atan2(p2.y - p.y, p2.x - p.x) * (180 / Math.PI);
+      return { x: p.x, y: p.y, angle: angle };
+    }
+
     var PARTICLE_COUNT = 10;
-    var PATH_START = 15, PATH_END = 770;
     var particles = [];
     for (var i = 0; i < PARTICLE_COUNT; i++) {
-      var el = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      var el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       el.setAttribute('class', 'vlab-particle');
-      el.setAttribute('r', '5');
-      el.setAttribute('cy', '192');
+      el.setAttribute('d', 'M -7,-4.5 L 6,0 L -7,4.5 L -3,0 Z');
       flowGroup.appendChild(el);
-      particles.push({ el: el, x: PATH_START + (i / PARTICLE_COUNT) * (PATH_END - PATH_START) });
+      var onUpper = i % 2 === 0;
+      var pathEl = onUpper ? flowPathUpper : flowPathLower;
+      var totalLength = onUpper ? pathLengthUpper : pathLengthLower;
+      particles.push({
+        el: el,
+        pathEl: pathEl,
+        totalLength: totalLength,
+        dist: (i / PARTICLE_COUNT) * totalLength,
+      });
     }
 
     var targetRpm = MIN_RPM;
@@ -289,15 +324,18 @@
       jet.style.opacity = String(0.15 + thrustFrac * 0.85);
       jet.style.transform = 'scaleX(' + (0.3 + thrustFrac * 1.3) + ')';
 
-      // Airflow particle speed scales with RPM; color shifts cool → hot →
-      // exhaust along the flow path (compressor exit ~x330, turbine ~x580).
+      // Airflow arrow speed scales with RPM; color shifts cool → hot →
+      // exhaust by fraction travelled along the path (compressor exit
+      // ~35%, turbine/annular passage ~55-100%).
       var speed = (1.5 + frac * 11) * dt;
       particles.forEach(function (p) {
-        p.x += speed;
-        if (p.x > PATH_END) p.x = PATH_START + (p.x - PATH_END);
-        p.el.setAttribute('cx', p.x.toFixed(1));
-        var color = p.x < 330 ? '#6fb7e8' : (p.x < 580 ? '#ff8a4d' : '#ffb98a');
+        p.dist += speed;
+        if (p.dist > p.totalLength) p.dist -= p.totalLength;
+        var pt = pointAndAngle(p.pathEl, p.totalLength, p.dist);
+        var travelFrac = p.dist / p.totalLength;
+        var color = travelFrac < 0.35 ? '#6fb7e8' : (travelFrac < 0.72 ? '#ff8a4d' : '#ffb98a');
         p.el.setAttribute('fill', color);
+        p.el.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ',' + pt.y.toFixed(1) + ') rotate(' + pt.angle.toFixed(1) + ')');
       });
 
       rafId = requestAnimationFrame(frame);

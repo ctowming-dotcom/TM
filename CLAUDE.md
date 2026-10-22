@@ -66,13 +66,24 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   drop its baked-in T1–T5 label strip, keeping just the engine art and its
   5 yellow sensor dots) with a throttle slider driving RPM, and animation
   overlaid on top of the picture rather than drawn into it: an SVG layer
-  (`viewBox` matched to the image's pixel size) holds airflow particles
-  that speed up and shift cool→hot→exhaust color with RPM along the
-  engine's centerline, a pulsing combustor glow that scales with fuel
-  flow, and an exhaust jet gradient that scales with thrust. The image
-  can't show literal blade rotation (no shapes to animate in a raster
-  picture), so that part of the previous animated-SVG version was dropped
-  — motion now reads entirely through flow/glow/jet. 5 invisible
+  (`viewBox` matched to the image's pixel size) holds airflow arrows that
+  travel two mirrored bezier paths (`FLOW_PATH_UPPER`/`_LOWER`) traced by
+  eye over the picture's own gas route — straight through the intake,
+  up through the centrifugal compressor to its diffuser exit, down the
+  short elbow into the turbine inlet, then rearward through the annular
+  passage around the nozzle centerbody, converging back to the shaft
+  centerline at the centerbody's tip — matching the direction of the
+  arrows the user annotated on the reference image. Each arrow is an SVG
+  `<path>` positioned and rotated every frame via
+  `getPointAtLength`/tangent-angle sampling on a corresponding invisible
+  guide `<path>` (one upper, one mirrored lower, `fill/stroke: none`,
+  queried only for its geometry); speed scales with RPM and color shifts
+  cool→hot→exhaust by fraction of path length travelled. A pulsing
+  combustor glow scales with fuel flow, and an exhaust jet gradient
+  scales with thrust. The image can't show literal blade rotation (no
+  shapes to animate in a raster picture), so that part of the previous
+  animated-SVG version was dropped — rotation reads only through the
+  flow/glow/jet. 5 invisible
   percentage-positioned hover markers sit exactly on the image's own
   yellow dots (inlet / compressor exit / combustor / turbine / exhaust)
   for tooltips, the same marker-overlay pattern as the Air System tool.
