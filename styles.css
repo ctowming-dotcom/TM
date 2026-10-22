@@ -1,41 +1,33 @@
 :root {
-  color-scheme: light dark;
-  --bg: #ffffff;
-  --surface: #ffffff;
-  --text: #16181d;
-  --text-muted: #5a5e68;
-  --border: #e7e7ec;
-  --accent: #ff5c6c;
-  --accent-contrast: #ffffff;
-  --success: #1a7f4b;
-  --error: #c0392b;
+  /* Always-dark navy theme (matches the Oil System tool's palette) —
+     this used to be a @media (prefers-color-scheme: dark) variant;
+     promoted to the one and only theme by request, so the site no
+     longer reads light for visitors whose OS prefers light mode. */
+  color-scheme: dark;
+  --bg: #0b1c2c;
+  --surface: #0f2033;
+  --text: #eaf3fb;
+  --text-muted: #9db6cc;
+  --border: #2f5a7d;
+  --accent: #ff7b88;
+  --accent-contrast: #0b1c2c;
+  --success: #4ade80;
+  --error: #f87171;
   --radius: 20px;
   --radius-sm: 12px;
   --radius-pill: 999px;
-  --tint-1: #ffd9dc;
-  --tint-2: #c9f3ec;
-  --tint-3: #ffe9b8;
-  --card-badge-bg: rgba(255, 255, 255, 0.55);
   --font-display: "Fredoka", sans-serif;
   --font-body: "Karla", sans-serif;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #16181d;
-    --surface: #1f2128;
-    --text: #f1f1f5;
-    --text-muted: #a7abb5;
-    --border: #2c2f37;
-    --accent: #ff7b88;
-    --accent-contrast: #16181d;
-    --success: #4ade80;
-    --error: #f87171;
-    --tint-1: #402530;
-    --tint-2: #1c3a37;
-    --tint-3: #3a2e1a;
-    --card-badge-bg: rgba(255, 255, 255, 0.12);
-  }
+  /* Catalog tool cards keep their original light pastel look (by
+     request) even though the rest of the site is now always dark —
+     these are a separate token set from --bg/--text/etc. so the cards
+     don't follow the page's own dark theme. */
+  --card-tint-1: #ffd9dc;
+  --card-tint-2: #c9f3ec;
+  --card-tint-3: #ffe9b8;
+  --card-badge-bg: rgba(255, 255, 255, 0.55);
+  --card-text: #16181d;
 }
 
 * {
@@ -106,18 +98,18 @@ main#app {
   padding: 1.5rem;
   border-radius: var(--radius);
   text-decoration: none;
-  color: var(--text);
+  color: var(--card-text);
   transition: transform 0.15s ease;
 }
 
 .tool-card:nth-child(3n + 1) {
-  background: var(--tint-1);
+  background: var(--card-tint-1);
 }
 .tool-card:nth-child(3n + 2) {
-  background: var(--tint-2);
+  background: var(--card-tint-2);
 }
 .tool-card:nth-child(3n + 3) {
-  background: var(--tint-3);
+  background: var(--card-tint-3);
 }
 
 .tool-card:hover,
@@ -133,7 +125,7 @@ main#app {
   height: 44px;
   border-radius: 14px;
   background: var(--card-badge-bg);
-  color: var(--text);
+  color: var(--card-text);
 }
 
 .tool-card h2 {
@@ -145,7 +137,7 @@ main#app {
 
 .tool-card p {
   margin: 0;
-  color: var(--text);
+  color: var(--card-text);
   opacity: 0.75;
   font-size: 0.95rem;
 }
@@ -206,7 +198,7 @@ main#app {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: var(--tint-2);
+  background: var(--surface);
   color: var(--accent);
   display: flex;
   align-items: center;
@@ -220,7 +212,7 @@ main#app {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
-  background: var(--tint-1);
+  background: rgba(255, 123, 136, 0.15);
   padding: 0.3rem 0.9rem;
   border-radius: var(--radius-pill);
 }

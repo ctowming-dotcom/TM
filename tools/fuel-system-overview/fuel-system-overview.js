@@ -163,9 +163,9 @@
     }
 
     function setState(state) {
-      var green = '#4c9a2a';
-      var red = '#c0392b';
-      var gray = '#b9b8b2';
+      var green = '#4ade80';
+      var red = '#f87171';
+      var gray = '#7e93a8';
 
       if (state === 'start') {
         btnStart.classList.add('active');

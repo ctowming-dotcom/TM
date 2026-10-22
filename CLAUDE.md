@@ -41,10 +41,57 @@ tools' code.
 
 ### Visual direction
 
-Bright Lab: white/near-black base, coral accent (`#ff5c6c`), a rotating
-pastel tint per card (coral/teal/amber) so new cards keep cycling through
-it, pill-shaped buttons and inputs, Fredoka (display) + Karla (body) via
-Google Fonts. Full dark-mode token set in `styles.css`.
+Bright Lab, now always dark: the shell (`styles.css` `:root`) permanently
+uses the dark navy palette that used to be its `@media (prefers-color-
+scheme: dark)` variant — `--bg: #0b1c2c`, `--surface: #0f2033`,
+`--text: #eaf3fb`, `--text-muted: #9db6cc`, `--border: #2f5a7d` — chosen
+to match the Oil System tool's own palette (by request: "dark background
+for all my pages similar to Oil system page"). There is no light theme
+or `prefers-color-scheme` branch anymore; `color-scheme: dark` is set
+unconditionally. Coral accent (`#ff7b88` on this dark bg, was `#ff5c6c`
+on the old light one), pill-shaped buttons and inputs, Fredoka (display)
++ Karla (body) via Google Fonts.
+
+**Catalog tool cards are the one deliberate exception** — kept on their
+original light pastel look (coral/teal/amber tints cycling per card)
+even though everything else went dark, by explicit follow-up request
+("the tools look at the front page to remain unchange[d]"). This needed
+a second, separate token set so the cards don't follow the page's own
+dark tokens: `--card-tint-1/2/3` (the original light pastel values,
+unused anywhere else now that `--tint-1/2/3` no longer exist),
+`--card-badge-bg` (back to its original translucent white), and
+`--card-text: #16181d` (a fixed dark color for `.tool-card`/
+`.tool-card-icon`/`.tool-card p`, since using the page's own `--text`
+— now light — would be unreadable on a light pastel card). `.placeholder-
+tool` (the three Phase 2 stub pages) is NOT part of this exception and
+did go dark along with everything else — only the catalog's own cards
+kept the light look.
+
+Every tool other than the catalog cards followed the shell dark, either
+automatically or by hand:
+- **Virtual Lab, Air System, and the placeholder tools** needed no
+  changes at all — their CSS already referenced the shared `var(--bg)`/
+  `var(--surface)`/`var(--text)`/etc. tokens rather than hardcoding
+  colors, so they picked up the new dark values for free. (`.placeholder-
+  icon`/`.placeholder-badge` did need their own small fix: they'd
+  referenced the now-removed `var(--tint-1)`/`var(--tint-2)` directly;
+  repointed to `var(--surface)`/`rgba(255, 123, 136, 0.15)`.)
+- **Oil System and Turbofan Engine** already had their own dark reference-
+  sheet palette (hardcoded in each tool's own CSS `:root`-equivalent, not
+  the shared tokens) and didn't need recoloring — only a font-size pass
+  (every `font-size` in both files bumped by exactly +2px), since the
+  user flagged the Oil System tool's own small text (10–13.5px range) as
+  "a bit too small" once it became the reference for the rest of the site.
+- **Fuel System Overview** was the one tool still on a hardcoded *light*
+  palette (`--card: #fff`, `--page: #f4f3ee`, box fill `#fff`, text fill
+  `#222`, etc.) and needed a full manual repaint to the same Oil-System-
+  matching dark navy values, keeping the same custom-property names
+  (`--ink`/`--muted`/`--line`/`--card`/`--page`/`--box`) so the rest of
+  the file and the JS (which only ever reference these tokens, plus a
+  few literal green/red/gray hex codes for valve and pipe state that got
+  brightened to match — `#4ade80`/`#f87171`/`#7e93a8`) didn't need
+  touching beyond what the tokens now point to. Also got the same +2px
+  font-size pass as Oil/Turbofan.
 
 ### Phase 1 — Portal shell + 4 tools (current)
 
