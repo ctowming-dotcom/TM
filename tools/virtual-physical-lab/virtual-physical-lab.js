@@ -66,11 +66,11 @@
   // displayed width (kept circular regardless of the image's own aspect
   // ratio via `aspect-ratio: 1/1` in CSS, not a height percentage).
   var PARTS = [
-    { comp: 'inlet', xPct: 23.6, yPct: 44.3, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
-    { comp: 'compressor', xPct: 43.0, yPct: 7.3, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
-    { comp: 'combustor', xPct: 48.8, yPct: 21.9, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
-    { comp: 'turbine', xPct: 58.6, yPct: 32.2, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor.' },
-    { comp: 'exhaust', xPct: 77.3, yPct: 44.3, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+    { comp: 'inlet', xPct: 8.4, yPct: 44.8, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 36.1, yPct: 45, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 83.6, yPct: 14.9, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 57.2, yPct: 42, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor to turn Compressor and the accessories Gear Box.' },
+    { comp: 'exhaust', xPct: 73.9, yPct: 42.5, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
   ];
   var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
@@ -84,22 +84,21 @@
   // reshaped in edit mode; a smooth curve is rebuilt through them each
   // time one moves. The lower route mirrors the upper one about the
   // centerline (y=303), matching the engine's own top/bottom symmetry.
-  // A few of these were originally pixel-identical to a PARTS marker's
-  // center (by design — the route passes through those stations); nudged
-  // a few px off-exact so a dead-center click on the marker isn't always
-  // shadowed by the waypoint handle drawn on top of it in edit mode. The
-  // route's shape is unaffected at this scale.
+  // A dead-center click on a PARTS marker that happens to sit under a
+  // waypoint handle can be shadowed by that handle in edit mode (the
+  // overlay SVG sits above the marker layer so handles stay reachable);
+  // dragging from an off-center point on the marker always works.
   var UPPER_WAYPOINTS = [
-    { x: 20, y: 303 }, { x: 155, y: 303 }, { x: 290, y: 296 }, { x: 410, y: 180 },
-    { x: 521, y: 50 }, { x: 650, y: 140 }, { x: 720, y: 213 }, { x: 835, y: 265 },
-    { x: 943, y: 303 }, { x: 1080, y: 303 }, { x: 1210, y: 303 },
+    { x: 65, y: 304 }, { x: 266, y: 231 }, { x: 473, y: 228 }, { x: 515, y: 58 },
+    { x: 976, y: 33 }, { x: 943, y: 97 }, { x: 591, y: 103 }, { x: 608, y: 165 },
+    { x: 779, y: 191 }, { x: 969, y: 236 }, { x: 1117, y: 303 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
   // 1229x684 image), one per duct — draggable in edit mode.
   var GLOWS = [
-    { x: 650, y: 120 },
-    { x: 650, y: 486 },
+    { x: 996, y: 100 },
+    { x: 1009, y: 513 },
   ];
 
   var EDIT_PASSWORD = 'APP';
