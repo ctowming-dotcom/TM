@@ -96,10 +96,81 @@
 .air-sys-image-markers {
   position: absolute;
   inset: 0;
+  /* Click-through except where a marker itself opts back in — otherwise
+     this layer (later in DOM, painted on top) would swallow pointer
+     events over its whole empty area, blocking the flow boxes beneath
+     it everywhere except directly under an actual marker. */
+  pointer-events: none;
+}
+
+.air-sys-flow-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.air-sys-flow-seg {
+  fill: none;
+  stroke: #f2b134;
+  stroke-width: 0.5;
+  stroke-linecap: round;
+  stroke-dasharray: 2.2 1.6;
+  animation: air-sys-flowmove 0.6s linear infinite;
+  opacity: 0.9;
+}
+
+@keyframes air-sys-flowmove {
+  to {
+    stroke-dashoffset: -7.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .air-sys-flow-seg {
+    animation: none;
+  }
+}
+
+.air-sys-flow-boxes {
+  position: absolute;
+  inset: 0;
+}
+
+.air-sys-flow-box {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+  margin-top: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2b134;
+  border: 2px solid #fff;
+  border-radius: 4px;
+  color: #3a2a00;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  box-shadow: 0 0 0 2px #f2b134;
+  user-select: none;
+}
+
+.air-sys-edit .air-sys-flow-box {
+  cursor: grab;
+  touch-action: none;
+}
+
+.air-sys-edit .air-sys-flow-box.dragging {
+  cursor: grabbing;
+  opacity: 0.85;
 }
 
 .air-sys-img-marker {
   position: absolute;
+  pointer-events: auto;
   width: 20px;
   height: 20px;
   margin-left: -10px;

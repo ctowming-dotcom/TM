@@ -232,6 +232,46 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   changes panel is still how a change becomes the new default for
   everyone, by landing in this file.
 
+  Each mode also has its own airflow route (`INTERNAL_FLOW`/
+  `EXTERNAL_FLOW`, independent of `INTERNAL_ITEMS`/`EXTERNAL_ITEMS` —
+  different purpose: these aren't functions to look up, just a path),
+  drawn as straight dashed-and-animated yellow segments (CSS
+  `@keyframes air-sys-flowmove`, same marching-dashes technique as the
+  Oil System tool) with an arrowhead on each segment, through small
+  numbered yellow boxes (`.air-sys-flow-box`, labelled 1..N in route
+  order) placed at percentage positions like the circle markers. Always
+  visible (not edit-gated) since the route itself is teaching content;
+  only the boxes' positions are draggable, and only in edit mode. The
+  line segments live in an SVG overlay (`viewBox="0 0 100 100"`,
+  `preserveAspectRatio="none"` so a point's 0–100 coordinate maps
+  directly onto the wrapper's `xPct`/`yPct` percentages, matching the
+  image-overlay markers' own percentage math instead of switching to
+  pixel/SVG-space math); the numbered boxes are plain `%`-positioned
+  `<span>`s, reusing the exact same `makeDraggable()` the circle markers
+  use (it's generic over anything with `xPct`/`yPct`). Dragging a box
+  calls `renderFlowPath()` (rebuilds only the SVG line layer) rather
+  than re-rendering the box layer itself on every move — re-rendering
+  the box layer from inside its own drag handler would replace the
+  `<span>` mid-drag and silently end the drag after one move, the same
+  pointer-capture bug the Virtual Lab's waypoint handles had; box
+  elements are only (re)built once per mode switch
+  (`renderFlowBoxes()`), never during a drag. Also had to add an
+  explicit `pointer-events: none` to `.air-sys-image-markers` (with
+  `pointer-events: auto` restored on the individual `.air-sys-img-marker`
+  spans) once the flow boxes were added underneath it in DOM order —
+  without that, the marker layer's own empty space (it covers the full
+  image, same as every other overlay layer here) silently swallowed
+  clicks meant for the flow boxes sitting below it, since an
+  unstyled-for-pointer-events absolutely-positioned div still intercepts
+  hit-testing across its whole box. Flow points persist to `localStorage`
+  (`tm.airSystem.internalFlow`/`externalFlow`) the same way the items do,
+  and are included in the Copy-changes panel's textarea
+  (`formatFlow()`, alongside `formatItems()`) so a dragged route can be
+  pasted back into this file too. Default waypoints are rough
+  placeholders (not sourced from the supplied deck, unlike the items) —
+  meant to be dragged into an accurate shape for the real bleed-air
+  routing once that reference is available.
+
 - **Turbofan Engine** (`turbofan-engine`): interactive schematic teaching
   spool count, N-number naming, and bypass ratio — distinct from the
   Fuel/Oil/Virtual-Lab tools above in that its engine diagram is drawn

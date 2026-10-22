@@ -22,6 +22,26 @@
     { id: 'nacelle-vent', xPct: 15.3, yPct: 79.1, name: 'Nacelle Ventilation and Cooling', desc: 'The space between the engine cowling and casing (the nacelle) is ventilated with fan air to prevent fluid vapor from accumulating and self-igniting.' },
   ];
 
+  // Airflow route for each mode: a short sequence of waypoints (not tied
+  // to INTERNAL_ITEMS/EXTERNAL_ITEMS — a separate, independent path) drawn
+  // as a yellow flowing line with arrowheads, and shown as numbered yellow
+  // boxes in flow order. Positions are rough defaults meant to be dragged
+  // into place in edit mode, same as the circle markers.
+  var INTERNAL_FLOW = [
+    { xPct: 38, yPct: 30 },
+    { xPct: 50, yPct: 22 },
+    { xPct: 62, yPct: 25 },
+    { xPct: 71, yPct: 35 },
+    { xPct: 80, yPct: 45 },
+  ];
+  var EXTERNAL_FLOW = [
+    { xPct: 15, yPct: 20 },
+    { xPct: 30, yPct: 15 },
+    { xPct: 45, yPct: 18 },
+    { xPct: 60, yPct: 15 },
+    { xPct: 75, yPct: 20 },
+  ];
+
   var EDIT_PASSWORD = 'APP';
 
   // Persist edits to this browser's localStorage so they survive a page
@@ -33,6 +53,8 @@
   // the "Copy changes" text so it can be committed to this file.
   var STORAGE_KEY_INTERNAL = 'tm.airSystem.internalItems';
   var STORAGE_KEY_EXTERNAL = 'tm.airSystem.externalItems';
+  var STORAGE_KEY_INTERNAL_FLOW = 'tm.airSystem.internalFlow';
+  var STORAGE_KEY_EXTERNAL_FLOW = 'tm.airSystem.externalFlow';
 
   function restoreItems(key, items) {
     try {
@@ -51,13 +73,15 @@
   }
   restoreItems(STORAGE_KEY_INTERNAL, INTERNAL_ITEMS);
   restoreItems(STORAGE_KEY_EXTERNAL, EXTERNAL_ITEMS);
+  restoreItems(STORAGE_KEY_INTERNAL_FLOW, INTERNAL_FLOW);
+  restoreItems(STORAGE_KEY_EXTERNAL_FLOW, EXTERNAL_FLOW);
 
   function mount(container) {
     container.innerHTML =
       '<div class="air-sys">' +
       '<div class="air-sys-header">' +
       '<h1>Air System</h1>' +
-      '<p>The engine air system covers every airflow that doesn’t directly produce thrust. Switch between its two halves and hover a marker — or a list item — for what it does.</p>' +
+      '<p>The engine air system covers every airflow that doesn’t directly produce thrust. Switch between its two halves and hover a marker — or a list item — for what it does. The numbered yellow boxes trace the airflow path for that half.</p>' +
       '</div>' +
 
       '<div class="air-sys-toggle">' +
@@ -70,6 +94,11 @@
       '<div class="air-sys-stage">' +
       '<div class="air-sys-image-wrap">' +
       '<img class="air-sys-image" src="tools/air-system/engine-diagram.png" alt="Generic turbojet cutaway diagram: intake, compression, combustion and exhaust sections, cold section and hot section labeled.">' +
+      '<svg class="air-sys-flow-svg" viewBox="0 0 100 100" preserveAspectRatio="none">' +
+      '<defs><marker id="air-sys-flow-arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f2b134"></path></marker></defs>' +
+      '<g class="air-sys-flow-segs"></g>' +
+      '</svg>' +
+      '<div class="air-sys-flow-boxes"></div>' +
       '<div class="air-sys-image-markers"></div>' +
       '</div>' +
       '</div>' +
@@ -92,6 +121,8 @@
     var root = container.querySelector('.air-sys');
     var markerLayer = root.querySelector('.air-sys-image-markers');
     var imageWrap = root.querySelector('.air-sys-image-wrap');
+    var flowSegsRoot = root.querySelector('.air-sys-flow-segs');
+    var flowBoxLayer = root.querySelector('.air-sys-flow-boxes');
     var listEl = root.querySelector('.air-sys-list');
     var modeButtons = root.querySelectorAll('.air-sys-mode-btn');
     var editBtn = root.querySelector('.air-sys-edit-btn');
@@ -145,16 +176,27 @@
       return '  var ' + varName + ' = [\n' + lines.join('\n') + '\n  ];';
     }
 
+    function formatFlow(varName, points) {
+      var lines = points.map(function (p) {
+        return '    { xPct: ' + (Math.round(p.xPct * 10) / 10) + ', yPct: ' + (Math.round(p.yPct * 10) / 10) + ' },';
+      });
+      return '  var ' + varName + ' = [\n' + lines.join('\n') + '\n  ];';
+    }
+
     function updateEditPanel() {
       if (!editUnlocked) return;
       editPanelText.value =
         formatItems('INTERNAL_ITEMS', INTERNAL_ITEMS) + '\n\n' +
-        formatItems('EXTERNAL_ITEMS', EXTERNAL_ITEMS);
+        formatItems('EXTERNAL_ITEMS', EXTERNAL_ITEMS) + '\n\n' +
+        formatFlow('INTERNAL_FLOW', INTERNAL_FLOW) + '\n\n' +
+        formatFlow('EXTERNAL_FLOW', EXTERNAL_FLOW);
       persistItems(STORAGE_KEY_INTERNAL, INTERNAL_ITEMS);
       persistItems(STORAGE_KEY_EXTERNAL, EXTERNAL_ITEMS);
+      persistItems(STORAGE_KEY_INTERNAL_FLOW, INTERNAL_FLOW);
+      persistItems(STORAGE_KEY_EXTERNAL_FLOW, EXTERNAL_FLOW);
     }
 
-    function makeDraggable(el, item) {
+    function makeDraggable(el, item, onMoveExtra) {
       el.addEventListener('pointerdown', function (evt) {
         if (!editUnlocked) return;
         evt.preventDefault();
@@ -172,6 +214,7 @@
           item.yPct = y;
           el.style.left = x + '%';
           el.style.top = y + '%';
+          if (onMoveExtra) onMoveExtra();
           updateEditPanel();
         }
         function onUp(upEvt) {
@@ -182,6 +225,29 @@
         }
         el.addEventListener('pointermove', onMove);
         el.addEventListener('pointerup', onUp);
+      });
+    }
+
+    // Rebuilds only the connecting line segments, never the numbered box
+    // elements — safe to call on every pointermove while dragging a box.
+    // (Rebuilding the box layer itself mid-drag would replace the <span>
+    // the pointer is captured on, silently ending the drag after one
+    // move, the same bug the Virtual Lab's waypoint handles had.)
+    function renderFlowPath(mode) {
+      var points = mode === 'internal' ? INTERNAL_FLOW : EXTERNAL_FLOW;
+      flowSegsRoot.innerHTML = points.slice(0, -1).map(function (p, i) {
+        var next = points[i + 1];
+        return '<path class="air-sys-flow-seg" d="M' + p.xPct + ',' + p.yPct + ' L' + next.xPct + ',' + next.yPct + '" marker-end="url(#air-sys-flow-arrow)"></path>';
+      }).join('');
+    }
+
+    function renderFlowBoxes(mode) {
+      var points = mode === 'internal' ? INTERNAL_FLOW : EXTERNAL_FLOW;
+      flowBoxLayer.innerHTML = points.map(function (p, i) {
+        return '<span class="air-sys-flow-box" style="left:' + p.xPct + '%; top:' + p.yPct + '%;">' + (i + 1) + '</span>';
+      }).join('');
+      flowBoxLayer.querySelectorAll('.air-sys-flow-box').forEach(function (el, i) {
+        makeDraggable(el, points[i], function () { renderFlowPath(currentMode); });
       });
     }
 
@@ -196,6 +262,9 @@
       currentMode = mode;
       root.className = 'air-sys air-sys-mode-' + mode + (editUnlocked ? ' air-sys-edit' : '');
       var items = mode === 'internal' ? INTERNAL_ITEMS : EXTERNAL_ITEMS;
+
+      renderFlowPath(mode);
+      renderFlowBoxes(mode);
 
       markerLayer.innerHTML = items.map(function (item) {
         return '<span class="air-sys-img-marker" data-marker="' + item.id + '" style="left:' + item.xPct + '%; top:' + item.yPct + '%;"></span>';
