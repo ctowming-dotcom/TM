@@ -117,7 +117,7 @@
       '</svg>' +
 
       '<p class="caption fd-caption"></p>' +
-      '<div class="tooltip fd-tooltip"></div>' +
+      '<div class="explain fd-explain"><span class="e-title">Hover a component</span><span class="e-desc">Hover any box in the diagram above to see what it does, here.</span></div>' +
       '</div>';
 
     var root = container.querySelector('.fuel-diagram');
@@ -125,7 +125,9 @@
     var btnShutdown = root.querySelector('.fd-btn-shutdown');
     var processTitle = root.querySelector('.fd-process-title');
     var captionText = root.querySelector('.fd-caption');
-    var tooltip = root.querySelector('.fd-tooltip');
+    var explain = root.querySelector('.fd-explain');
+    var eTitle = explain.querySelector('.e-title');
+    var eDesc = explain.querySelector('.e-desc');
 
     var lpsov = root.querySelector('#lpsov');
     var hpsov = root.querySelector('#hpsov');
@@ -137,29 +139,21 @@
     var mainPipeIds = ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'];
     var drainPipeIds = ['d1', 'd2', 'd3'];
 
-    function showTip(evt, key) {
-      tooltip.innerHTML = '<strong>' + titles[key] + '</strong>' + descriptions[key];
-      tooltip.style.display = 'block';
-      positionTip(evt);
+    function showExplain(key) {
+      eTitle.textContent = titles[key];
+      eDesc.textContent = descriptions[key];
+      explain.classList.add('has-value');
     }
-    function positionTip(evt) {
-      var rect = root.getBoundingClientRect();
-      var x = evt.clientX - rect.left + 18;
-      var y = evt.clientY - rect.top + 18;
-      var maxX = rect.width - 280;
-      if (x > maxX) x = evt.clientX - rect.left - 278;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top = y + 'px';
-    }
-    function hideTip() {
-      tooltip.style.display = 'none';
+    function hideExplain() {
+      eTitle.textContent = 'Hover a component';
+      eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
+      explain.classList.remove('has-value');
     }
 
     root.querySelectorAll('.box').forEach(function (box) {
       var key = box.getAttribute('data-comp');
-      box.addEventListener('mouseenter', function (evt) { showTip(evt, key); });
-      box.addEventListener('mousemove', positionTip);
-      box.addEventListener('mouseleave', hideTip);
+      box.addEventListener('mouseenter', function () { showExplain(key); });
+      box.addEventListener('mouseleave', hideExplain);
     });
 
     function setBoxColor(el, color) {

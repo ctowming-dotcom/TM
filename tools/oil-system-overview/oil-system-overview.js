@@ -210,16 +210,16 @@
       '<g class="diagram-root"></g>' +
       '</svg>' +
       '</div>' +
+      '<div class="explain"><span class="e-title">Hover a component</span><span class="e-desc">Hover any box in the diagram above to see what it does, here.</span></div>' +
       '<footer>Diagram generated from lubrication system training notes. Educational schematic, not to scale.</footer>' +
-      '<div class="tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
       '</div>';
 
     var wrap = container.querySelector('.oil-diagram');
     var diagramRoot = wrap.querySelector('.diagram-root');
     var svgEl = wrap.querySelector('.oil-svg');
-    var tooltip = wrap.querySelector('.tooltip');
-    var tTitle = tooltip.querySelector('.t-title');
-    var tDesc = tooltip.querySelector('.t-desc');
+    var explain = wrap.querySelector('.explain');
+    var eTitle = explain.querySelector('.e-title');
+    var eDesc = explain.querySelector('.e-desc');
 
     var currentSpool = 'single';
     var lineState = { supply: true, scavenge: true, return: true };
@@ -258,23 +258,16 @@
     svgEl.addEventListener('mouseover', function (e) {
       var g = e.target.closest('.comp');
       if (!g) return;
-      tTitle.textContent = g.dataset.title;
-      tDesc.textContent = g.dataset.desc;
-      tooltip.style.display = 'block';
-    });
-    svgEl.addEventListener('mousemove', function (e) {
-      if (tooltip.style.display !== 'block') return;
-      var x = e.clientX + 16, y = e.clientY + 16;
-      var vw = window.innerWidth, vh = window.innerHeight;
-      if (x + 290 > vw) x = e.clientX - 296;
-      if (y + 120 > vh) y = e.clientY - 130;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top = y + 'px';
+      eTitle.textContent = g.dataset.title;
+      eDesc.textContent = g.dataset.desc;
+      explain.classList.add('has-value');
     });
     svgEl.addEventListener('mouseout', function (e) {
       var g = e.target.closest('.comp');
       if (!g) return;
-      tooltip.style.display = 'none';
+      eTitle.textContent = 'Hover a component';
+      eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
+      explain.classList.remove('has-value');
     });
 
     render();

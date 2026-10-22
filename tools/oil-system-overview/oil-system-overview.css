@@ -274,29 +274,39 @@
   opacity: 0 !important;
 }
 
-.oil-diagram .tooltip {
-  position: fixed;
-  max-width: 280px;
-  background: #0c1f31;
-  border: 1px solid var(--amber);
+.oil-diagram .explain {
+  margin-top: 14px;
+  background: var(--panel);
+  border: 1px solid var(--box-stroke-dim);
   border-radius: 6px;
-  padding: 10px 12px;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--text);
-  pointer-events: none;
-  z-index: 50;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-  display: none;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 62px;
+  transition: border-color 0.15s ease;
 }
 
-.oil-diagram .tooltip .t-title {
+.oil-diagram .explain.has-value {
+  border-color: var(--amber);
+}
+
+.oil-diagram .explain .e-title {
   color: var(--amber);
   font-weight: 600;
-  font-size: 13px;
-  margin-bottom: 4px;
-  display: block;
+  font-size: 13.5px;
   letter-spacing: 0.2px;
+}
+
+.oil-diagram .explain .e-desc {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.oil-diagram .explain:not(.has-value) .e-title,
+.oil-diagram .explain:not(.has-value) .e-desc {
+  color: var(--text-dim);
 }
 
 .oil-diagram footer {

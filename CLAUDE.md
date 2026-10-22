@@ -60,6 +60,17 @@ Google Fonts. Full dark-mode token set in `styles.css`.
   Both diagram tools keep their own reference-sheet visual style (not the
   portal's Bright Lab palette) since their colors are semantic — e.g. green
   = open/flowing, red = closed or a return line, amber = active selection.
+  Both show the hovered component's title/description in a fixed
+  `.explain` panel below the diagram (not edit-gated, no stored state —
+  just a hover-driven display) rather than a tooltip that follows the
+  mouse — replaced the Fuel tool's `.fd-tooltip` and the Oil tool's
+  `.tooltip` (position: fixed, repositioned on every `mousemove`) with
+  this, by request, since a fixed on-page panel is easier to read than
+  text chasing the cursor. Each tool keeps one `.explain`/`.fd-explain`
+  element with an `.e-title`/`.e-desc` pair, a default "Hover a
+  component" prompt shown via a `:not(.has-value)` dimmed state, and the
+  same mouseenter/mouseleave swap the old tooltip code used — only the
+  display target changed, not the hover-detection logic.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
   reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`,
   1229×684 — a second user-supplied centrifugal-compressor turbojet
