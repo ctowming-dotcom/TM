@@ -209,21 +209,18 @@
 
 .turbofan-diagram .tf-cutaway-wrap {
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .turbofan-diagram .tf-cutaway-wrap img {
-  max-width: 480px;
   width: 100%;
   border-radius: 10px;
   border: 1px solid var(--line2);
 }
 
 .turbofan-diagram .tf-cutaway-text {
-  flex: 1;
-  min-width: 260px;
+  max-width: 900px;
 }
 
 .turbofan-diagram .tf-cutaway-text ul {

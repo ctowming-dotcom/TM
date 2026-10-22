@@ -319,8 +319,15 @@ Google Fonts. Full dark-mode token set in `styles.css`.
     relabel automatically when the mode changes — e.g. HP reads "N3" in
     triple-spool mode and "N2" in twin-spool mode with no special-casing
     beyond that one function.
-  - **Shaft arrangement**: a static supporting image alongside prose
-    explaining how the mode's shafts nest inside one another — this
+  - **Shaft arrangement**: a static supporting image, full panel width
+    (edge to edge, not capped like the other tools' reference images),
+    with its explanation stacked below it rather than beside it — this
+    full-bleed layout is specific to this one panel (`.tf-cutaway-wrap`
+    is `flex-direction: column`, not the row layout other image+text
+    panels in this codebase use), chosen because this image is dense
+    enough (labels, call-outs) that it needed the extra width rather
+    than sharing a row with prose. Explains how the mode's shafts nest
+    inside one another — this
     physical nesting isn't visible in the flat schematic above (its
     shafts are drawn as parallel bars, not a true cross-section), so a
     real reference image carries this specific point instead. One image
