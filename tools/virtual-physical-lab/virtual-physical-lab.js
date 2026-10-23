@@ -66,11 +66,11 @@
   // displayed width (kept circular regardless of the image's own aspect
   // ratio via `aspect-ratio: 1/1` in CSS, not a height percentage).
   var PARTS = [
-    { comp: 'inlet', xPct: 8.6, yPct: 50, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
-    { comp: 'compressor', xPct: 37.2, yPct: 50, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
-    { comp: 'combustor', xPct: 73.3, yPct: 14.4, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
-    { comp: 'turbine', xPct: 68.7, yPct: 33.3, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor to turn Compressor and the accessories Gear Box.' },
-    { comp: 'exhaust', xPct: 85.9, yPct: 50, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+    { comp: 'inlet', xPct: 9.7, yPct: 45.9, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 36.1, yPct: 45.5, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 84.1, yPct: 15, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 56.9, yPct: 45.9, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor to turn Compressor and the accessories Gear Box.' },
+    { comp: 'exhaust', xPct: 77.9, yPct: 45.9, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
   ];
   var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
@@ -115,7 +115,11 @@
   // *seeded* from the mirror of the current UPPER_WAYPOINTS at load
   // time — dragging an upper waypoint no longer moves the lower route
   // at all, and vice versa.
-  var LOWER_WAYPOINTS = mirrorPoints(UPPER_WAYPOINTS);
+  var LOWER_WAYPOINTS = [
+    { x: 90, y: 407 }, { x: 295, y: 507 }, { x: 670, y: 538 }, { x: 779, y: 733 },
+    { x: 1442, y: 689 }, { x: 1500, y: 584 }, { x: 1244, y: 634 }, { x: 861, y: 659 },
+    { x: 859, y: 598 }, { x: 1232, y: 556 }, { x: 1665, y: 374 },
+  ];
 
   // Two independent combustor glows (pixel coordinates over the
   // 1747x900 image), one per duct — draggable in edit mode.
