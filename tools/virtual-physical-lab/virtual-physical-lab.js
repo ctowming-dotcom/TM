@@ -82,8 +82,10 @@
   // centerline at the centerbody's tip before the exhaust. Stored as a
   // handful of waypoints (not a fixed path string) so the route can be
   // reshaped in edit mode; a smooth curve is rebuilt through them each
-  // time one moves. The lower route mirrors the upper one about the
-  // centerline (y=450), matching the engine's own top/bottom symmetry.
+  // time one moves. The lower route (`LOWER_WAYPOINTS`, below) starts
+  // out mirroring the upper one about the centerline (y=450), matching
+  // the engine's own top/bottom symmetry, but is independently
+  // editable from then on — see `LOWER_WAYPOINTS`'s own comment.
   // A dead-center click on a PARTS marker that happens to sit under a
   // waypoint handle can be shadowed by that handle in edit mode (the
   // overlay SVG sits above the marker layer so handles stay reachable);
@@ -102,6 +104,18 @@
     { x: 1387, y: 58 }, { x: 1422, y: 149 }, { x: 1085, y: 102 }, { x: 849, y: 116 },
     { x: 892, y: 227 }, { x: 1214, y: 256 }, { x: 1661, y: 368 },
   ];
+
+  // The lower route started life as a pure mirror of the upper one
+  // (`mirrorPoints()`, defined below) — convenient while both halves of
+  // the image were symmetric, but it meant the bottom route had no
+  // handles of its own and couldn't be reshaped independently. By
+  // request ("I have no control to edit the bottom half of the
+  // airflow... allow me to edit the airflow at the bottom with yellow
+  // boxes in numbers"), it's now its own independent array, just
+  // *seeded* from the mirror of the current UPPER_WAYPOINTS at load
+  // time — dragging an upper waypoint no longer moves the lower route
+  // at all, and vice versa.
+  var LOWER_WAYPOINTS = mirrorPoints(UPPER_WAYPOINTS);
 
   // Two independent combustor glows (pixel coordinates over the
   // 1747x900 image), one per duct — draggable in edit mode.
@@ -128,6 +142,7 @@
   // suffix again the next time the reference image changes.
   var STORAGE_KEY_PARTS = 'tm.vlab.parts.v2';
   var STORAGE_KEY_WAYPOINTS = 'tm.vlab.waypoints.v2';
+  var STORAGE_KEY_LOWER_WAYPOINTS = 'tm.vlab.lowerWaypoints.v2';
   var STORAGE_KEY_GLOWS = 'tm.vlab.glows.v2';
 
   function restoreArray(key, items, requiredFields) {
@@ -150,6 +165,7 @@
   }
   restoreArray(STORAGE_KEY_PARTS, PARTS, ['xPct', 'yPct', 'rPct']);
   restoreArray(STORAGE_KEY_WAYPOINTS, UPPER_WAYPOINTS, ['x', 'y']);
+  restoreArray(STORAGE_KEY_LOWER_WAYPOINTS, LOWER_WAYPOINTS, ['x', 'y']);
   restoreArray(STORAGE_KEY_GLOWS, GLOWS, ['x', 'y']);
 
   function mirrorPoints(points) {
@@ -451,19 +467,30 @@
 
     function rebuildFlowPaths() {
       flowPathUpper.setAttribute('d', pathFromPoints(UPPER_WAYPOINTS));
-      flowPathLower.setAttribute('d', pathFromPoints(mirrorPoints(UPPER_WAYPOINTS)));
+      flowPathLower.setAttribute('d', pathFromPoints(LOWER_WAYPOINTS));
       pathLengthUpper = flowPathUpper.getTotalLength();
       pathLengthLower = flowPathLower.getTotalLength();
     }
 
+    // Builds and wires the numbered yellow-box handles for BOTH routes
+    // in one shared SVG layer, tagged `data-set="upper"/"lower"` so a
+    // drag updates the right array — same per-handle in-place-attribute-
+    // update technique as before (never re-render the whole layer mid-
+    // drag, or the pointer-captured element gets replaced and the drag
+    // silently stops after one move).
     function renderWaypointHandles() {
-      waypointHandleLayer.innerHTML = UPPER_WAYPOINTS.map(function (p, i) {
-        return '<rect class="vlab-waypoint-handle" data-i="' + i + '" x="' + (p.x - 9) + '" y="' + (p.y - 9) + '" width="18" height="18" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>' +
-          '<text class="vlab-waypoint-label" data-i="' + i + '" x="' + p.x + '" y="' + p.y + '">' + (i + 1) + '</text>';
-      }).join('');
+      function setHtml(points, set) {
+        return points.map(function (p, i) {
+          return '<rect class="vlab-waypoint-handle ' + set + '" data-set="' + set + '" data-i="' + i + '" x="' + (p.x - 9) + '" y="' + (p.y - 9) + '" width="18" height="18" transform="rotate(45 ' + p.x + ' ' + p.y + ')"></rect>' +
+            '<text class="vlab-waypoint-label" data-set="' + set + '" data-i="' + i + '" x="' + p.x + '" y="' + p.y + '">' + (i + 1) + '</text>';
+        }).join('');
+      }
+      waypointHandleLayer.innerHTML = setHtml(UPPER_WAYPOINTS, 'upper') + setHtml(LOWER_WAYPOINTS, 'lower');
       waypointHandleLayer.querySelectorAll('.vlab-waypoint-handle').forEach(function (el) {
+        var set = el.getAttribute('data-set');
         var i = Number(el.getAttribute('data-i'));
-        var label = waypointHandleLayer.querySelector('.vlab-waypoint-label[data-i="' + i + '"]');
+        var points = set === 'upper' ? UPPER_WAYPOINTS : LOWER_WAYPOINTS;
+        var label = waypointHandleLayer.querySelector('.vlab-waypoint-label[data-set="' + set + '"][data-i="' + i + '"]');
         el.addEventListener('pointerdown', function (evt) {
           if (!editUnlocked) return;
           evt.preventDefault();
@@ -472,7 +499,7 @@
           function onMove(moveEvt) {
             var p = svgPoint(moveEvt);
             var x = Math.round(p.x), y = Math.round(p.y);
-            UPPER_WAYPOINTS[i] = { x: x, y: y };
+            points[i] = { x: x, y: y };
             label.setAttribute('x', x);
             label.setAttribute('y', y);
             // Update this handle's own attributes in place — calling
@@ -533,7 +560,7 @@
       root.classList.toggle('vlab-edit', on);
       editPanel.hidden = !on;
       editPartsBox.querySelector('.vlab-edit-parts-hint').textContent = on ?
-        'Drag the circular part markers, the diamond flow waypoints, or the square glow handles on the diagram above. Click a name/description below to retype it.' :
+        'Drag the circular part markers, the diamond flow waypoints (top and bottom routes drag independently), or the square glow handles on the diagram above. Click a name/description below to retype it.' :
         'Hover a marker on the diagram, or a name below, for what each part does.';
       editPartsList.querySelectorAll('[data-field]').forEach(function (el) {
         el.contentEditable = on ? 'true' : 'false';
@@ -561,12 +588,16 @@
       var waypointsCode = '  var UPPER_WAYPOINTS = [\n    ' +
         UPPER_WAYPOINTS.map(function (p) { return '{ x: ' + p.x + ', y: ' + p.y + ' }'; }).join(', ') +
         '\n  ];';
+      var lowerWaypointsCode = '  var LOWER_WAYPOINTS = [\n    ' +
+        LOWER_WAYPOINTS.map(function (p) { return '{ x: ' + p.x + ', y: ' + p.y + ' }'; }).join(', ') +
+        '\n  ];';
       var glowsCode = '  var GLOWS = [\n    ' +
         GLOWS.map(function (g) { return '{ x: ' + g.x + ', y: ' + g.y + ' }'; }).join(',\n    ') +
         '\n  ];';
-      editPanelText.value = partsCode + '\n\n' + waypointsCode + '\n\n' + glowsCode;
+      editPanelText.value = partsCode + '\n\n' + waypointsCode + '\n\n' + lowerWaypointsCode + '\n\n' + glowsCode;
       persistArray(STORAGE_KEY_PARTS, PARTS);
       persistArray(STORAGE_KEY_WAYPOINTS, UPPER_WAYPOINTS);
+      persistArray(STORAGE_KEY_LOWER_WAYPOINTS, LOWER_WAYPOINTS);
       persistArray(STORAGE_KEY_GLOWS, GLOWS);
     }
 

@@ -264,8 +264,9 @@ automatically or by hand:
   `pointer-events: none` so it never steals the drag, repositioned
   alongside its handle on every move rather than via a full
   `renderWaypointHandles()` re-render, for the same reason as below) —
-  dragging one rebuilds both the upper path and its auto-mirrored lower
-  counterpart; the 2 combustor glow
+  dragging one rebuilds just that route's own path (see next paragraph
+  for why "just that route's", not "both, via auto-mirroring" as
+  originally built); the 2 combustor glow
   centers become draggable dashed-circle handles. Waypoint/glow handles
   are plain SVG shapes positioned by converting pointer coordinates
   through the overlay `<svg>`'s own `getScreenCTM()` rather than by
@@ -278,21 +279,47 @@ automatically or by hand:
   otherwise the marker (on top in DOM order) always wins the drag and
   the handle underneath becomes unreachable. A floating panel (like Air
   System's) shows the live, paste-ready `PARTS`/`UPPER_WAYPOINTS`/
-  `GLOWS` source to copy back into the file. A waypoint-drag handler
-  must never re-render the handle layer (`renderWaypointHandles()`) from
-  inside its own `pointermove` callback — that replaces the `<rect>` the
-  pointer is captured on mid-drag, which silently ends the drag after
-  one move since a removed element can't keep pointer capture; update
-  the dragged handle's own attributes in place instead (glow handles
-  already did this correctly — only the waypoint handler had the bug).
-  Every PARTS/UPPER_WAYPOINTS/GLOWS edit is also auto-saved to
-  `localStorage` (`tm.vlab.parts`/`waypoints`/`glows`, restored over the
-  hardcoded defaults on mount via `restoreArray`/`persistArray`) so it
-  survives a reload in the editor's own browser without needing to be
-  redone — same reasoning and same one-browser-only caveat as Air
-  System's copy of this (see above); the Copy-changes panel is still how
-  an edit becomes the new default for every visitor, by landing in this
-  file. `PARTICLE_COUNT` is 24 (was 10, raised by request for a denser
+  `LOWER_WAYPOINTS`/`GLOWS` source to copy back into the file. A
+  waypoint-drag handler must never re-render the handle layer
+  (`renderWaypointHandles()`) from inside its own `pointermove` callback
+  — that replaces the `<rect>` the pointer is captured on mid-drag,
+  which silently ends the drag after one move since a removed element
+  can't keep pointer capture; update the dragged handle's own
+  attributes in place instead (glow handles already did this correctly
+  — only the waypoint handler had the bug).
+
+  The lower route was originally *not* independently stored at all —
+  `flowPathLower` was just `pathFromPoints(mirrorPoints(UPPER_WAYPOINTS))`,
+  recomputed from the upper array on every change, with no handles of
+  its own. By follow-up request ("I have no control to edit the bottom
+  half of the airflow... allow me to edit the airflow at the bottom
+  with yellow boxes in numbers"), it became its own array,
+  `LOWER_WAYPOINTS` — seeded once from `mirrorPoints(UPPER_WAYPOINTS)`
+  at load (so the two routes still start out visually symmetric) but
+  never recomputed from the upper array again afterward.
+  `renderWaypointHandles()` was generalized to build and wire both
+  routes' numbered yellow-box handles in one shared SVG layer
+  (`data-set="upper"`/`"lower"` tags picking which array a given
+  handle's drag updates), rather than being hardcoded to
+  `UPPER_WAYPOINTS` — both sets still number 1-11 independently (lower
+  isn't a continuation like 12-22), since they're two separate routes,
+  not one continuous numbered sequence. Persists to its own
+  `localStorage` key (`tm.vlab.lowerWaypoints`, same
+  `restoreArray`/`persistArray` pattern) and is included in the
+  Copy-changes panel.
+
+  Every PARTS/UPPER_WAYPOINTS/LOWER_WAYPOINTS/GLOWS edit is also
+  auto-saved to `localStorage` (`tm.vlab.parts`/`waypoints`/
+  `lowerWaypoints`/`glows`, restored over the hardcoded defaults on
+  mount via `restoreArray`/`persistArray`) so it survives a reload in
+  the editor's own browser without needing to be redone — same
+  reasoning and same one-browser-only caveat as Air System's copy of
+  this (see above); the Copy-changes panel is still how an edit becomes
+  the new default for every visitor, by landing in this file. These
+  keys all carry a `.v2` suffix (bumped when the reference image was
+  swapped — see that image's own entry above for why) rather than the
+  bare names this paragraph uses for readability.
+  `PARTICLE_COUNT` is 24 (was 10, raised by request for a denser
   flow of arrows). 4 of the 11 default `UPPER_WAYPOINTS` were originally
   pixel-identical to a PARTS marker's center (the route is meant to pass
   through those stations) and are nudged a few px off-exact so a dead-
