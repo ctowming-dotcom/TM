@@ -478,10 +478,20 @@ automatically or by hand:
     `applyPartMarkerVisibility()` (called from `applyMode()`), so e.g.
     the IP Compressor/IP Turbine markers only show in triple-spool
     mode, matching the IP shaft/stages' own visibility. The schematic
-    never drew a separate LP-compressor shape of its own (the LP
-    spool's only drawn stage is the fan), so `lpCompressor`'s default
-    position just sits aft of the fan rather than over a dedicated
-    shape — by design, left for edit mode to refine.
+    originally had no separate LP-compressor shape of its own (the LP
+    spool's only drawn stage was the fan), so `lpCompressor`'s default
+    marker position was just placed aft of the fan with nothing drawn
+    under it; a follow-up request ("Add LP compressor blade with
+    yellow colour") added a real blade stage for it — a fourth entry
+    in `SPOOLS[0].stages` (`{ x: 205, wide: 23, size: 78, component:
+    'lpCompressor' }`, sized like a single IP-compressor column) that
+    automatically renders yellow and spins with the rest of the LP
+    spool, since stage color/rotation/animation all key off `spool.color`/
+    `spool.speed` generically rather than being hardcoded per stage —
+    adding the array entry was the entire change. Its `x: 205` already
+    matched `PART_LABELS.lpCompressor`'s existing default position, so
+    the hover marker now sits right over its own real blade stage
+    rather than empty shaft, with no marker reposition needed.
     - **Edit mode**: a password-gated "✎ Edit" button (password `APP`,
       same casual click-guard as every other tool), in a new
       `.tf-header-row` next to the title (this tool previously had no

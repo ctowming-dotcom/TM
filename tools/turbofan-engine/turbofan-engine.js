@@ -23,6 +23,7 @@
       note: 'LP spool drives the LP fan/compressor and LP turbine',
       stages: [
         { x: 112, wide: 67, size: 142, component: 'lpFan' },
+        { x: 205, wide: 23, size: 78, component: 'lpCompressor' },
         { x: 1001, wide: 28, size: 86, component: 'lpTurbine' },
         { x: 1037, wide: 28, size: 83, component: 'lpTurbine' },
       ],
