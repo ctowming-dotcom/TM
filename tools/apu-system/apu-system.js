@@ -89,7 +89,7 @@
   // numbering is 0-based throughout. Edit-mode-only numbered yellow
   // handles; the flow line itself is always visible.
   var POWER_FLOW = [
-    { xPct: 32.8, yPct: 73.8 },
+    { xPct: 32.8, yPct: 74.2 },
     { xPct: 32.8, yPct: 45 },
     { xPct: 46.8, yPct: 45.7 },
     { xPct: 47, yPct: 72.6 },
@@ -98,7 +98,7 @@
     { xPct: 95.1, yPct: 41.3 },
   ];
   var LOAD_FLOW = [
-    { xPct: 29.3, yPct: 74 },
+    { xPct: 29, yPct: 74.2 },
     { xPct: 28.8, yPct: 43.9 },
     { xPct: 22.2, yPct: 43.6 },
     { xPct: 21.9, yPct: 18.5 },
