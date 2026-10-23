@@ -295,7 +295,7 @@
 .vlab-flow-path-upper,
 .vlab-flow-path-lower {
   stroke: rgba(140, 205, 255, 0.55);
-  stroke-width: 5;
+  stroke-width: 7;
   stroke-linecap: round;
   stroke-dasharray: 14 10;
   animation: vlab-flowmove 0.5s linear infinite;

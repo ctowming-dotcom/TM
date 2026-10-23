@@ -185,10 +185,11 @@ automatically or by hand:
   Fuel/Oil/Air System/APU System's own flow lines use), independent of
   RPM/throttle so it's always flowing, giving a continuous broken-line
   stream underneath the discrete arrow particles rather than just
-  arrows with visible gaps between them; frozen in edit mode
-  (`.vlab-edit .vlab-flow-path-upper/-lower { animation: none; }`) like
-  the combustor flicker, for the same reason (a moving diagram fights
-  precise handle dragging).
+  arrows with visible gaps between them (stroke-width 5, thickened to
+  7 by follow-up request — "thicken a bit on the airflow line");
+  frozen in edit mode (`.vlab-edit .vlab-flow-path-upper/-lower
+  { animation: none; }`) like the combustor flicker, for the same
+  reason (a moving diagram fights precise handle dragging).
   Two independent pulsing combustor glows (`GLOWS`, one per duct, both
   scale with fuel flow) sit over the top and bottom red ducts; an exhaust
   jet gradient scales with thrust. The image can't show literal blade
