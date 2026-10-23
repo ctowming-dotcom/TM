@@ -102,7 +102,7 @@
   var UPPER_WAYPOINTS = [
     { x: 96, y: 401 }, { x: 303, y: 318 }, { x: 662, y: 276 }, { x: 777, y: 60 },
     { x: 1387, y: 58 }, { x: 1422, y: 149 }, { x: 1085, y: 102 }, { x: 849, y: 116 },
-    { x: 892, y: 227 }, { x: 1214, y: 256 }, { x: 1661, y: 368 },
+    { x: 892, y: 227 }, { x: 1214, y: 256 }, { x: 1667, y: 409 },
   ];
 
   // The lower route started life as a pure mirror of the upper one
@@ -118,7 +118,7 @@
   var LOWER_WAYPOINTS = [
     { x: 90, y: 407 }, { x: 295, y: 507 }, { x: 670, y: 538 }, { x: 779, y: 733 },
     { x: 1442, y: 689 }, { x: 1500, y: 584 }, { x: 1244, y: 634 }, { x: 861, y: 659 },
-    { x: 892, y: 594 }, { x: 1232, y: 556 }, { x: 1665, y: 374 },
+    { x: 892, y: 594 }, { x: 1232, y: 556 }, { x: 1663, y: 411 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
