@@ -118,7 +118,7 @@
   var LOWER_WAYPOINTS = [
     { x: 90, y: 407 }, { x: 295, y: 507 }, { x: 670, y: 538 }, { x: 779, y: 733 },
     { x: 1442, y: 689 }, { x: 1500, y: 584 }, { x: 1244, y: 634 }, { x: 861, y: 659 },
-    { x: 859, y: 598 }, { x: 1232, y: 556 }, { x: 1665, y: 374 },
+    { x: 892, y: 594 }, { x: 1232, y: 556 }, { x: 1665, y: 374 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
