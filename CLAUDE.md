@@ -659,12 +659,18 @@ automatically or by hand:
     the mouse event's own `clientX`/`clientY` directly, since
     `.fs-tooltip` is `position: fixed` (viewport-relative) — an earlier
     version computed the offset against `.fs-diagram`'s own bounding
-    rect instead (a pattern copied from the other tools' absolutely-
-    positioned-inside-the-panel tooltips) and then applied that as a
-    fixed-position left/top, which put the tooltip nowhere near the
-    cursor whenever the centered, `max-width`-capped `.fs-diagram`
-    wasn't flush against the viewport's left edge — caught by request
-    ("the mouse explanation should be somewhere near the cursor").
+    rect instead and then applied that as a fixed-position left/top,
+    which put the tooltip nowhere near the cursor whenever the
+    centered, `max-width`-capped `.fs-diagram` wasn't flush against the
+    viewport's left edge — caught by request ("the mouse explanation
+    should be somewhere near the cursor"). The same bug existed in
+    every other tool with a cursor-following tooltip (Air System, APU
+    System, Virtual Lab — each had copied the same root-rect-offset
+    math) and was fixed the same way site-wide by a follow-up request
+    ("The mouse over explanation should be somewhere near the curser
+    for every page") — the diagram tools (Fuel/Oil/Starting System)
+    were never affected, since they use a fixed `.explain` panel
+    instead of a cursor-following tooltip (see Phase 1 intro above).
   - **Edit mode** (added by follow-up request — "allow me to edit the
     size and location of the circle in edit mode for fire protection"
     — reversing the tool's original "no edit mode, nothing here is
@@ -798,10 +804,13 @@ content.
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
 Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
-Overview, Air System, Starting System, Virtual Lab on System, Virtual
-Lab on Fire Protection System. The last two's catalog names were
-renamed by request from "APU System"/"Fire Protection System" — ids
-(`apu-system`/`fire-system`) and every in-tool heading/doc reference
+Overview, Air System, Starting System, Virtual Lab on APU System,
+Virtual Lab on Fire Protection System. The last two's catalog names
+were renamed by request from "APU System"/"Fire Protection System" —
+first to "Virtual Lab on System"/"Virtual Lab on Fire Protection
+System", then "Virtual Lab on System" renamed again to "Virtual Lab on
+APU System" by follow-up request — ids (`apu-system`/`fire-system`)
+and every in-tool heading/doc reference
 below are unchanged; only the `tools.js` card name (and so the catalog
 card + browser hash's displayed label) changed.
 

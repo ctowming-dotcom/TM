@@ -145,11 +145,13 @@
     }
     function positionTip(evt) {
       if (tooltip.style.display !== 'block') return;
-      var rect = root.getBoundingClientRect();
-      var x = evt.clientX - rect.left + 16;
-      var y = evt.clientY - rect.top + 16;
-      var maxX = rect.width - 300;
-      if (x > maxX) x = evt.clientX - rect.left - 296;
+      // .air-sys-tooltip is position: fixed (viewport-relative), so its left/top
+      // must come straight from the pointer's own viewport coordinates,
+      // not an offset against the panel's own bounding rect.
+      var x = evt.clientX + 16;
+      var y = evt.clientY + 16;
+      var maxX = window.innerWidth - 300;
+      if (x > maxX) x = evt.clientX - 296;
       tooltip.style.left = x + 'px';
       tooltip.style.top = y + 'px';
     }
