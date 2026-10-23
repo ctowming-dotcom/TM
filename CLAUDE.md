@@ -545,7 +545,9 @@ automatically or by hand:
     do add arrow to the airflow too"), since a single long path only
     gets one arrowhead at its very end; per-segment paths put a visible
     arrow on every leg of the route. Segment stroke-width went from 0.9
-    to 2.2 for the same reason. The arrowhead markers needed
+    to 2.2 for the same reason, then back down to 1.1 ("half the
+    thickness") once the thicker line made the airflow look heavier
+    than intended once arrowheads were added. The arrowhead markers needed
     `markerUnits="userSpaceOnUse"` added once the stroke got thicker —
     the default `markerUnits="strokeWidth"` scales the marker by the
     path's own stroke-width, so thickening the line without this
@@ -563,7 +565,12 @@ automatically or by hand:
     Copy-changes panel with paste-ready `POWER_FLOW`/`LOAD_FLOW`/
     `REGION_SPLIT` source, and `localStorage` persistence
     (`tm.apuSystem.powerFlow`/`loadFlow`) otherwise match Air System's
-    flow-box pattern.
+    flow-box pattern. `POWER_FLOW` (the orange circuit) got one more
+    waypoint by request ("I need an extra yellow box for the orange
+    airflow") — inserted at `{ xPct: 69, yPct: 47 }`, the midpoint of
+    its longest unbroken leg (compressor-exit corner → turbine), for
+    finer control over that segment's shape; `LOAD_FLOW` is unchanged
+    at 5 points.
   - **Key components, circled in red**: `COMPONENTS[id].key` flags the
     3 components the reference image itself circles in red — Bleed
     Valve, Surge Control Valve, and the Inlet Guide Vane (the small
@@ -586,9 +593,18 @@ automatically or by hand:
     image width; `evt.stopPropagation()` on the handle's own
     `pointerdown` so it doesn't also trigger the marker's hover/tooltip
     logic) — by request ("allow me to change the size of the red and
-    blue circle"). Sizes persist to `localStorage`
-    (`tm.apuSystem.components`, one `{rPct}` per component id) and are
-    included in the Copy-changes panel.
+    blue circle"). A follow-up request ("allow me to change the
+    location of the red and blue circle in edit mode") added position-
+    dragging too: the marker body itself now has its own `pointerdown`
+    handler (ignored when `evt.target === resizeHandle`, so the two
+    drags never fight — the resize handle's own handler already
+    `stopPropagation()`s) that drags `xPct`/`yPct` the same way the
+    flow-route boxes do. Position and size now persist together in
+    `localStorage` (`tm.apuSystem.components`, one `{rPct, xPct, yPct}`
+    per component id — widened from `{rPct}` alone) and are both
+    included in the Copy-changes panel (`formatComponents()`, listing
+    every component's current `xPct`/`yPct`/`rPct` with its id as a
+    trailing comment, appended after the flow/REGION_SPLIT output).
   - Had to add `pointer-events: none` to `.apu-sys-flow-boxes` (with
     `pointer-events: auto` restored on the individual `.apu-sys-flow-
     box` spans) once the divider handle was added underneath it in DOM

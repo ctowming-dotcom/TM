@@ -93,6 +93,7 @@
     { xPct: 31, yPct: 47 },
     { xPct: 42, yPct: 40 },
     { xPct: 57, yPct: 55 },
+    { xPct: 69, yPct: 47 },
     { xPct: 81, yPct: 39 },
     { xPct: 93, yPct: 31 },
   ];
@@ -144,13 +145,18 @@
       if (!saved || typeof saved !== 'object') return;
       Object.keys(COMPONENTS).forEach(function (id) {
         var s = saved[id];
-        if (s && typeof s.rPct === 'number') COMPONENTS[id].rPct = s.rPct;
+        if (!s) return;
+        if (typeof s.rPct === 'number') COMPONENTS[id].rPct = s.rPct;
+        if (typeof s.xPct === 'number') COMPONENTS[id].xPct = s.xPct;
+        if (typeof s.yPct === 'number') COMPONENTS[id].yPct = s.yPct;
       });
     } catch (e) { /* corrupt/blocked storage — keep defaults */ }
   }
   function persistComponentSizes() {
     var out = {};
-    Object.keys(COMPONENTS).forEach(function (id) { out[id] = { rPct: COMPONENTS[id].rPct }; });
+    Object.keys(COMPONENTS).forEach(function (id) {
+      out[id] = { rPct: COMPONENTS[id].rPct, xPct: COMPONENTS[id].xPct, yPct: COMPONENTS[id].yPct };
+    });
     try { window.localStorage.setItem(STORAGE_KEY_COMPONENTS, JSON.stringify(out)); } catch (e) { /* storage full/blocked */ }
   }
   restoreArray(STORAGE_KEY_POWER_FLOW, POWER_FLOW);
@@ -165,7 +171,7 @@
       '<div>' +
       '<p class="kicker">Official (Open)</p>' +
       '<h1>Auxiliary Power Unit (APU)</h1>' +
-      '<p class="apu-sys-sub">Hover any component for its function. In edit mode: drag the yellow boxes to reshape the airflow, drag the divider to resize the two sections, and drag a marker’s corner handle to resize it.</p>' +
+      '<p class="apu-sys-sub">Hover any component for its function. In edit mode: drag the yellow boxes to reshape the airflow, drag the divider to resize the two sections, drag a marker to move it, and drag its corner handle to resize it.</p>' +
       '</div>' +
       '<button type="button" class="apu-sys-edit-btn" title="Edit diagram">✎ Edit</button>' +
       '</div>' +
@@ -211,7 +217,7 @@
       '</div>' +
 
       '<div class="apu-sys-edit-panel" hidden>' +
-      '<p>Drag the numbered yellow boxes, the section divider, or a marker’s resize handle. When done:</p>' +
+      '<p>Drag the numbered yellow boxes, the section divider, a marker, or a marker’s resize handle. When done:</p>' +
       '<button type="button" class="apu-sys-edit-copy">Copy changes</button>' +
       '<textarea readonly></textarea>' +
       '</div>' +
@@ -297,6 +303,31 @@
         el.addEventListener('mousemove', positionTip);
         el.addEventListener('mouseleave', function () { hideTip(); setActive(id, false); });
 
+        el.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked || evt.target === resizeHandle) return;
+          evt.preventDefault();
+          el.setPointerCapture(evt.pointerId);
+          el.classList.add('dragging');
+          function onMove(moveEvt) {
+            var rect = imageWrap.getBoundingClientRect();
+            var x = Math.max(0, Math.min(100, ((moveEvt.clientX - rect.left) / rect.width) * 100));
+            var y = Math.max(0, Math.min(100, ((moveEvt.clientY - rect.top) / rect.height) * 100));
+            c.xPct = x;
+            c.yPct = y;
+            el.style.left = x + '%';
+            el.style.top = y + '%';
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            el.classList.remove('dragging');
+            el.releasePointerCapture(upEvt.pointerId);
+            el.removeEventListener('pointermove', onMove);
+            el.removeEventListener('pointerup', onUp);
+          }
+          el.addEventListener('pointermove', onMove);
+          el.addEventListener('pointerup', onUp);
+        });
+
         resizeHandle.addEventListener('pointerdown', function (evt) {
           if (!editUnlocked) return;
           evt.preventDefault();
@@ -379,12 +410,20 @@
       });
       return '  var ' + varName + ' = [\n' + lines.join('\n') + '\n  ];';
     }
+    function formatComponents() {
+      var lines = Object.keys(COMPONENTS).map(function (id) {
+        var c = COMPONENTS[id];
+        return '    xPct: ' + (Math.round(c.xPct * 10) / 10) + ', yPct: ' + (Math.round(c.yPct * 10) / 10) + ', rPct: ' + (Math.round(c.rPct * 10) / 10) + '  // ' + id;
+      });
+      return '  // COMPONENTS positions/sizes:\n' + lines.join('\n');
+    }
     function updateEditPanel() {
       if (!editUnlocked) return;
       editPanelText.value =
         formatFlow('POWER_FLOW', POWER_FLOW) + '\n\n' +
         formatFlow('LOAD_FLOW', LOAD_FLOW) + '\n\n' +
-        '  var REGION_SPLIT = ' + (Math.round(REGION_SPLIT * 10) / 10) + ';';
+        '  var REGION_SPLIT = ' + (Math.round(REGION_SPLIT * 10) / 10) + ';\n\n' +
+        formatComponents();
       persistArray(STORAGE_KEY_POWER_FLOW, POWER_FLOW);
       persistArray(STORAGE_KEY_LOAD_FLOW, LOAD_FLOW);
       persistNumber(STORAGE_KEY_REGION_SPLIT, REGION_SPLIT);

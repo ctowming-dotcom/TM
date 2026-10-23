@@ -182,7 +182,7 @@
 
 .apu-sys .apu-sys-flow-seg {
   fill: none;
-  stroke-width: 2.2;
+  stroke-width: 1.1;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 4 3;
@@ -236,6 +236,14 @@
 .apu-sys .apu-sys-marker.key:hover,
 .apu-sys .apu-sys-marker.key.is-hovered {
   background: rgba(239, 68, 68, 0.25);
+}
+
+.apu-sys.apu-sys-edit .apu-sys-marker {
+  cursor: grab;
+}
+
+.apu-sys .apu-sys-marker.dragging {
+  cursor: grabbing;
 }
 
 .apu-sys .apu-sys-marker-resize {
