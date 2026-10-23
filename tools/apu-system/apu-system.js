@@ -12,55 +12,55 @@
   // convention as the Virtual Lab's PARTS markers.
   var COMPONENTS = {
     bleedvalve: {
-      name: 'Non-modulating Bleed (Load) Valve', key: true, xPct: 16.9, yPct: 17.5, rPct: 3.3,
+      name: 'Non-modulating Bleed (Load) Valve', key: true, xPct: 17, yPct: 18.1, rPct: 6.3,
       desc: 'Allows the pneumatic bleed from the APU to be interconnected or isolated from the aircraft pneumatic system (the air supply for ECS, Main Engine Start, and ATM). Usually a butterfly-type, spring-loaded, fail-safe-open valve, controlled by the ECB.',
     },
     surgevalve: {
-      name: 'Surge Control Valve', key: true, xPct: 40.8, yPct: 16.1, rPct: 3.3,
+      name: 'Surge Control Valve', key: true, xPct: 41.9, yPct: 17.1, rPct: 8.4,
       desc: 'A modulating valve on the compressor supply duct. If the load compressor delivers more airflow through the IGV than the aircraft pneumatic systems need, compressor stall/surge can result — this valve spills the excess air into the exhaust to protect both the load compressor and the engine from over-pressure. Controlled by the FCU, which supplies servo fuel to open or close it.',
     },
     igv: {
-      name: 'Inlet Guide Vane (IGV)', key: true, xPct: 24.3, yPct: 44, rPct: 3.3,
+      name: 'Inlet Guide Vane (IGV)', key: true, xPct: 25.7, yPct: 37.6, rPct: 4,
       desc: 'A ring of vanes at the load compressor inlet (the small vertical oval next to the IGVA box). Positioning them controls how much air reaches the compressor, letting the APU satisfy varying aircraft pneumatic load demands without changing shaft RPM.',
     },
     igva: {
-      name: 'IGV Actuator (IGVA)', key: false, xPct: 19.6, yPct: 52.4, rPct: 2,
+      name: 'IGV Actuator (IGVA)', key: false, xPct: 19.6, yPct: 54.5, rPct: 4.3,
       desc: 'Regulates the IGV opening to vary the pneumatic load supply entering the load compressor to suit demand. Controlled by the Electronic Control Box (ECB) and operated by servo fuel from the Fuel Control Unit (FCU) — this is how the IGV can vary the load without changing shaft RPM.',
     },
     flowsensor: {
-      name: 'Flow Sensor', key: false, xPct: 27.6, yPct: 26.9, rPct: 2,
+      name: 'Flow Sensor', key: false, xPct: 26.7, yPct: 27.4, rPct: 2.8,
       desc: 'Measures airflow into the load compressor, feeding the control system that positions the IGV to match aircraft demand.',
     },
     loadcompressor: {
-      name: 'Load Compressor', key: false, xPct: 9.2, yPct: 53.7, rPct: 2,
+      name: 'Load Compressor', key: false, xPct: 22.5, yPct: 44, rPct: 5.2,
       desc: 'Compresses air drawn through the inlet for the aircraft’s pneumatic systems. Mounted on the same shaft as the gas generator, so it spins whenever the APU runs — part of the Load Section.',
     },
     accygearbox: {
-      name: 'Accessory / Reduction Gearbox', key: false, xPct: 15.5, yPct: 33.6, rPct: 2,
+      name: 'Accessory / Reduction Gearbox', key: false, xPct: 17.5, yPct: 38.5, rPct: 6.9,
       desc: 'Reduction gears drive the components needed to operate and control the gas turbine engine, and supply the mechanical power needed to drive the electrical generator.',
     },
     gen: {
-      name: 'Generator (GEN)', key: false, xPct: 8.4, yPct: 31.6, rPct: 2,
+      name: 'Generator (GEN)', key: false, xPct: 11.3, yPct: 34.4, rPct: 5.2,
       desc: 'Driven mechanically off the accessory gearbox, supplying electrical power to the aircraft — one of the two things (electrical and pneumatic) the APU exists to provide.',
     },
     ecb: {
-      name: 'Electronic Control Box (ECB)', key: false, xPct: 21, yPct: 80, rPct: 2,
+      name: 'Electronic Control Box (ECB)', key: false, xPct: 21.4, yPct: 80.2, rPct: 8.2,
       desc: 'Receives the aircraft’s pneumatic/electrical demand signal and commands the IGV actuator and fuel metering accordingly, coordinating how much air and fuel the APU supplies.',
     },
     compressor: {
-      name: 'Compressor', key: false, xPct: 42.4, yPct: 40.3, rPct: 2,
+      name: 'Compressor', key: false, xPct: 42.4, yPct: 40.3, rPct: 1,
       desc: 'Part of the gas-generator (Power Section): raises incoming air to high pressure before it enters the combustor, same shaft as the turbine.',
     },
     combustor: {
-      name: 'Combustor', key: false, xPct: 56.8, yPct: 64.5, rPct: 2,
+      name: 'Combustor', key: false, xPct: 56.9, yPct: 68.5, rPct: 10,
       desc: 'Burns metered fuel in the compressed air to produce the high-energy gas that drives the turbine.',
     },
     turbine: {
-      name: 'Turbine (3 Wheels)', key: false, xPct: 81.3, yPct: 39, rPct: 2,
+      name: 'Turbine (3 Wheels)', key: false, xPct: 80.3, yPct: 40.9, rPct: 10,
       desc: 'Extracts energy from the combustor’s hot gas to drive the compressor, the load compressor, the accessory gearbox, and the generator — the Power Section’s whole reason for existing: providing torque to drive the Load Section.',
     },
     metering: {
-      name: 'Fuel Metering Valve', key: false, xPct: 54.4, yPct: 82, rPct: 2,
+      name: 'Fuel Metering Valve', key: false, xPct: 54.2, yPct: 83.1, rPct: 2.8,
       desc: 'Meters fuel into the combustor in the quantity commanded by the ECB/FCU for the current demand.',
     },
   };
@@ -78,7 +78,7 @@
 
   // Where the Power/Load section tint divides, as a % of image width —
   // draggable in edit mode via a vertical handle.
-  var REGION_SPLIT = 27;
+  var REGION_SPLIT = 30.7;
 
   // Simplified airflow routes from a shared inlet, split into the Power
   // Section (compressor → combustor → turbine → exhaust) and Load
@@ -89,20 +89,20 @@
   // numbering is 0-based throughout. Edit-mode-only numbered yellow
   // handles; the flow line itself is always visible.
   var POWER_FLOW = [
-    { xPct: 22, yPct: 55 },
-    { xPct: 31, yPct: 47 },
-    { xPct: 42, yPct: 40 },
-    { xPct: 57, yPct: 55 },
-    { xPct: 69, yPct: 47 },
-    { xPct: 81, yPct: 39 },
-    { xPct: 93, yPct: 31 },
+    { xPct: 32.8, yPct: 73.8 },
+    { xPct: 32.8, yPct: 45 },
+    { xPct: 46.8, yPct: 45.7 },
+    { xPct: 47, yPct: 72.6 },
+    { xPct: 70.3, yPct: 73 },
+    { xPct: 70.1, yPct: 40.5 },
+    { xPct: 95.1, yPct: 41.3 },
   ];
   var LOAD_FLOW = [
-    { xPct: 20, yPct: 57 },
-    { xPct: 29, yPct: 47 },
-    { xPct: 23, yPct: 45 },
-    { xPct: 18, yPct: 40 },
-    { xPct: 15, yPct: 34 },
+    { xPct: 29.3, yPct: 74 },
+    { xPct: 28.8, yPct: 43.9 },
+    { xPct: 22.2, yPct: 43.6 },
+    { xPct: 21.9, yPct: 18.5 },
+    { xPct: 9.8, yPct: 18.1 },
   ];
 
   var EDIT_PASSWORD = 'APP';
