@@ -772,8 +772,12 @@ content.
 
 Catalog order (set by request, `tools.js` array order): Virtual Lab on
 Engine Practical, Turbofan Engine, Oil System Overview, Fuel System
-Overview, Air System, Starting System, APU System, Fire Protection
-System.
+Overview, Air System, Starting System, Virtual Lab on System, Virtual
+Lab on Fire Protection System. The last two's catalog names were
+renamed by request from "APU System"/"Fire Protection System" — ids
+(`apu-system`/`fire-system`) and every in-tool heading/doc reference
+below are unchanged; only the `tools.js` card name (and so the catalog
+card + browser hash's displayed label) changed.
 
 ### Future phases
 
