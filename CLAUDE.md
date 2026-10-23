@@ -440,10 +440,54 @@ automatically or by hand:
     per-mode renders) swaps all of it in one pass — e.g. twin-spool's
     panel title drops back to "Concentric shaft arrangement" (two nested
     shafts) while single-spool's reads "Shaft arrangement" (no nesting to
-    be "concentric" about). Not edit-gated — unlike Air System/Virtual
-    Lab, this tool has no password-gated edit mode at all, since nothing
-    in it is user-editable content (no marker positions, no retypable
-    descriptions).
+    be "concentric" about). This panel itself has no retypable
+    descriptions or draggable content of its own — see the next bullet
+    for the edit mode this tool gained later, scoped to the schematic's
+    part-label markers.
+  - **Part-label hover markers** (added by follow-up request — "I want
+    mouse over to label parts such as fan blade, LP compressor, IP
+    compressor, HP compressor, LP turbine, IP turbine, and HP
+    turbine"): 7 circles (`PART_LABELS`) overlaid directly on the
+    engine schematic, one per listed part, each showing a name/
+    description tooltip on hover (the same `showTip`/`positionTip`/
+    `hideTip` pattern as Air System/APU System/Virtual Lab/Fire System,
+    with `positionTip()` using the mouse event's own `clientX`/
+    `clientY` since `.tf-tooltip` is `position: fixed` — written
+    correctly from the start here, having already hit and fixed that
+    bug in every other tool). Unlike those tools, this schematic has no
+    reference image to overlay percentage-positioned markers onto —
+    it's pure SVG — so `PART_LABELS` positions (`x`/`y`/`r`) are plain
+    numbers in the same raw SVG user-space coordinates (viewBox `0 0
+    1180 475`) every other shape in this diagram already uses, not a
+    `%`-of-image convention. Each marker's `spool` field (`LP`/`IP`/
+    `HP`) ties its visibility to `MODES[currentMode].visible` via
+    `applyPartMarkerVisibility()` (called from `applyMode()`), so e.g.
+    the IP Compressor/IP Turbine markers only show in triple-spool
+    mode, matching the IP shaft/stages' own visibility. The schematic
+    never drew a separate LP-compressor shape of its own (the LP
+    spool's only drawn stage is the fan), so `lpCompressor`'s default
+    position just sits aft of the fan rather than over a dedicated
+    shape — by design, left for edit mode to refine.
+    - **Edit mode**: a password-gated "✎ Edit" button (password `APP`,
+      same casual click-guard as every other tool), in a new
+      `.tf-header-row` next to the title (this tool previously had no
+      edit mode of any kind). Unlocked, each marker's circle becomes
+      draggable from its body (repositioning `x`/`y`) and gets a small
+      white edge handle (`.tf-part-resize`, hidden outside edit mode)
+      draggable to resize `r` — both drags convert pointer coordinates
+      through `svg.getScreenCTM().inverse()` (`svgPoint()`, the same
+      technique the Virtual Lab's waypoint/glow handles use), since
+      these markers live in the SVG's own coordinate space rather than
+      a percentage-positioned HTML overlay. The handle's own
+      `pointerdown` calls `evt.stopPropagation()` and the body's own
+      handler ignores clicks landing on the handle, so the two drags
+      never fight, matching every other tool's marker-plus-resize-
+      handle convention. Edits persist to `localStorage`
+      (`tm.turbofanEngine.partLabels`, one `{x, y, r}` per marker id)
+      and a fixed bottom-right Copy-changes panel (`.tf-edit-panel`,
+      same `right: 20px; bottom: 20px; width: 320px` layout as APU/Fire
+      System's) shows live, paste-ready position/size data — same
+      one-browser-only caveat as every other tool's copy of this.
   - **High bypass vs. low bypass**: a separate static two-card
     comparison (not tied to the spool-count toggle, since bypass ratio
     and spool count are independent design choices) — each card a small

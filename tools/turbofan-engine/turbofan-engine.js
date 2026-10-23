@@ -54,6 +54,82 @@
     },
   ];
 
+  // Hover-labeled part markers over the schematic — 7 circles the
+  // student can mouse over for a name/description, added by request
+  // ("I want mouse over to label parts such as fan blade, LP
+  // compressor, IP compressor, HP compressor, LP turbine, IP turbine,
+  // and HP turbine"). Positioned in the same raw SVG user-space
+  // coordinates (viewBox 0 0 1180 475) as every other shape in this
+  // diagram, not a percentage-of-image overlay like Air System/APU
+  // System/Virtual Lab use — there's no reference image here, it's all
+  // drawn SVG, so plain x/y/r in the viewBox's own units is the natural
+  // fit. `spool` ties each marker's visibility to the same
+  // MODES[mode].visible list the shaft/stage geometry already uses
+  // (e.g. the IP markers only show in triple-spool mode). The
+  // schematic doesn't draw a separate LP-compressor stage of its own
+  // (the LP spool's one drawn stage is the fan), so `lpCompressor`'s
+  // default position just sits just aft of the fan rather than over a
+  // dedicated shape — exact placement is for edit mode to refine, by
+  // request ("allow me to edit the location and size of the label
+  // circle").
+  var PART_LABELS = {
+    fanBlade: {
+      name: 'Fan Blade', spool: 'LP', x: 112, y: 240, r: 75,
+      desc: 'The large forward blades that draw air into the engine. In a high-bypass turbofan, most of that air is accelerated straight past the core through the bypass duct, producing most of the engine’s thrust directly.',
+    },
+    lpCompressor: {
+      name: 'LP Compressor', spool: 'LP', x: 205, y: 240, r: 38,
+      desc: 'Raises the pressure of the air that continues into the engine core (as opposed to the bypass air the fan diverts around it), driven by the LP turbine through the long LP shaft.',
+    },
+    ipCompressor: {
+      name: 'IP Compressor', spool: 'IP', x: 338, y: 240, r: 55,
+      desc: 'A middle compression stage between the LP and HP compressors, driven by its own IP turbine via the IP shaft. Only present in triple-spool engines — twin- and single-spool engines go straight from LP to HP compression (or have no separate stages at all).',
+    },
+    hpCompressor: {
+      name: 'HP Compressor', spool: 'HP', x: 526, y: 240, r: 42,
+      desc: 'The final, highest-pressure compression stage right before the combustor, driven by the HP turbine next to it through the short HP shaft.',
+    },
+    hpTurbine: {
+      name: 'HP Turbine', spool: 'HP', x: 850, y: 240, r: 32,
+      desc: 'The first turbine stage the combustor’s hot gas reaches — extracts just enough energy to drive the HP compressor, which sits right next to it on the same short shaft.',
+    },
+    ipTurbine: {
+      name: 'IP Turbine', spool: 'IP', x: 930, y: 240, r: 32,
+      desc: 'Extracts energy to drive the IP compressor via the IP shaft. Only present in triple-spool engines.',
+    },
+    lpTurbine: {
+      name: 'LP Turbine', spool: 'LP', x: 1019, y: 240, r: 42,
+      desc: 'The last turbine stage(s) — extracts the remaining energy from the gas stream to drive the fan and LP compressor at the front of the engine, via the long outer LP shaft.',
+    },
+  };
+
+  var TF_EDIT_PASSWORD = 'APP';
+  var STORAGE_KEY_PART_LABELS = 'tm.turbofanEngine.partLabels';
+
+  function restorePartLabels() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY_PART_LABELS);
+      if (!raw) return;
+      var saved = JSON.parse(raw);
+      if (!saved || typeof saved !== 'object') return;
+      Object.keys(PART_LABELS).forEach(function (id) {
+        var s = saved[id];
+        if (!s) return;
+        if (typeof s.x === 'number') PART_LABELS[id].x = s.x;
+        if (typeof s.y === 'number') PART_LABELS[id].y = s.y;
+        if (typeof s.r === 'number') PART_LABELS[id].r = s.r;
+      });
+    } catch (e) { /* corrupt/blocked storage — keep defaults */ }
+  }
+  function persistPartLabels() {
+    var out = {};
+    Object.keys(PART_LABELS).forEach(function (id) {
+      out[id] = { x: PART_LABELS[id].x, y: PART_LABELS[id].y, r: PART_LABELS[id].r };
+    });
+    try { window.localStorage.setItem(STORAGE_KEY_PART_LABELS, JSON.stringify(out)); } catch (e) { /* storage full/blocked */ }
+  }
+  restorePartLabels();
+
   // Per-mode content for the "shaft arrangement" panel — a reference
   // cutaway matched to the mode's own shaft count (not a single
   // triple-spool image reused for every mode), since the nesting it
@@ -123,8 +199,13 @@
       '<div class="turbofan-diagram">' +
 
       '<div class="tf-panel">' +
+      '<div class="tf-header-row">' +
+      '<div>' +
       '<h1 class="tf-title">Triple-Spool Turbofan Engine</h1>' +
       '<p class="tf-subtitle">Interactive schematic — compare single, twin, and triple spool arrangements</p>' +
+      '</div>' +
+      '<button type="button" class="tf-edit-btn" title="Edit part-label markers">✎ Edit</button>' +
+      '</div>' +
       '<div class="tf-toolbar" style="margin-top:14px">' +
       '<span class="tf-pill">Engine configuration</span>' +
       '<button type="button" class="tf-mode-btn tf-active" data-mode="triple">Triple spool</button>' +
@@ -173,7 +254,10 @@
 
       '<g class="tf-stages"></g>' +
       '<g class="tf-top-labels"></g>' +
+      '<g class="tf-part-markers"></g>' +
       '</svg>' +
+
+      '<div class="tf-tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
 
       '<div class="tf-legend">' +
       '<span><i class="tf-key" style="background:#f6c83c"></i>LP / N1 (yellow)</span>' +
@@ -224,20 +308,185 @@
       '<div class="tf-bypass-grid"></div>' +
       '</div>' +
 
+      '<div class="tf-edit-panel" hidden>' +
+      '<p>Drag a part-label circle to move it, or its small edge handle to resize it. When done:</p>' +
+      '<button type="button" class="tf-edit-copy">Copy changes</button>' +
+      '<textarea readonly></textarea>' +
+      '</div>' +
+
       '</div>';
 
     var wrap = container.querySelector('.turbofan-diagram');
+    var svg = wrap.querySelector('.tf-engine-svg');
     var stageRoot = wrap.querySelector('.tf-stages');
     var topLabelsRoot = wrap.querySelector('.tf-top-labels');
+    var partMarkerRoot = wrap.querySelector('.tf-part-markers');
     var rotorsRoot = wrap.querySelector('.tf-rotors');
     var controlsRoot = wrap.querySelector('.tf-controls');
     var namingRoot = wrap.querySelector('.tf-naming-grid');
     var bypassRoot = wrap.querySelector('.tf-bypass-grid');
+    var tooltip = wrap.querySelector('.tf-tooltip');
+    var tTitle = tooltip.querySelector('.t-title');
+    var tDesc = tooltip.querySelector('.t-desc');
+    var editBtn = wrap.querySelector('.tf-edit-btn');
+    var editPanel = wrap.querySelector('.tf-edit-panel');
+    var editPanelText = editPanel.querySelector('textarea');
+    var editCopyBtn = editPanel.querySelector('.tf-edit-copy');
 
     var currentMode = 'triple';
     var paused = false;
     var isolateIndex = 0;
     var rafId = null;
+    var editUnlocked = false;
+
+    // --- part-label tooltip (same pattern as the other tools', fixed
+    // to the cursor's own viewport coordinates since .tf-tooltip is
+    // position: fixed) ---
+    function showTip(evt, info) {
+      tTitle.textContent = info.name;
+      tDesc.textContent = info.desc;
+      tooltip.style.display = 'block';
+      positionTip(evt);
+    }
+    function positionTip(evt) {
+      if (tooltip.style.display !== 'block') return;
+      var x = evt.clientX + 16;
+      var y = evt.clientY + 16;
+      var maxX = window.innerWidth - 300;
+      if (x > maxX) x = evt.clientX - 296;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+    function hideTip() {
+      tooltip.style.display = 'none';
+    }
+
+    // Converts a pointer event's viewport coordinates into the SVG's
+    // own user-space (viewBox) coordinates — same technique the
+    // Virtual Lab's waypoint/glow handles use, needed because this
+    // diagram's markers live directly in SVG space, not a percentage-
+    // of-image overlay.
+    function svgPoint(evt) {
+      var pt = svg.createSVGPoint();
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function formatPartLabels() {
+      var lines = Object.keys(PART_LABELS).map(function (id) {
+        var p = PART_LABELS[id];
+        return '    ' + id + ': { x: ' + Math.round(p.x) + ', y: ' + Math.round(p.y) + ', r: ' + Math.round(p.r) + ' },';
+      });
+      return '  // PART_LABELS positions/sizes:\n' + lines.join('\n');
+    }
+    function updateEditPanel() {
+      if (!editUnlocked) return;
+      editPanelText.value = formatPartLabels();
+      persistPartLabels();
+    }
+
+    function renderPartMarkers() {
+      partMarkerRoot.innerHTML = '';
+      Object.keys(PART_LABELS).forEach(function (id) {
+        var p = PART_LABELS[id];
+        var g = elt('g', { 'class': 'tf-part-marker ' + p.spool.toLowerCase(), 'data-part': id }, partMarkerRoot);
+        var circle = elt('circle', { cx: p.x, cy: p.y, r: p.r, 'class': 'tf-part-circle' }, g);
+        var handle = elt('circle', { cx: p.x + p.r, cy: p.y, r: 8, 'class': 'tf-part-resize' }, g);
+        p.groupEl = g;
+
+        g.addEventListener('mouseenter', function (evt) { if (!editUnlocked) showTip(evt, p); });
+        g.addEventListener('mousemove', positionTip);
+        g.addEventListener('mouseleave', hideTip);
+
+        circle.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          hideTip();
+          circle.setPointerCapture(evt.pointerId);
+          circle.classList.add('dragging');
+          function onMove(moveEvt) {
+            var pt = svgPoint(moveEvt);
+            p.x = pt.x; p.y = pt.y;
+            circle.setAttribute('cx', p.x);
+            circle.setAttribute('cy', p.y);
+            handle.setAttribute('cx', p.x + p.r);
+            handle.setAttribute('cy', p.y);
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            circle.classList.remove('dragging');
+            circle.releasePointerCapture(upEvt.pointerId);
+            circle.removeEventListener('pointermove', onMove);
+            circle.removeEventListener('pointerup', onUp);
+          }
+          circle.addEventListener('pointermove', onMove);
+          circle.addEventListener('pointerup', onUp);
+        });
+
+        handle.addEventListener('pointerdown', function (evt) {
+          if (!editUnlocked) return;
+          evt.preventDefault();
+          evt.stopPropagation();
+          hideTip();
+          handle.setPointerCapture(evt.pointerId);
+          handle.classList.add('dragging');
+          function onMove(moveEvt) {
+            var pt = svgPoint(moveEvt);
+            var dx = pt.x - p.x, dy = pt.y - p.y;
+            p.r = Math.max(10, Math.min(120, Math.sqrt(dx * dx + dy * dy)));
+            circle.setAttribute('r', p.r);
+            handle.setAttribute('cx', p.x + p.r);
+            updateEditPanel();
+          }
+          function onUp(upEvt) {
+            handle.classList.remove('dragging');
+            handle.releasePointerCapture(upEvt.pointerId);
+            handle.removeEventListener('pointermove', onMove);
+            handle.removeEventListener('pointerup', onUp);
+          }
+          handle.addEventListener('pointermove', onMove);
+          handle.addEventListener('pointerup', onUp);
+        });
+      });
+    }
+    renderPartMarkers();
+
+    function applyPartMarkerVisibility() {
+      var visibleSpools = MODES[currentMode].visible;
+      Object.keys(PART_LABELS).forEach(function (id) {
+        var p = PART_LABELS[id];
+        p.groupEl.style.display = visibleSpools.indexOf(p.spool) !== -1 ? '' : 'none';
+      });
+    }
+
+    editBtn.addEventListener('click', function () {
+      if (editUnlocked) {
+        editUnlocked = false;
+        editBtn.textContent = '✎ Edit';
+        editBtn.classList.remove('tf-active');
+        editPanel.hidden = true;
+        wrap.classList.remove('tf-edit');
+        return;
+      }
+      var pw = window.prompt('Enter the edit password:');
+      if (pw === null) return;
+      if (pw === TF_EDIT_PASSWORD) {
+        editUnlocked = true;
+        editBtn.textContent = '✓ Editing (click to stop)';
+        editBtn.classList.add('tf-active');
+        editPanel.hidden = false;
+        wrap.classList.add('tf-edit');
+        updateEditPanel();
+      } else {
+        window.alert('Incorrect password.');
+      }
+    });
+
+    editCopyBtn.addEventListener('click', function () {
+      editPanelText.focus();
+      editPanelText.select();
+      try { document.execCommand('copy'); } catch (e) { /* text stays selected for manual copy */ }
+    });
 
     // --- stage geometry (built once; shown/hidden per mode) ---
     SPOOLS.forEach(function (spool) {
@@ -408,6 +657,7 @@
       });
 
       renderTopLabels();
+      applyPartMarkerVisibility();
       renderRotorViews();
       renderControls();
       renderNaming();
