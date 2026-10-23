@@ -205,8 +205,8 @@
       '<div class="apu-sys-tooltip"><span class="t-title"></span><span class="t-desc"></span></div>' +
 
       '<div class="apu-sys-sections">' +
-      '<div class="apu-sys-section-card power"><h3>' + SECTIONS.power.name + '</h3><p>' + SECTIONS.power.desc + '</p></div>' +
       '<div class="apu-sys-section-card load"><h3>' + SECTIONS.load.name + '</h3><p>' + SECTIONS.load.desc + '</p></div>' +
+      '<div class="apu-sys-section-card power"><h3>' + SECTIONS.power.name + '</h3><p>' + SECTIONS.power.desc + '</p></div>' +
       '</div>' +
 
       '<div class="apu-sys-ref">' +

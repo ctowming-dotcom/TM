@@ -531,7 +531,12 @@ automatically or by hand:
     ("let me edit the dividing line of the box to differentiate load
     and power section"). A `SECTIONS` object (`power`/`load`, name/desc
     from slide 11) renders as two colored cards below the diagram
-    explaining what each section is for.
+    explaining what each section is for — Load card first (left),
+    Power card second (right), matching the diagram's own left-to-
+    right layout (Load Section's blue-tinted region sits left of the
+    divider, Power Section's orange-tinted region to its right); the
+    cards were originally in the reverse, power-then-load order and
+    swapped by request to match.
   - **Airflow overlay**: `POWER_FLOW` (now 6 points: inlet →
     compressor → combustor → turbine → exhaust) and `LOAD_FLOW` (now 5
     points: inlet → load compressor → accessory gearbox) — each gained
