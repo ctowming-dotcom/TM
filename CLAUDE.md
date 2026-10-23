@@ -173,10 +173,22 @@ automatically or by hand:
   (`pathFromPoints`) so it can be reshaped in edit mode (see below)
   without separate bezier-handle bookkeeping. Each arrow is an SVG
   `<path>` positioned and rotated every frame via `getPointAtLength`/
-  tangent-angle sampling on a corresponding invisible guide `<path>` (one
-  upper, one mirrored lower, `fill/stroke: none`, queried only for its
-  geometry, rebuilt whenever a waypoint moves); speed scales with RPM and
-  color shifts cool→hot→exhaust by fraction of path length travelled.
+  tangent-angle sampling on a corresponding guide `<path>`
+  (`.vlab-flow-path-upper`/`-lower`, queried only for its geometry,
+  rebuilt whenever a waypoint moves); speed scales with RPM and color
+  shifts cool→hot→exhaust by fraction of path length travelled. These
+  two guide paths were originally `fill/stroke: none` (invisible,
+  geometry-only), then given a visible dashed stroke by follow-up
+  request ("change from only arrow to constant stream of broken lines
+  with arrow") — a pure-CSS marching-dashes animation
+  (`stroke-dasharray` + `@keyframes vlab-flowmove`, the same technique
+  Fuel/Oil/Air System/APU System's own flow lines use), independent of
+  RPM/throttle so it's always flowing, giving a continuous broken-line
+  stream underneath the discrete arrow particles rather than just
+  arrows with visible gaps between them; frozen in edit mode
+  (`.vlab-edit .vlab-flow-path-upper/-lower { animation: none; }`) like
+  the combustor flicker, for the same reason (a moving diagram fights
+  precise handle dragging).
   Two independent pulsing combustor glows (`GLOWS`, one per duct, both
   scale with fuel flow) sit over the top and bottom red ducts; an exhaust
   jet gradient scales with thrust. The image can't show literal blade

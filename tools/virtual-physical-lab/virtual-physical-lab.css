@@ -284,6 +284,39 @@
   stroke-width: 0.75;
 }
 
+/* A constant, always-moving dashed stream along the flow route, under
+   the discrete arrow particles above — these two paths were previously
+   invisible (stroke: none), used only as a geometry guide for
+   getPointAtLength(); the dash animation is pure CSS, independent of
+   RPM/throttle, same marching-dashes technique as the Fuel/Oil/Air
+   System/APU System tools' flow lines, so the route reads as a
+   continuous stream of broken lines rather than a handful of floating
+   arrows with gaps between them. */
+.vlab-flow-path-upper,
+.vlab-flow-path-lower {
+  stroke: rgba(140, 205, 255, 0.55);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 14 10;
+  animation: vlab-flowmove 0.5s linear infinite;
+}
+
+@keyframes vlab-flowmove {
+  to { stroke-dashoffset: -24; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vlab-flow-path-upper,
+  .vlab-flow-path-lower {
+    animation: none;
+  }
+}
+
+.vlab-edit .vlab-flow-path-upper,
+.vlab-edit .vlab-flow-path-lower {
+  animation: none;
+}
+
 .vlab-controls {
   display: flex;
   align-items: center;
