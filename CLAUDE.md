@@ -119,6 +119,20 @@ automatically or by hand:
   same mouseenter/mouseleave swap the old tooltip code used — only the
   display target changed, not the hover-detection logic.
 
+  (Fuel System's `.fd-explain` and Starting System's `.ss-explain`
+  existed in name/description here but had actually dropped out of
+  `fuel-system-overview.js`/`starting-system.js` at some point without
+  this doc catching up — both tools' `.box`/`.ss-box` hover handlers
+  only toggled `.is-hovered` highlighting, with no title/description
+  shown anywhere except the static reference list below. Re-added by
+  follow-up request — "for ... 'Fuel system flow' and 'Engine Starting
+  System — Twin-Spool Start Sequence': I want mouse over explanation on
+  all parts based on rectangular block" (sent together with the Oil
+  System tool, which already had this working correctly and needed no
+  change) — both now call the same `showExplain(key)`/`hideExplain()`
+  pair from their existing `mouseenter`/`mouseleave` handlers, so no
+  hover-detection code changed, only the missing display logic.)
+
   Both also show every component's name/description at once, in a
   permanent reference list below that hover panel (by follow-up request
   — "I want to see all the explanation below the diagram") — the single

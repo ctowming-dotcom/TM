@@ -187,6 +187,41 @@
 .ss-diagram .ss-arrowhead-mech { fill: var(--mech); }
 .ss-diagram .ss-arrowhead-spark { fill: var(--spark); }
 
+.ss-diagram .ss-explain {
+  margin-top: 14px;
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 62px;
+  transition: border-color 0.15s ease;
+}
+
+.ss-diagram .ss-explain.has-value {
+  border-color: var(--box);
+}
+
+.ss-diagram .ss-explain .e-title {
+  color: var(--box);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: 0.2px;
+}
+
+.ss-diagram .ss-explain .e-desc {
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.ss-diagram .ss-explain:not(.has-value) .e-title,
+.ss-diagram .ss-explain:not(.has-value) .e-desc {
+  color: var(--muted);
+}
+
 .ss-diagram .ss-readout {
   margin-top: 18px;
   background: var(--page);

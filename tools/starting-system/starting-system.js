@@ -133,6 +133,8 @@
 
       '</svg>' +
 
+      '<div class="ss-explain"><span class="e-title">Hover a component</span><span class="e-desc">Hover any box in the diagram above to see what it does, here.</span></div>' +
+
       '<div class="ss-readout">' +
       '<div class="ss-step-text"><span class="ss-step-num"></span><span class="ss-step-desc"></span></div>' +
       '<div class="ss-badges">' +
@@ -159,6 +161,9 @@
     var stepDescEl = root.querySelector('.ss-step-desc');
     var n2ValEl = root.querySelector('.ss-n2-val');
     var listEl = root.querySelector('.ss-list');
+    var explain = root.querySelector('.ss-explain');
+    var eTitle = explain.querySelector('.e-title');
+    var eDesc = explain.querySelector('.e-desc');
 
     listEl.innerHTML = Object.keys(COMPONENTS).map(function (key) {
       var c = COMPONENTS[key];
@@ -177,15 +182,26 @@
         el.classList.toggle('is-hovered', active);
       });
     }
+    function showExplain(key) {
+      var c = COMPONENTS[key];
+      eTitle.textContent = c[0];
+      eDesc.textContent = c[1];
+      explain.classList.add('has-value');
+    }
+    function hideExplain() {
+      eTitle.textContent = 'Hover a component';
+      eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
+      explain.classList.remove('has-value');
+    }
     root.querySelectorAll('.ss-box').forEach(function (g) {
       var key = g.getAttribute('data-comp');
-      g.addEventListener('mouseenter', function () { setActive(key, true); });
-      g.addEventListener('mouseleave', function () { setActive(key, false); });
+      g.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
+      g.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
     });
     root.querySelectorAll('.ss-list-item').forEach(function (li) {
       var key = li.getAttribute('data-comp');
-      li.addEventListener('mouseenter', function () { setActive(key, true); });
-      li.addEventListener('mouseleave', function () { setActive(key, false); });
+      li.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
+      li.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
     });
 
     var current = 0;
