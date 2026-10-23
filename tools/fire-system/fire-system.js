@@ -99,7 +99,7 @@
       desc: 'The second of the two identical, parallel fire-sensing loops. Having two independent loops means the FDU can cross-check them: agreement between both gives a confident fire signal, while a mismatch points to a fault in one loop rather than a real fire.',
     },
     'sensing-element': {
-      name: 'Fire-Sensing Element', xPct: 36.6, yPct: 58.1, rPct: 2.2,
+      name: 'Fire-Sensing Element', xPct: 41.5, yPct: 57.2, rPct: 2.2,
       desc: 'A continuous heat-sensitive element running the length of each loop. Its electrical properties change when it detects an overheat/fire condition, which is what the FDU actually measures.',
     },
     'fdu-box': {
