@@ -165,6 +165,37 @@
     var eTitle = explain.querySelector('.e-title');
     var eDesc = explain.querySelector('.e-desc');
 
+    // Cursor-following tooltip, added alongside the existing fixed
+    // `.ss-explain` panel by follow-up request ("I want mouse over
+    // explanation display near my mouse cursor on all parts"). Reuses
+    // the clientX/clientY-direct positioning every other tool's
+    // tooltip uses, since `.ss-tooltip` is `position: fixed`.
+    var tooltip = document.createElement('div');
+    tooltip.className = 'ss-tooltip';
+    tooltip.innerHTML = '<span class="t-title"></span><span class="t-desc"></span>';
+    root.appendChild(tooltip);
+    var tTitle = tooltip.querySelector('.t-title');
+    var tDesc = tooltip.querySelector('.t-desc');
+    function showTip(evt, key) {
+      var c = COMPONENTS[key];
+      tTitle.textContent = c[0];
+      tDesc.textContent = c[1];
+      tooltip.style.display = 'block';
+      positionTip(evt);
+    }
+    function positionTip(evt) {
+      if (tooltip.style.display !== 'block') return;
+      var x = evt.clientX + 16;
+      var y = evt.clientY + 16;
+      var maxX = window.innerWidth - 300;
+      if (x > maxX) x = evt.clientX - 296;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+    function hideTip() {
+      tooltip.style.display = 'none';
+    }
+
     listEl.innerHTML = Object.keys(COMPONENTS).map(function (key) {
       var c = COMPONENTS[key];
       return '<li class="ss-list-item" data-comp="' + key + '">' +
@@ -195,13 +226,15 @@
     }
     root.querySelectorAll('.ss-box').forEach(function (g) {
       var key = g.getAttribute('data-comp');
-      g.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
-      g.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
+      g.addEventListener('mouseenter', function (e) { setActive(key, true); showExplain(key); showTip(e, key); });
+      g.addEventListener('mousemove', positionTip);
+      g.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); hideTip(); });
     });
     root.querySelectorAll('.ss-list-item').forEach(function (li) {
       var key = li.getAttribute('data-comp');
-      li.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
-      li.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
+      li.addEventListener('mouseenter', function (e) { setActive(key, true); showExplain(key); showTip(e, key); });
+      li.addEventListener('mousemove', positionTip);
+      li.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); hideTip(); });
     });
 
     var current = 0;

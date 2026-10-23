@@ -133,6 +133,27 @@ automatically or by hand:
   pair from their existing `mouseenter`/`mouseleave` handlers, so no
   hover-detection code changed, only the missing display logic.)
 
+  A further follow-up request ("I want mouse over explanation display
+  near my mouse cursor on all parts based on rectangular block" for
+  Oil, then "Do the same for" Fuel System and Starting System) added a
+  cursor-following tooltip (`.oil-tooltip`/`.fd-tooltip`/`.ss-tooltip`,
+  one shared tooltip element appended once per tool, `position: fixed`
+  and positioned from the mouse event's own `clientX`/`clientY`
+  directly — written correctly from the start per-tool here, having
+  already hit and fixed the root-rect-offset version of this bug
+  everywhere else) **alongside** the existing `.explain`/`.fd-explain`/
+  `.ss-explain` fixed panel in all three diagram tools, rather than
+  replacing it — the fixed panel stays as a persistent "what did I last
+  hover" readout, the tooltip is additive so the explanation also
+  appears right next to the cursor. Each tool's existing hover handlers
+  (Oil's delegated `mouseover`/`mouseout` on the whole `svgEl`, Fuel/
+  Starting's per-element `mouseenter`/`mouseleave` on each `.box`/
+  `.ss-box`) gained a `mousemove` listener (delegated the same way for
+  Oil) to reposition the tooltip while the cursor moves within a
+  hovered part, plus `showTip()`/`hideTip()` calls alongside the
+  existing `setActive()`/explain-panel calls — no hover-detection logic
+  changed, same pattern as the explain-panel addition above.
+
   Both also show every component's name/description at once, in a
   permanent reference list below that hover panel (by follow-up request
   — "I want to see all the explanation below the diagram") — the single

@@ -187,6 +187,29 @@
 .ss-diagram .ss-arrowhead-mech { fill: var(--mech); }
 .ss-diagram .ss-arrowhead-spark { fill: var(--spark); }
 
+.ss-diagram .ss-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 300px;
+  background: var(--page);
+  border: 1px solid var(--box);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.ss-diagram .ss-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  color: var(--box);
+  margin-bottom: 4px;
+}
+
 .ss-diagram .ss-explain {
   margin-top: 14px;
   background: var(--page);

@@ -135,6 +135,36 @@
     var eTitle = explain.querySelector('.e-title');
     var eDesc = explain.querySelector('.e-desc');
 
+    // Cursor-following tooltip, added alongside the existing fixed
+    // `.fd-explain` panel by follow-up request ("I want mouse over
+    // explanation display near my mouse cursor on all parts"). Reuses
+    // the clientX/clientY-direct positioning every other tool's
+    // tooltip uses, since `.fd-tooltip` is `position: fixed`.
+    var tooltip = document.createElement('div');
+    tooltip.className = 'fd-tooltip';
+    tooltip.innerHTML = '<span class="t-title"></span><span class="t-desc"></span>';
+    root.appendChild(tooltip);
+    var tTitle = tooltip.querySelector('.t-title');
+    var tDesc = tooltip.querySelector('.t-desc');
+    function showTip(evt, key) {
+      tTitle.textContent = titles[key];
+      tDesc.textContent = descriptions[key];
+      tooltip.style.display = 'block';
+      positionTip(evt);
+    }
+    function positionTip(evt) {
+      if (tooltip.style.display !== 'block') return;
+      var x = evt.clientX + 16;
+      var y = evt.clientY + 16;
+      var maxX = window.innerWidth - 300;
+      if (x > maxX) x = evt.clientX - 296;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+    function hideTip() {
+      tooltip.style.display = 'none';
+    }
+
     listEl.innerHTML = Object.keys(titles).map(function (key) {
       return '<li class="fd-list-item" data-comp="' + key + '">' +
         '<span class="fd-list-name">' + TM.escapeHtml(titles[key]) + '</span>' +
@@ -170,14 +200,16 @@
 
     root.querySelectorAll('.box').forEach(function (box) {
       var key = box.getAttribute('data-comp');
-      box.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
-      box.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
+      box.addEventListener('mouseenter', function (e) { setActive(key, true); showExplain(key); showTip(e, key); });
+      box.addEventListener('mousemove', positionTip);
+      box.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); hideTip(); });
     });
 
     root.querySelectorAll('.fd-list-item').forEach(function (li) {
       var key = li.getAttribute('data-comp');
-      li.addEventListener('mouseenter', function () { setActive(key, true); showExplain(key); });
-      li.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); });
+      li.addEventListener('mouseenter', function (e) { setActive(key, true); showExplain(key); showTip(e, key); });
+      li.addEventListener('mousemove', positionTip);
+      li.addEventListener('mouseleave', function () { setActive(key, false); hideExplain(); hideTip(); });
     });
 
     function setBoxColor(el, color) {

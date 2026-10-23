@@ -226,6 +226,38 @@
     var eDesc = explain.querySelector('.e-desc');
     var compListEl = wrap.querySelector('.comp-list');
 
+    // Cursor-following tooltip, added alongside the existing fixed
+    // `.explain` panel by follow-up request ("I want mouse over
+    // explanation display near my mouse cursor on all parts") — the
+    // `.explain` panel stays (still useful as a persistent "what did I
+    // last hover" readout), this is additive. Reuses the clientX/
+    // clientY-direct positioning every other tool's tooltip uses,
+    // since `.oil-tooltip` is `position: fixed`.
+    var tooltip = document.createElement('div');
+    tooltip.className = 'oil-tooltip';
+    tooltip.innerHTML = '<span class="t-title"></span><span class="t-desc"></span>';
+    wrap.appendChild(tooltip);
+    var tTitle = tooltip.querySelector('.t-title');
+    var tDesc = tooltip.querySelector('.t-desc');
+    function showTip(evt, title, desc) {
+      tTitle.textContent = title;
+      tDesc.textContent = desc;
+      tooltip.style.display = 'block';
+      positionTip(evt);
+    }
+    function positionTip(evt) {
+      if (tooltip.style.display !== 'block') return;
+      var x = evt.clientX + 16;
+      var y = evt.clientY + 16;
+      var maxX = window.innerWidth - 300;
+      if (x > maxX) x = evt.clientX - 296;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+    function hideTip() {
+      tooltip.style.display = 'none';
+    }
+
     var currentSpool = 'single';
     var lineState = { supply: true, scavenge: true, return: true };
 
@@ -300,7 +332,9 @@
       eDesc.textContent = g.dataset.desc;
       explain.classList.add('has-value');
       setActive(g.dataset.title, true);
+      showTip(e, g.dataset.title, g.dataset.desc);
     });
+    svgEl.addEventListener('mousemove', positionTip);
     svgEl.addEventListener('mouseout', function (e) {
       var g = e.target.closest('.comp');
       if (!g) return;
@@ -308,17 +342,21 @@
       eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
       explain.classList.remove('has-value');
       setActive(g.dataset.title, false);
+      hideTip();
     });
 
     compListEl.addEventListener('mouseover', function (e) {
       var li = e.target.closest('.comp-list-item');
       if (!li) return;
       var title = li.dataset.title;
+      var desc = li.querySelector('.comp-list-desc').textContent;
       eTitle.textContent = title;
-      eDesc.textContent = li.querySelector('.comp-list-desc').textContent;
+      eDesc.textContent = desc;
       explain.classList.add('has-value');
       setActive(title, true);
+      showTip(e, title, desc);
     });
+    compListEl.addEventListener('mousemove', positionTip);
     compListEl.addEventListener('mouseout', function (e) {
       var li = e.target.closest('.comp-list-item');
       if (!li) return;
@@ -326,6 +364,7 @@
       eDesc.textContent = 'Hover any box in the diagram above to see what it does, here.';
       explain.classList.remove('has-value');
       setActive(li.dataset.title, false);
+      hideTip();
     });
 
     render();

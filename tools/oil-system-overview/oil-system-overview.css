@@ -275,6 +275,29 @@
   opacity: 0 !important;
 }
 
+.oil-diagram .oil-tooltip {
+  position: fixed;
+  display: none;
+  max-width: 300px;
+  background: var(--panel);
+  border: 1px solid var(--amber);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 50;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.oil-diagram .oil-tooltip .t-title {
+  display: block;
+  font-weight: 700;
+  color: var(--amber);
+  margin-bottom: 4px;
+}
+
 .oil-diagram .explain {
   margin-top: 14px;
   background: var(--panel);
