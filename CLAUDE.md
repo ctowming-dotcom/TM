@@ -182,15 +182,17 @@ automatically or by hand:
     panel the same way a direct diagram hover does.
 - **Virtual Lab on Engine Practical** (`virtual-physical-lab`): a static
   reference cutaway image (`tools/virtual-physical-lab/engine-diagram.png`,
-  1229×684 — a second user-supplied centrifugal-compressor turbojet
-  diagram, replacing an earlier one; its 4 station labels, "Inlet"/
-  "P1/T1"/"P2/T2"/"P3/T3"/"P4/T4", are baked into the art and kept as-is,
-  unlike the first image's leader-lines-and-dots strip, which needed
+  now 1747×900 — a third user-supplied centrifugal-compressor turbojet
+  diagram, swapped in by request ("change the engine image to the
+  attached file") to replace the previous 1229×684 one; its 4 station
+  labels, "Inlet"/"P1/T1"/"P2/T2"/"P3/T3"/"P4/T4", are baked into the
+  art and kept as-is, same as every prior image in this slot — unlike
+  the very first image's leader-lines-and-dots strip, which needed
   OpenCV-inpainting cleanup — see git history for that approach if a
   future replacement image needs it again) with a throttle slider driving
   RPM, and animation
   overlaid on top of the picture rather than drawn into it: an SVG layer
-  (`viewBox="0 0 1229 684"`, i.e. `IMG_W`×`IMG_H`, matched to the image's
+  (`viewBox="0 0 1747 900"`, i.e. `IMG_W`×`IMG_H`, matched to the image's
   actual pixel size — update these constants together with all waypoint/
   marker/glow coordinates if the reference image is ever swapped again,
   since every position in this tool is pixel- or percentage-anchored to

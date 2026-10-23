@@ -98,16 +98,16 @@
   // placements, same as every waypoint set in this codebase; refine by
   // eye via edit mode if they don't trace the new artwork tightly enough.
   var UPPER_WAYPOINTS = [
-    { x: 90, y: 450 }, { x: 380, y: 450 }, { x: 600, y: 420 }, { x: 750, y: 200 },
-    { x: 950, y: 60 }, { x: 920, y: 130 }, { x: 1000, y: 230 }, { x: 1230, y: 300 },
-    { x: 1380, y: 380 }, { x: 1470, y: 430 }, { x: 1510, y: 450 },
+    { x: 96, y: 401 }, { x: 303, y: 318 }, { x: 662, y: 276 }, { x: 777, y: 60 },
+    { x: 1387, y: 58 }, { x: 1422, y: 149 }, { x: 1085, y: 102 }, { x: 849, y: 116 },
+    { x: 892, y: 227 }, { x: 1214, y: 256 }, { x: 1661, y: 368 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
   // 1747x900 image), one per duct — draggable in edit mode.
   var GLOWS = [
-    { x: 1250, y: 130 },
-    { x: 1250, y: 770 },
+    { x: 1383, y: 125 },
+    { x: 1403, y: 701 },
   ];
 
   var EDIT_PASSWORD = 'APP';
@@ -119,9 +119,16 @@
   // site see, since there's no backend here (per CLAUDE.md) — getting an
   // edit onto the live site for everyone still means sending the "Copy
   // changes" text so it can be committed to this file.
-  var STORAGE_KEY_PARTS = 'tm.vlab.parts';
-  var STORAGE_KEY_WAYPOINTS = 'tm.vlab.waypoints';
-  var STORAGE_KEY_GLOWS = 'tm.vlab.glows';
+  // Versioned (v2) because the reference image was swapped for a
+  // different picture with a different layout — any positions an
+  // editor's browser had saved under the old key were relative to the
+  // *old* image, and would otherwise silently resurrect over the new
+  // hardcoded defaults above via restoreArray() below, even though
+  // they're now wrong for the picture actually on screen. Bump this
+  // suffix again the next time the reference image changes.
+  var STORAGE_KEY_PARTS = 'tm.vlab.parts.v2';
+  var STORAGE_KEY_WAYPOINTS = 'tm.vlab.waypoints.v2';
+  var STORAGE_KEY_GLOWS = 'tm.vlab.glows.v2';
 
   function restoreArray(key, items, requiredFields) {
     try {
