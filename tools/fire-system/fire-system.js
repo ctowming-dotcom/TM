@@ -16,11 +16,11 @@
   // edit mode for fire protection").
   var PANEL_MARKERS = {
     'eng1-fire-pb': {
-      name: 'ENG 1 FIRE Pushbutton', xPct: 19.9, yPct: 16.1, rPct: 2.2,
+      name: 'ENG 1 FIRE Pushbutton', xPct: 19.3, yPct: 18, rPct: 7,
       desc: 'The guarded red pushbutton for engine 1. Pushing it arms the fire extinguishing system and automatically cuts off fuel, hydraulic, bleed air, and electrical supplies to that engine.',
     },
     'agent1-eng1': {
-      name: 'ENG 1 — AGENT 1 (Squib/Disch)', xPct: 8.7, yPct: 13.6, rPct: 2.2,
+      name: 'ENG 1 — AGENT 1 (Squib/Disch)', xPct: 8.7, yPct: 12.4, rPct: 4.7,
       desc: 'Fires the first extinguisher bottle into the engine 1 nacelle. Pressed after the ENG FIRE pushbutton, once the fire warning has had time to clear on its own.',
     },
     'agent2-eng1': {
@@ -32,15 +32,15 @@
       desc: 'Checks the engine 1 fire detection and warning circuit without an actual fire present.',
     },
     'apu-fire-pb': {
-      name: 'APU FIRE Pushbutton', xPct: 41.5, yPct: 12.4, rPct: 2.2,
+      name: 'APU FIRE Pushbutton', xPct: 42.3, yPct: 13.9, rPct: 7.6,
       desc: 'The guarded red pushbutton for the APU. Pushing it arms the APU fire extinguishing system and shuts down the APU’s fuel and electrical supplies.',
     },
     'apu-agent': {
-      name: 'APU — AGENT (Squib/Disch)', xPct: 36.6, yPct: 23.4, rPct: 2.2,
+      name: 'APU — AGENT (Squib/Disch)', xPct: 36.6, yPct: 23.4, rPct: 4.8,
       desc: 'Fires the APU’s single extinguisher bottle. The APU only carries one bottle (unlike each main engine’s two), since it has no second engine nearby still needing thrust and is usually shut down entirely once a fire is confirmed.',
     },
     'apu-test': {
-      name: 'APU — TEST', xPct: 47.2, yPct: 19.5, rPct: 2.2,
+      name: 'APU — TEST', xPct: 46.8, yPct: 23.2, rPct: 3.3,
       desc: 'Checks the APU fire detection and warning circuit without an actual fire present.',
     },
     'agent1-eng2': {
@@ -48,15 +48,15 @@
       desc: 'Fires the first extinguisher bottle into the engine 2 nacelle. Pressed after the ENG FIRE pushbutton, once the fire warning has had time to clear on its own.',
     },
     'eng2-fire-pb': {
-      name: 'ENG 2 FIRE Pushbutton', xPct: 64.2, yPct: 16.1, rPct: 2.2,
+      name: 'ENG 2 FIRE Pushbutton', xPct: 64.1, yPct: 18.2, rPct: 5.5,
       desc: 'The guarded red pushbutton for engine 2. Pushing it arms the fire extinguishing system and automatically cuts off fuel, hydraulic, bleed air, and electrical supplies to that engine.',
     },
     'agent2-eng2': {
-      name: 'ENG 2 — AGENT 2 (Squib/Disch)', xPct: 75.1, yPct: 13.6, rPct: 2.2,
+      name: 'ENG 2 — AGENT 2 (Squib/Disch)', xPct: 74.8, yPct: 12, rPct: 4.3,
       desc: 'Fires the second, backup extinguisher bottle into the engine 2 nacelle, if the fire warning persists after Agent 1 has been discharged.',
     },
     'test-eng2': {
-      name: 'ENG 2 — TEST', xPct: 75.1, yPct: 19.5, rPct: 2.2,
+      name: 'ENG 2 — TEST', xPct: 75.1, yPct: 20.4, rPct: 3.4,
       desc: 'Checks the engine 2 fire detection and warning circuit without an actual fire present.',
     },
     'overhead-location': {
@@ -64,27 +64,27 @@
       desc: 'This whole fire panel (labelled 20VU) is physically mounted on the cockpit’s overhead panel, within easy reach of both pilots.',
     },
     'pedestal-location': {
-      name: 'Engine Mode Panel Location — Pedestal', xPct: 51.1, yPct: 73.9, rPct: 2.2,
+      name: 'Engine Mode Panel Location — Pedestal', xPct: 50.2, yPct: 74.1, rPct: 4.4,
       desc: 'The engine master switches and MODE selector (labelled 115VU) sit on the center pedestal between the two pilots, next to the thrust levers.',
     },
     'eng1-master': {
-      name: 'ENG 1 Master Switch', xPct: 78.6, yPct: 71.7, rPct: 2.2,
+      name: 'ENG 1 Master Switch', xPct: 78.7, yPct: 77.6, rPct: 6.9,
       desc: 'ON starts/keeps engine 1 running; OFF shuts off its fuel supply. Used in the shutdown step before pushing the ENG FIRE pushbutton.',
     },
     'eng2-master': {
-      name: 'ENG 2 Master Switch', xPct: 90.8, yPct: 71.7, rPct: 2.2,
+      name: 'ENG 2 Master Switch', xPct: 90.8, yPct: 77.4, rPct: 7.5,
       desc: 'ON starts/keeps engine 2 running; OFF shuts off its fuel supply. Used in the shutdown step before pushing the ENG FIRE pushbutton.',
     },
     'mode-selector': {
-      name: 'MODE Selector (CRANK / NORM / IGN START)', xPct: 84.5, yPct: 82.9, rPct: 2.2,
+      name: 'MODE Selector (CRANK / NORM / IGN START)', xPct: 84.6, yPct: 87.6, rPct: 5.2,
       desc: 'Selects the engine start mode — CRANK (dry-motor the engine with no fuel/ignition), NORM (normal automatic start), or IGN START (manual ignition override). Not part of the fire logic itself, but shares the same 115VU panel.',
     },
     'eng1-fire-fault': {
-      name: 'ENG 1 FIRE/FAULT Light', xPct: 77.1, yPct: 87.3, rPct: 2.2,
+      name: 'ENG 1 FIRE/FAULT Light', xPct: 76.7, yPct: 88.6, rPct: 4.9,
       desc: 'Illuminates red (FIRE) or amber (FAULT) to repeat the engine 1 fire/fault state on the pedestal panel, next to the master switch the pilot is about to use.',
     },
     'eng2-fire-fault': {
-      name: 'ENG 2 FIRE/FAULT Light', xPct: 92.3, yPct: 87.3, rPct: 2.2,
+      name: 'ENG 2 FIRE/FAULT Light', xPct: 92.3, yPct: 88.7, rPct: 6,
       desc: 'Illuminates red (FIRE) or amber (FAULT) to repeat the engine 2 fire/fault state on the pedestal panel, next to the master switch the pilot is about to use.',
     },
   };
@@ -103,7 +103,7 @@
       desc: 'A continuous heat-sensitive element running the length of each loop. Its electrical properties change when it detects an overheat/fire condition, which is what the FDU actually measures.',
     },
     'fdu-box': {
-      name: 'Fire Detection Unit (FDU)', xPct: 77.6, yPct: 68.4, rPct: 2.2,
+      name: 'Fire Detection Unit (FDU)', xPct: 77.9, yPct: 71.4, rPct: 10,
       desc: 'Continuously monitors both loops’ signals. If both loops agree a fire condition is present, it raises a Fire signal; if a loop’s own reading looks abnormal (e.g. open/shorted wiring) rather than a genuine fire, it raises a Fault signal instead. One FDU per engine/APU, each wired to that engine’s own Loop A/Loop B.',
     },
   };
