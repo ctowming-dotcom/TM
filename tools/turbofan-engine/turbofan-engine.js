@@ -66,13 +66,12 @@
   // drawn SVG, so plain x/y/r in the viewBox's own units is the natural
   // fit. `spool` ties each marker's visibility to the same
   // MODES[mode].visible list the shaft/stage geometry already uses
-  // (e.g. the IP markers only show in triple-spool mode). The
-  // schematic doesn't draw a separate LP-compressor stage of its own
-  // (the LP spool's one drawn stage is the fan), so `lpCompressor`'s
-  // default position just sits just aft of the fan rather than over a
-  // dedicated shape — exact placement is for edit mode to refine, by
-  // request ("allow me to edit the location and size of the label
-  // circle").
+  // (e.g. the IP markers only show in triple-spool mode). `lpCompressor`'s
+  // default position (x: 205) lines up with the LP spool's own second
+  // drawn stage of the same name (see SPOOLS[0].stages below) — exact
+  // placement is still for edit mode to refine if that stage ever
+  // moves, by request ("allow me to edit the location and size of the
+  // label circle").
   var PART_LABELS = {
     fanBlade: {
       name: 'Fan Blade', spool: 'LP', x: 112, y: 240, r: 75,
