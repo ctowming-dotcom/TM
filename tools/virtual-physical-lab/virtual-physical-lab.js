@@ -89,9 +89,9 @@
   // overlay SVG sits above the marker layer so handles stay reachable);
   // dragging from an off-center point on the marker always works.
   var UPPER_WAYPOINTS = [
-    { x: 65, y: 304 }, { x: 266, y: 231 }, { x: 473, y: 228 }, { x: 515, y: 58 },
-    { x: 976, y: 33 }, { x: 943, y: 97 }, { x: 591, y: 103 }, { x: 608, y: 165 },
-    { x: 779, y: 191 }, { x: 969, y: 236 }, { x: 1117, y: 303 },
+    { x: 65, y: 304 }, { x: 266, y: 231 }, { x: 473, y: 228 }, { x: 554, y: 46 },
+    { x: 978, y: 41 }, { x: 943, y: 97 }, { x: 632, y: 81 }, { x: 608, y: 165 },
+    { x: 779, y: 191 }, { x: 971, y: 222 }, { x: 1182, y: 299 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
