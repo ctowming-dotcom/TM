@@ -643,7 +643,16 @@ automatically or by hand:
     list below its image, sharing one `setActive()`/tooltip
     implementation across both images (a single shared `.fs-tooltip`
     element appended once in `mount()`, not per-image, since only one
-    marker can be hovered at a time).
+    marker can be hovered at a time). `positionTip()` places it using
+    the mouse event's own `clientX`/`clientY` directly, since
+    `.fs-tooltip` is `position: fixed` (viewport-relative) — an earlier
+    version computed the offset against `.fs-diagram`'s own bounding
+    rect instead (a pattern copied from the other tools' absolutely-
+    positioned-inside-the-panel tooltips) and then applied that as a
+    fixed-position left/top, which put the tooltip nowhere near the
+    cursor whenever the centered, `max-width`-capped `.fs-diagram`
+    wasn't flush against the viewport's left edge — caught by request
+    ("the mouse explanation should be somewhere near the cursor").
   - **Edit mode** (added by follow-up request — "allow me to edit the
     size and location of the circle in edit mode for fire protection"
     — reversing the tool's original "no edit mode, nothing here is
