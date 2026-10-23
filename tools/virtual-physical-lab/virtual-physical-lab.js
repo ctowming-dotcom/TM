@@ -60,17 +60,17 @@
   // Engine parts: position (percentage over the image) plus the name/desc
   // shown in the hover tooltip. Both position and wording are editable in
   // edit mode (see EDIT_PASSWORD below).
-  var IMG_W = 1229, IMG_H = 684, CENTER_Y = 303;
+  var IMG_W = 1747, IMG_H = 900, CENTER_Y = 450;
 
   // rPct is the marker's diameter as a percentage of the image's
   // displayed width (kept circular regardless of the image's own aspect
   // ratio via `aspect-ratio: 1/1` in CSS, not a height percentage).
   var PARTS = [
-    { comp: 'inlet', xPct: 8.4, yPct: 44.8, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
-    { comp: 'compressor', xPct: 36.1, yPct: 45, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
-    { comp: 'combustor', xPct: 83.6, yPct: 14.9, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
-    { comp: 'turbine', xPct: 57.2, yPct: 42, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor to turn Compressor and the accessories Gear Box.' },
-    { comp: 'exhaust', xPct: 73.9, yPct: 42.5, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
+    { comp: 'inlet', xPct: 8.6, yPct: 50, rPct: 9, name: 'Air Intake (Inlet Section)', desc: 'To capture and smoothly deliver air to the compressor with minimum energy loss.' },
+    { comp: 'compressor', xPct: 37.2, yPct: 50, rPct: 9, name: 'Compressor Section', desc: 'To increase the pressure of the incoming air before it enters the combustion chamber.' },
+    { comp: 'combustor', xPct: 73.3, yPct: 14.4, rPct: 9, name: 'Combustion Chamber (Combustor)', desc: 'To burn the fuel–air mixture efficiently and release high-temperature, high-energy gas.' },
+    { comp: 'turbine', xPct: 68.7, yPct: 33.3, rPct: 9, name: 'Turbine Section', desc: 'To extract energy from the high-temperature, high-pressure gases leaving the combustor to turn Compressor and the accessories Gear Box.' },
+    { comp: 'exhaust', xPct: 85.9, yPct: 50, rPct: 9, name: 'Exhaust (Nozzle Section)', desc: 'To convert the remaining gas energy into high-speed jet thrust.' },
   ];
   var CPR_INFO = { name: 'Compressor Pressure Ratio (CPR)', desc: 'CPR = P2 ÷ P1, the ratio of compressor outlet pressure to inlet pressure. A higher CPR improves combustion efficiency, increases thrust output, reduces fuel consumption, and is a useful indicator of compressor health — keeping it in range also helps avoid compressor surge or stall.' };
 
@@ -83,22 +83,31 @@
   // handful of waypoints (not a fixed path string) so the route can be
   // reshaped in edit mode; a smooth curve is rebuilt through them each
   // time one moves. The lower route mirrors the upper one about the
-  // centerline (y=303), matching the engine's own top/bottom symmetry.
+  // centerline (y=450), matching the engine's own top/bottom symmetry.
   // A dead-center click on a PARTS marker that happens to sit under a
   // waypoint handle can be shadowed by that handle in edit mode (the
   // overlay SVG sits above the marker layer so handles stay reachable);
   // dragging from an off-center point on the marker always works.
+  //
+  // Re-derived by eye against the 1747x900 replacement image (a
+  // different render of the same general centrifugal-compressor/
+  // reverse-flow-combustor layout — straight through the intake, up
+  // through the compressor to its diffuser exit around the top, a
+  // short elbow down into the turbine inlet, then rearward past the
+  // nozzle centerbody to its tip on the shaft centerline) — approximate
+  // placements, same as every waypoint set in this codebase; refine by
+  // eye via edit mode if they don't trace the new artwork tightly enough.
   var UPPER_WAYPOINTS = [
-    { x: 65, y: 304 }, { x: 266, y: 231 }, { x: 473, y: 228 }, { x: 554, y: 46 },
-    { x: 978, y: 41 }, { x: 943, y: 97 }, { x: 632, y: 81 }, { x: 608, y: 165 },
-    { x: 779, y: 191 }, { x: 971, y: 222 }, { x: 1182, y: 299 },
+    { x: 90, y: 450 }, { x: 380, y: 450 }, { x: 600, y: 420 }, { x: 750, y: 200 },
+    { x: 950, y: 60 }, { x: 920, y: 130 }, { x: 1000, y: 230 }, { x: 1230, y: 300 },
+    { x: 1380, y: 380 }, { x: 1470, y: 430 }, { x: 1510, y: 450 },
   ];
 
   // Two independent combustor glows (pixel coordinates over the
-  // 1229x684 image), one per duct — draggable in edit mode.
+  // 1747x900 image), one per duct — draggable in edit mode.
   var GLOWS = [
-    { x: 996, y: 100 },
-    { x: 1009, y: 513 },
+    { x: 1250, y: 130 },
+    { x: 1250, y: 770 },
   ];
 
   var EDIT_PASSWORD = 'APP';
