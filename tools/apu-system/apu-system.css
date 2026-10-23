@@ -325,22 +325,22 @@
   position: fixed;
   display: none;
   max-width: 300px;
-  background: var(--page);
-  border: 1px solid var(--yellow);
-  color: var(--ink);
+  background: #fffaf0;
+  border: 1px solid #e7d6a8;
+  color: #1a2330;
   font-size: 14px;
   line-height: 1.5;
   padding: 10px 14px;
   border-radius: 8px;
   pointer-events: none;
   z-index: 50;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
 .apu-sys .apu-sys-tooltip .t-title {
   display: block;
   font-weight: 700;
-  color: var(--yellow);
+  color: #8a5a00;
   margin-bottom: 4px;
 }
 
@@ -411,39 +411,39 @@
 }
 
 .apu-sys .apu-sys-list-item {
-  background: var(--page);
-  border: 1px solid var(--line);
+  background: #f2f8fc;
+  border: 1px solid #dde3ea;
   border-radius: 8px;
   padding: 10px 14px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .apu-sys .key-list .apu-sys-list-item {
-  border-color: rgba(239, 68, 68, 0.5);
+  border-color: rgba(185, 28, 28, 0.5);
 }
 
 .apu-sys .apu-sys-list-item.is-hovered {
-  border-color: var(--yellow);
-  background: #1d3e61;
+  border-color: #c9962e;
+  background: #fff3d6;
 }
 
 .apu-sys .apu-sys-list-name {
   display: block;
   font-weight: 700;
   font-size: 14.5px;
-  color: #5aa9d6;
+  color: #1f5c82;
   margin-bottom: 4px;
 }
 
 .apu-sys .key-list .apu-sys-list-name {
-  color: var(--key);
+  color: #b91c1c;
 }
 
 .apu-sys .apu-sys-list-desc {
   display: block;
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--ink);
+  color: #1a2330;
 }
 
 .apu-sys .apu-sys-edit-panel {

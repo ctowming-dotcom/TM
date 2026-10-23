@@ -191,29 +191,29 @@
   position: fixed;
   display: none;
   max-width: 300px;
-  background: var(--page);
-  border: 1px solid var(--box);
-  color: var(--ink);
+  background: #f2f8fc;
+  border: 1px solid #bcd7e8;
+  color: #1a2330;
   font-size: 14px;
   line-height: 1.5;
   padding: 10px 14px;
   border-radius: 8px;
   pointer-events: none;
   z-index: 50;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
 }
 
 .ss-diagram .ss-tooltip .t-title {
   display: block;
   font-weight: 700;
-  color: var(--box);
+  color: #1f5c82;
   margin-bottom: 4px;
 }
 
 .ss-diagram .ss-explain {
   margin-top: 14px;
-  background: var(--page);
-  border: 1px solid var(--line);
+  background: #f2f8fc;
+  border: 1px solid #dde3ea;
   border-radius: 6px;
   padding: 12px 16px;
   display: flex;
@@ -224,25 +224,25 @@
 }
 
 .ss-diagram .ss-explain.has-value {
-  border-color: var(--box);
+  border-color: #4a8bb0;
 }
 
 .ss-diagram .ss-explain .e-title {
-  color: var(--box);
+  color: #1f5c82;
   font-weight: 600;
   font-size: 15.5px;
   letter-spacing: 0.2px;
 }
 
 .ss-diagram .ss-explain .e-desc {
-  color: var(--ink);
+  color: #1a2330;
   font-size: 15px;
   line-height: 1.5;
 }
 
 .ss-diagram .ss-explain:not(.has-value) .e-title,
 .ss-diagram .ss-explain:not(.has-value) .e-desc {
-  color: var(--muted);
+  color: #6b7686;
 }
 
 .ss-diagram .ss-readout {
@@ -325,23 +325,23 @@
 }
 
 .ss-diagram .ss-list-item {
-  background: var(--page);
-  border: 1px solid var(--line);
+  background: #f2f8fc;
+  border: 1px solid #dde3ea;
   border-radius: 8px;
   padding: 10px 14px;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .ss-diagram .ss-list-item.is-hovered {
-  border-color: var(--box);
-  background: #1d3e61;
+  border-color: #4a8bb0;
+  background: #e1f0fa;
 }
 
 .ss-diagram .ss-list-name {
   display: block;
   font-weight: 700;
   font-size: 14.5px;
-  color: var(--box);
+  color: #1f5c82;
   margin-bottom: 4px;
 }
 
@@ -349,5 +349,5 @@
   display: block;
   font-size: 13.5px;
   line-height: 1.5;
-  color: var(--ink);
+  color: #1a2330;
 }

@@ -67,6 +67,40 @@ tool` (the three Phase 2 stub pages) is NOT part of this exception and
 did go dark along with everything else — only the catalog's own cards
 kept the light look.
 
+A second, narrower light-background exception was added later by
+request ("for all mouse over explanatory or label boxes, use a light
+background in all pages"): every tool's cursor-following tooltip
+(`.oil-tooltip`/`.fd-tooltip`/`.ss-tooltip`/`.air-sys-tooltip`/
+`.apu-sys-tooltip`/`.fs-tooltip`/`.vlab-tooltip`/`.tf-tooltip`), fixed
+`.explain`/`.fd-explain`/`.ss-explain` panel, and permanent reference-
+list item box (`.comp-list-item`/`.fd-list-item`/`.ss-list-item`/
+`.air-sys-list-item`/`.apu-sys-list-item`/`.fs-list-item`/
+`.vlab-edit-parts-item`) now has a light background with dark text,
+rather than following the page's own dark `--panel`/`--page`/
+`--surface`/`--card` tokens — these are the boxes whose whole job is
+showing a part's name/description, so a light background reads like a
+label/index-card next to the dark diagram, the same reasoning as the
+catalog cards' own exception. Two tools (Air System's
+`.air-sys-tooltip`, Virtual Lab's `.vlab-tooltip`) already happened to
+use `background: var(--text)` (light, since `--text` is the page's
+light foreground color on this dark theme) with `color: var(--bg)`
+(dark) and needed no change; every other tool's tooltip/explain/list-
+item had been using the dark `--panel`/`--page`/`--card`/`--surface`
+tokens and got hardcoded light hex values instead (not new CSS
+variables, since each occurrence only needed a background/border/text-
+color override, not a reusable token) — a cream/amber tint (`#fffaf0`
+background, `#8a5a00` title text) for tools whose accent is amber/
+yellow (Oil, APU, Fire, Turbofan System), a pale blue tint (`#f2f8fc`
+background, `#1f5c82` title text) for Fuel/Starting System's blue
+accent, and a warm pale tint (`#fdf6f0` background, `#a6303f` title
+text) for Air System's red accent — body text `#1a2330` (dark navy)
+and dimmed/placeholder text `#6b7686`/`#51607a` (gray) throughout,
+regardless of each tool's own accent hue. Signal/comparison cards and
+other always-visible (not hover-triggered, not a reference-list
+item) content panels were left on the page's own dark palette — this
+exception is scoped to "explain what I'm pointing at" boxes
+specifically, not every piece of static content.
+
 Every tool other than the catalog cards followed the shell dark, either
 automatically or by hand:
 - **Virtual Lab, Air System, and the placeholder tools** needed no

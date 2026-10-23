@@ -216,7 +216,8 @@
 }
 
 .vlab-edit-parts-item {
-  border: 1px solid var(--border);
+  background: #fdf6f0;
+  border: 1px solid #e6dcd3;
   border-radius: var(--radius-sm);
   padding: 0.7rem 0.9rem;
 }
@@ -226,11 +227,12 @@
   font-family: var(--font-display);
   font-weight: 600;
   margin-bottom: 0.3rem;
+  color: #a6303f;
 }
 
 .vlab-edit-parts-desc {
   display: block;
-  color: var(--text-muted);
+  color: #51607a;
   font-size: 0.88rem;
   line-height: 1.5;
 }

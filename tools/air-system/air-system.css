@@ -213,12 +213,13 @@
 }
 
 .air-sys-list-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: #fdf6f0;
+  border: 1px solid #e6dcd3;
   border-radius: var(--radius-sm);
   padding: 0.8rem 1rem;
   cursor: default;
   transition: border-color 0.15s ease, background 0.15s ease;
+  color: #1a2330;
 }
 
 .air-sys-list-item.is-hovered {
@@ -231,11 +232,12 @@
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 0.3rem;
+  color: #a6303f;
 }
 
 .air-sys-list-desc {
   display: block;
-  color: var(--text-muted);
+  color: #51607a;
   font-size: 0.92rem;
   line-height: 1.5;
 }
