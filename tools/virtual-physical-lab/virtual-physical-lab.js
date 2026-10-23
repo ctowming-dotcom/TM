@@ -125,7 +125,7 @@
   // 1747x900 image), one per duct — draggable in edit mode.
   var GLOWS = [
     { x: 1383, y: 125 },
-    { x: 1403, y: 701 },
+    { x: 1413, y: 659 },
   ];
 
   var EDIT_PASSWORD = 'APP';
